@@ -1,0 +1,34 @@
+# Packaging
+.cask/
+.eask/
+.eldev/
+.keg/
+
+# dirs
+dev/
+info/
+md/
+old/
+
+# Emacs files
+*.elc
+*.eln
+*.lisp
+*~
+# *scratch*, *Messages*, etc.
+\**
+
+# Dev files
+*.diff
+*.patch
+*.texinfo
+
+# Other files
+*.html
+*.json
+*.otf
+*.svg
+*.ttf
+*.webp
+*.woff
+*.woff2
