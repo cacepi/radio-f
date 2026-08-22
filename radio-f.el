@@ -48,7 +48,7 @@
 (require 'emms nil t)
 (require 'svg nil t)
 
-(eval-when-require
+(eval-when-compile
  (require 'radio-f-stations))
 
 ;; == Custom ============
