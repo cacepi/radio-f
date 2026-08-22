@@ -18,11 +18,13 @@ Radio F is licensed under the GNU General Public License, Version 3. See [LICENS
 <a id="use-package"></a>
 ```elisp
 (use-package radio-f
-      :vc (:url "https://github.com/cacepi/radio-f" :rev :newest)
-      :load-path "~/.emacs.d/elpa/radio-f")
+  :vc (:url "https://github.com/cacepi/radio-f" :rev :newest)
+  :commands (radio-f)
+  :bind
+  (("C-c f r" . radio-f)))
  ```
 
-This will install Radio F in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.
+This will compile the Radio F source and install it in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.  If Emacs was compiled with native complation enabled, Radio F will also be compiled natively.
 
 <!-- * Or, if you use [straight.el](https://github.com/radian-software/straight.el) for package management:
 <a id="straight.el"></a>
@@ -243,14 +245,15 @@ You can also change volume with the mouse wheel while the mouse cursor is inside
 ## Tips:
 
 * You can remove the minor mode lighters that Radio F installs in the modeline by including a `:delight` clause in your `use-package` definition like so:
-```
-:ensure delight ; installs the delight package: does nothing if already installed
+
+```elisp
+:ensure delight        ; installs the delight package: does nothing if already installed
 :delight
 (radio-f-control-mode) ; if using 'frame view
-(buffer-face-mode) ; if using 'window view
+(buffer-face-mode)     ; if using 'window view
 ```
 
-* Did I mentions the favorites list? Only like 11 times already?  Let's make it an even dozen: go to the [station list](#stations) to learn how to build your list.  Your `n` and `p` keys - or arrow keys if you swing that way - will thank you.
+* Did I mention the favorites list? Only like 11 times already?  Let's make it an even dozen: go to the [station list](#stations) to learn how to build your list.  Your `n` and `p` keys - or arrow keys if you swing that way - will thank you.
 
 * The VLC remote interface is over a network connection, and you can control it directly via telnet:
 
@@ -373,7 +376,7 @@ will only show those 14 stations when you run `radio-f-change-station` instead o
 
 ## Items to Note:
 
-### SVG support encouraged, but no required.
+### SVG support encouraged, but not required.
 
 Radio F uses the Emacs `svg` library to generate the rounded corners for the view artwork. The program will work without it; you just won't see those oh-so-sexy RoundRects in the artwork image:
 
