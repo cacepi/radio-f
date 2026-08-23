@@ -1,27 +1,39 @@
-;;; radio-f.el --- A streaming library for Radio France stations.    -*- lexical-binding: t; -*-
-;; Radio F: a streaming library for stations under the Radio France banner.
+;;; radio-f.el --- A streaming library for Radio France stations -*- lexical-binding: t; -*-
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.1.1
-;; Package-Requires: ((emacs "30.1") (emms "18.0"))
+;; Package-Version: 0.1.1.1
+;; Package-Requires: (emacs "30.1")
 ;; Created: Thu 30 Jul 26
-;; Keywords: hypermedia, emms, streaming, radio
+;; Keywords: hypermedia, network, streaming, radio
 
 ;; This file is NOT part of Emacs.
 
 ;;; Commentary:
 
-;; Radio F: a streaming library for stations under the Radio France banner.
+;; Radio F is a streaming library for stations under the Radio France banner.
 ;;
-;; - Supports all Radio France stations and web streams.
-;; - Customizable information display, with artwork, track data, selectable
+;; * Supports all Radio France stations and web streams.
+;; * Customizable information display, with artwork, track data, selectable
 ;;   view style, and more.
-;; - Uses your choice of  mpv, VLC, and EMMS as audio backends, with access
+;; * Uses your choice of  mpv, VLC, and EMMS as audio backends, with access
 ;;   to a selection of most commonly accessed controls: volume up/down,
 ;;   mute/unmute, pause, play, etc.
 ;;
-;; See README.md for details.
+;; Installation is via a simple `use-package' definition placed in your
+;; `.emacs' or `init.el':
+;;
+;; (use-package radio-f
+;;   :vc (:url "https://github.com/cacepi/radio-f" :rev :newest)
+;;   :commands (radio-f)
+;;   :bind
+;;   (("C-c f r" . radio-f)))
+;;
+;; and evaluting the definition with `eval-defun'.  This will compile the Radio F
+;; sources and install them just like Emacs does with any package installed with
+;; `package-install'.
+;;
+;; See README.md for full documentation.
 
 ;; Copyright (C) 2026 Jason Martens.
 
@@ -29,18 +41,16 @@
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
-
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Code:
-
-;; == Require ===========
 
 (require 'json)
 (require 'url)
