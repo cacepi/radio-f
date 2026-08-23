@@ -48,8 +48,7 @@
 (require 'emms nil t)
 (require 'svg nil t)
 
-(eval-when-compile
- (require 'radio-f-stations))
+(require 'radio-f-stations)
 
 ;; == Custom ============
 
@@ -353,7 +352,7 @@ OBJECT refers to a JSON object or vector of objects."
    (lambda (entry)
      (member (cdr entry)
              '("Le direct"
-               "La radio la plus èclectique du monde")))
+               "La radio la plus éclectique du monde")))
    object))
 
 (defun radio-f--fetch-json ()
@@ -1748,7 +1747,8 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
 (defun radio-f-play-default-station ()
   "Switch back to the default station."
   (interactive)
-  (radio-f-change-station radio-f-default-station))
+  (radio-f-change-to-any-station
+   radio-f-default-station))
 
 (defun radio-f-surprise-me ()
   "Tune to a random station."

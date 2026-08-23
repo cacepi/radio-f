@@ -11,9 +11,13 @@ Radio F is a streaming library for stations under the Radio France banner.
 
 Radio F is licensed under the GNU General Public License, Version 3. See [LICENSE](https://github.com/cacepi/radio-f/blob/main/LICENSE) for details.
 
-## Installation
-* Requires a working version of [mpv](https://mpv.io/), [VLC](https://www.videolan.org/), or [EMMS](https://www.gnu.org/software/emms/).
-* Use the following `use-package` definition to grab the latest revision of the Radio F source:
+## Installation Requirements
+* A working version of either [mpv](https://mpv.io/), [VLC](https://www.videolan.org/) or [EMMS](https://www.gnu.org/software/emms/).
+* A working version of [git](https://git-scm.com/) anywhere in your `$PATH` to download the source code.
+
+## Instalation
+
+Installation is via a simple `use-package` definition placed in the user's `init.el` file:
 
 <a id="use-package"></a>
 ```elisp
@@ -24,16 +28,21 @@ Radio F is licensed under the GNU General Public License, Version 3. See [LICENS
   (("C-c f r" . radio-f)))
  ```
 
-This will compile the Radio F source and install it in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.  If Emacs was compiled with native complation enabled, Radio F will also be compiled natively.
+and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed with `package-install`.
 
-<!-- * Or, if you use [straight.el](https://github.com/radian-software/straight.el) for package management:
+<!-- This will compile the Radio F sources and place them in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.
+
+If the Emacs instance also supports native compilation, native object code will install in the user's `native-comp-eln-load-path` within `emacs-user-directory`.
+
+* Or, if you use [straight.el](https://github.com/radian-software/straight.el) for package management:
 <a id="straight.el"></a>
 
 <a id="straight"></a>
 ```
 (use-package radio-f
   :straight (radio-f :type git :host github :repo "cacepi/radio-f"))
-``` -->
+```
+-->
 
 ## Commands
 <a id="radio-f"></a> **`radio-f`**:
