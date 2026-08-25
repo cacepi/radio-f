@@ -2,12 +2,27 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Package-Version: 0.1.1.1
+;; Version: 0.1.1.2
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
 
 ;; This file is NOT part of Emacs.
+
+;; Copyright (C) 2026 Jason Martens.
+;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -35,21 +50,6 @@
 ;;
 ;; See README.md for full documentation.
 
-;; Copyright (C) 2026 Jason Martens.
-
-;; This program is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 ;;; Code:
 
 (require 'json)
@@ -58,7 +58,6 @@
 (require 'emms nil t)
 (require 'svg nil t)
 
-(require 'radio-f-stations)
 
 ;; == Custom ============
 
@@ -67,12 +66,23 @@
 the Radio France banner."
   :group 'multimedia)
 
-(defcustom radio-f-default-station "FIP"
-  "The station to play when launching Radio F."
+(defcustom radio-f-providers
+  '(radio-france rte)
+  "Radio providers available to Radio F."
+  :type '(set
+          (const :tag "Radio France" radio-france)
+          (const :tag "RTÉ" rte)
+          (const :tag "BBC" bbc))
+  :group 'radio-f)
+
+(defcustom radio-f-preferred-station "FIP"
+  "The station to preferably play when launching Radio F.
+
+Radio F determines available stations by examining those defined in `radio-f-providers'. If the preferred station is not available from those providers, the first station listed by the first provider named in `radio-f-providers' is played instead."
   :type 'string
   :group 'radio-f)
 
-(defcustom radio-f-view-style 'frame
+(defcustom radio-f-view-style 'window
   "View style for Radio F.
 
 Window view displays the track information in a standard Emacs window.
@@ -102,17 +112,17 @@ The value may be one of:
   :group 'radio-f)
 
 (defcustom radio-f-favorite-stations nil
-  "Present a choice of all stations to generate a favorites list of
-selected stations.  When nil, the favorites list includes all stations."
-  :type
-  `(set
-    ,@(mapcar
-       (lambda (station)
-         (let ((name (plist-get (cdr station) :name)))
-           `(const :tag ,name ,name)))
-       radio-f-stations))
+  "Stations to present as favorites for completion.
+
+When nil, include all stations supplied by the providers enabled in
+`radio-f-providers'."
+  :type '(repeat string)
   :group 'radio-f)
 
+(defun radio-f--favorite-stations ()
+  "Return the effective list of favorite stations."
+  (or radio-f-favorite-stations
+      (radio-f--list-station-names)))
 
 
 ;; == Custom Appearances ========================
@@ -179,7 +189,7 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
 (defcustom radio-f-stream-type 'aac
   "Choice of audio stream type."
   :type '(choice
-          (const :tag "Variable bitrate HLS stream." hls)
+          (const :tag "Variable bitrate AAC encoded HLS stream." hls)
           (const :tag "AAC stream." aac)
           (const :tag "MP3 stream." mp3))
   :group 'radio-f-audio)
@@ -295,6 +305,93 @@ in both frame and window view."
 (defvar radio-f--current-track-info nil
   "Accepted metadata for the currently playing track.")
 
+(defvar radio-f--current-item-id nil
+  "Identifier for the currently accepted program or track.")
+
+(defun radio-f--stations ()
+  "Return stations supplied by enabled providers."
+  (apply #'append
+         (mapcar
+          (lambda (provider)
+            (pcase provider
+              ('radio-france
+               radio-f--radio-france-stations)
+              ('rte
+               radio-f--rte-stations)
+              (_ nil)))
+          radio-f-providers)))
+
+;; It's a surprise!
+(defun radio-f--all-stations ()
+  "Return all stations supported by Radio F."
+  (radio-f--load-all-providers)
+  (append radio-f--radio-france-stations
+          radio-f--rte-stations))
+
+(defun radio-f--set-initial-station ()
+  "Return the preferred station, or the first available station from the first provider defined in `radio-f-providers'."
+  (let ((stations
+         (radio-f--list-station-names)))
+    (if (member radio-f-preferred-station stations)
+        radio-f-preferred-station
+      (car stations))))
+
+(defun radio-f--load-providers ()
+  "Load provider modules, as defined in `radio-f-providers'."
+  (dolist (provider radio-f-providers)
+    (pcase provider
+      ('radio-france
+       (require 'radio-f-radio-france))
+      ('rte
+       (require 'radio-f-rte))
+      ('bbc
+       (require 'radio-f-bbc)))))
+
+;; I told you, it's a surprise. Don't spoil it.
+(defun radio-f--load-all-providers ()
+  "Load all provider modules supported by Radio F."
+  (dolist (provider radio-f--available-providers)
+    (pcase provider
+      ('radio-france
+       (require 'radio-f-radio-france))
+      ('rte
+       (require 'radio-f-rte))
+      ('bbc
+       (require 'radio-f-bbc)))))
+
+(defun radio-f--list-station-names ()
+  "List all station names, with the preferred station appearing first."
+  (let* ((stations
+          (mapcar
+           (lambda (station)
+             (plist-get (cdr station) :name))
+           (radio-f--stations)))
+         (default radio-f-preferred-station))
+    (if (member default stations)
+        (cons default
+              (delete default
+                      (copy-sequence stations)))
+      stations)))
+
+(defun radio-f--list-favorite-stations ()
+  "List favorite station names, with the preferred station appearing first."
+  (let* ((stations
+          (mapcar
+           (lambda (station)
+             (plist-get (cdr station) :name))
+           (radio-f--stations)))
+         (stations
+          (if radio-f-favorite-stations
+              (seq-filter
+               (lambda (name)
+                 (member name radio-f-favorite-stations))
+               stations)
+            stations))
+         (default radio-f-preferred-station))
+    (if (member default stations)
+        (cons default
+              (delete default (copy-sequence stations)))
+      stations)))
 
 (defun radio-f--get-current-station-data ()
   "Return the metadata plist for the current station."
@@ -304,30 +401,32 @@ in both frame and window view."
       (equal
        (plist-get (cdr entry) :name)
        radio-f--current-station))
-    radio-f-stations)))
+    (radio-f--stations))))
 
-(defun radio-f--list-url-elements (template station)
-  "Expand URL TEMPLATE using metadata for STATION.
+(defun radio-f--get-station-page-template (provider)
+  "Return the station page URL template for PROVIDER."
+  (pcase provider
+    ('radio-france
+     radio-f--radio-france-url)
+    ('rte
+     radio-f--rte-url)
+    (_
+     nil)))
 
-STATION is the display name of a station in `radio-f-stations'."
-  (let* ((station-data
-          (cdr
-           (seq-find
-            (lambda (entry)
-              (equal
-               (plist-get (cdr entry) :name)
-               station))
-            radio-f-stations)))
-         (url template))
-    (while (string-match "\\[\\([^]]+\\)\\]" url)
-      (let* ((name (match-string 1 url))
-             (key (intern (concat ":" name)))
-             (value (plist-get station-data key)))
-        (setq url
-              (replace-match
-               (or value "")
-               t t url))))
-    url))
+(defun radio-f--get-stream-template (provider)
+  "Return an audio stream template for PROVIDER.
+
+Prefer `radio-f-stream-type'.  If PROVIDER does not support that
+stream type, return the provider's default stream template."
+  (let ((streams
+         (pcase provider
+           ('radio-france
+            radio-f--radio-france-streams)
+           ('rte
+            radio-f--rte-streams)
+           (_ nil))))
+    (or (cdr (assq radio-f-stream-type streams))
+        (cdr (assq 'default streams)))))
 
 (defun radio-f--expand-url (template station)
   "Expand URL TEMPLATE using values from STATION."
@@ -343,17 +442,29 @@ STATION is the display name of a station in `radio-f-stations'."
     url))
 
 (defun radio-f--get-stream-url ()
-  "Return the streaming URL for the current station."
+  "Return the streaming URL for the current station.
+
+The URl is determined by examining the streams that a provider has available. If the user has specificed a stream type that the provider does not have, the stream returned"
   (let* ((station
           (radio-f--get-current-station-data))
+         (provider
+          (plist-get station :provider))
          (template
-          (pcase radio-f-stream-type
-            ("hls"    radio-f-aac)
-            ("aac"    radio-f-aac)
-            ("mp3"    radio-f-aac)
-            (_        radio-f-aac))))
+          (radio-f--get-stream-template provider)))
     (radio-f--expand-url template station)))
 
+(defun radio-f--get-api-template (provider)
+  "Return the metadata URL template for PROVIDER."
+  (pcase provider
+    ('radio-france
+     radio-f--radio-france-api-url)
+    ('rte
+     radio-f--rte-api-url)
+    (_
+     (error "Radio F: No metadata template for provider %S"
+            provider))))
+
+;; "La radio la plus éclectique du monde"
 (defun radio-f--ordures-p (object)
   "Return non-nil when OBJECT contains unusable metadata.
 
@@ -361,18 +472,19 @@ OBJECT refers to a JSON object or vector of objects."
   (seq-some
    (lambda (entry)
      (member (cdr entry)
-             '("Le direct"
-               "La radio la plus éclectique du monde")))
+             '("Le direct")))
    object))
 
 (defun radio-f--fetch-json ()
   "Fetch metadata JSON for the current station."
-(let* ((station
-        (radio-f--get-current-station-data))
-       (url
-        (radio-f--expand-url
-         radio-f-api-url
-         station)))
+  (let* ((station
+          (radio-f--get-current-station-data))
+         (provider
+          (plist-get station :provider))
+         (template
+          (radio-f--get-api-template provider))
+         (url
+          (radio-f--expand-url template station)))
     ;; Testing.  Move along.
     ;; (message "Radio F metadata URL: %s" url)
     (url-retrieve
@@ -404,93 +516,176 @@ OBJECT refers to a JSON object or vector of objects."
              (kill-buffer retrieval-buffer)))))
      nil t nil)))
 
+
 (defun radio-f--json-postmaster (raw-json-string)
   "Parse RAW-JSON-STRING and process changed station metadata."
-  (let* ((json-object-type 'alist)
-         (json-array-type 'vector)
-         (json-key-type 'string)
-         (data
-          (json-read-from-string raw-json-string))
-         (station (cdr (seq-find
-            (lambda (entry)
-              (equal (plist-get (cdr entry) :name)
-               radio-f--current-station))
-            radio-f-stations)))
-         (metadata
-          (plist-get station :metadata))
-         (now
-          (cdr (assoc "now" data)))
-         artist title cover start end)
+(let* ((json-object-type 'alist)
+       (json-array-type 'vector)
+       (json-key-type 'string)
+       (data
+        (json-read-from-string raw-json-string))
+       (station
+        (radio-f--get-current-station-data))
+       (provider
+        (plist-get station :provider))
+       (metadata
+        (plist-get station :metadata))
+       (now
+        (pcase provider
+          ('rte
+           (aref data 0))
+          ('radio-france
+           (cdr (assoc "now" data)))))
+       item-id
+       artist
+       title
+       start
+       end
+       visual-url)
     ;; Radio France loves to send out "trash" JSON objects,
     ;; sometimes *during a playing track*, where the values
     ;; have placeholder info like "Le direct" or "La radio
     ;; la plus" etc.  Just throw away the whole object.
-    (unless (radio-f--ordures-p now)
+    (unless (and (not (eq provider 'rte))
+                 (radio-f--ordures-p now))
       (pcase metadata
+        ;; FIP-family Radio France metadata.
+        ('fip
+         (setq item-id
+               (cdr (assoc "stepId" now))
+               artist
+               (cdr (assoc "interpreters" now))
+               title
+               (cdr (assoc "title" now))
+               start
+               (cdr (assoc "startTime" now))
+               end
+               (cdr (assoc "endTime" now))
+               visual-url
+               (let ((cover
+                      (cdr (assoc "cover" now))))
+                 (and cover
+                      (replace-regexp-in-string
+                       "\\[cover\\]"
+                       cover
+                       radio-f--radio-france-visual-url
+                       t t)))))
+        ;; France Inter-style Radio France metadata.
         ('inter
-         ;; Most stations use the inter schema.
-         (setq artist (cdr (assoc "firstLine" now))
-               title  (cdr (assoc "secondLine" now))
-               cover  (cdr (assoc "cover" now))
-               start  (cdr (assoc "startTime" now))
-               end    (cdr (assoc "endTime" now))))
-        ('ici
+         (setq item-id
+               (cdr (assoc "stepId" now))
+               artist
+               (cdr (assoc "secondLine" now))
+               title
+               (cdr (assoc "firstLine" now))
+               start
+               (cdr (assoc "startTime" now))
+               end
+               (cdr (assoc "endTime" now))
+               visual-url
+               (let ((cover
+                      (cdr (assoc "cover" now))))
+                 (and cover
+                      (replace-regexp-in-string
+                       "\\[cover\\]"
+                       cover
+                       radio-f--radio-france-visual-url
+                       t t)))))
          ;; "Ici" are the local Radio France stations.
          ;; Same basic schema as inter, but there are a
          ;; couple of things I need to confirm first
          ;; before I can fold them in with the others.
-         (setq artist (cdr (assoc "firstLine" now))
-               title  (cdr (assoc "secondLine" now))
-               cover  (cdr (assoc "cover" now))
-               start  (cdr (assoc "startTime" now))
-               end    (cdr (assoc "endTime" now))))
+        ('ici
+         (setq item-id
+               (cdr (assoc "stepId" now))
+               artist
+               (cdr (assoc "secondLine" now))
+               title
+               (cdr (assoc "firstLine" now))
+               start
+               (cdr (assoc "startTime" now))
+               end
+               (cdr (assoc "endTime" now))
+               visual-url
+               (let ((cover
+                      (cdr (assoc "cover" now))))
+                 (and cover
+                      (replace-regexp-in-string
+                       "\\[cover\\]"
+                       cover
+                       radio-f--radio-france-visual-url
+                       t t)))))
         ;; Info is unique; its "cover" key points to
         ;; a "Le direct" image.
         ('info
-         (setq artist (cdr (assoc "firstLine" now))
-               title  (cdr (assoc "secondLine" now))
-               cover  (cdr (assoc "cover_square" now))
-               start  (cdr (assoc "startTime" now))
-               end    (cdr (assoc "endTime" now))))
+         (setq item-id
+               (cdr (assoc "stepId" now))
+               artist
+               (cdr (assoc "secondLine" now))
+               title
+               (cdr (assoc "firstLine" now))
+               start
+               (cdr (assoc "startTime" now))
+               end
+               (cdr (assoc "endTime" now))
+               visual-url
+               (let ((cover
+                      (cdr (assoc "cover_square" now))))
+                 (and cover
+                      (replace-regexp-in-string
+                       "\\[cover\\]"
+                       cover
+                       radio-f--radio-france-visual-url
+                       t t)))))
+        ;; RTÉ live-listings metadata.
+        ('rte
+         (setq item-id
+               (cdr (assoc "listingId" now))
+               artist
+               (cdr (assoc "channel" now))
+               title
+               (cdr (assoc "progName" now))
+               start
+               (float-time
+                (date-to-time
+                 (cdr (assoc "progDate" now))))
+               end
+               (cdr (assoc "endDate_ts" now))
+               visual-url
+               (cdr (assoc "thumbnail" now))))
         (_
          (message
-          "Radio F: Unknown metadata format: %S"
-          metadata)))
-      (let ((visual-url
-             (and cover
-                  (radio-f--expand-url
-                   radio-f-visual-url
-                   (list :cover cover)))))
-        ;; Don't call the views if "cover" hasn't changed.
-        ;; Instead, Wait for a fetch to return fresh JSON.
-        (when metadata
-          (unless (equal cover radio-f--cover-uuid)
-            (setq radio-f--cover-uuid cover
-                  radio-f--current-track-info
-                  `((artist     . ,artist)
-                    (title      . ,title)
-                    (cover      . ,cover)
-                    (start      . ,start)
-                    (end        . ,end)
-                    (visual-url . ,visual-url)
-                    (fetch-time . ,(floor (float-time)))))
-            (radio-f--record-track-log)
-            (pcase radio-f-view-style
-              ('window
-               (radio-f--create-window-view))
-              ('frame
-               (radio-f--create-frame-view))
-              (_
-               (message
-                "Radio F: unknown view style: %S. Check your view style settings."
-                radio-f-view-style)))))))))
+          "Radio F: Unknown metadata schema: %S"
+          provider)))
+      ;; Don't call the views if "item-id" hasn't changed.
+      ;; Instead, Wait for a fetch to return fresh JSON.
+      (unless (equal item-id radio-f--current-item-id)
+        (setq radio-f--current-item-id item-id
+              radio-f--current-track-info
+              `((item-id     . ,item-id)
+                (artist      . ,artist)
+                (title       . ,title)
+                (start       . ,start)
+                (end         . ,end)
+                (fetch-time  . ,(floor (float-time)))
+                (visual-url  . ,visual-url)))
+        (radio-f--record-track-log)
+        (pcase radio-f-view-style
+          ('window
+           (radio-f--create-window-view))
+          ('frame
+           (radio-f--create-frame-view))
+          (_
+           (message
+            "Radio F: unknown view style: %S. Check your view style settings."
+            radio-f-view-style)))))))
 
 (defun radio-f--fetch-artwork (visual-url callback)
   "Retrieve the image returned by VISUAL-URL.
 
-VISUAL-URL comes from the alist built by `radio-f--json-postmaster'
+VISUAL-URL comes from the alist built by `radio-f--json-postmaster'.
 
-CALLBACK is the callback from 'url-retrieve'."
+CALLBACK is called with two arguments: the image data and its MIME type."
   (url-retrieve
    visual-url
    (lambda (status)
@@ -499,19 +694,26 @@ CALLBACK is the callback from 'url-retrieve'."
            (if-let* ((error-data (plist-get status :error)))
                (message "Artwork retrieval error: %S" error-data)
              (goto-char (point-min))
-             (if (re-search-forward "\r?\n\r?\n" nil t)
-                 (funcall
-                  callback
-                  (buffer-substring-no-properties
-                   (point)
-                   (point-max)))
-               (let ((message-log-max nil))
-                 (message "Could not find end of HTTP headers"))))
+             (let ((image-type
+                    (when (re-search-forward
+                           "^Content-Type:[ \t]*\\([^;\r\n]+\\)"
+                           nil t)
+                      (match-string-no-properties 1))))
+               (goto-char (point-min))
+               (if (re-search-forward "\r?\n\r?\n" nil t)
+                   (funcall
+                    callback
+                    (buffer-substring-no-properties
+                     (point)
+                     (point-max))
+                    image-type)
+                 (let ((message-log-max nil))
+                   (message "Could not find end of HTTP headers")))))
          (when (buffer-live-p retrieval-buffer)
            (kill-buffer retrieval-buffer)))))
    nil t nil))
 
-(defun radio-f--stylize-artwork (image-data)
+(defun radio-f--stylize-artwork (image-data image-type)
   "Return a presentation image made from IMAGE-DATA.
 
 When SVG support is available, stylize the artwork with rounded corners
@@ -544,7 +746,7 @@ The size of the image is set to the value of the custom variable
         (svg-embed
          svg
          image-data
-         "image/webp"
+         image-type
          t
          :x 0
          :y 0
@@ -575,7 +777,10 @@ The size of the image is set to the value of the custom variable
     ;; after resizing.
     (create-image
      image-data
-     'webp
+     (pcase image-type
+       ("image/webp" 'webp)
+       ("image/jpeg" 'jpeg)
+       ("image/png"  'png))
      t
      :width radio-f-artwork-size
      :height radio-f-artwork-size)))
@@ -704,9 +909,9 @@ a small external margin of one character height."
   "Shrink the window view if it is larger than its buffer."
   (interactive)
   (let* ((buffer (get-buffer
-               ( radio-f--generate-buffer-name)))
+                  (radio-f--generate-buffer-name)))
          (window (and buffer
-                   (get-buffer-window buffer t))))
+                      (get-buffer-window buffer t))))
     (when (window-live-p window)
       (with-selected-window window
         (shrink-window-if-larger-than-buffer)))))
@@ -846,6 +1051,8 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
              (right-fringe . 0)
              (internal-border-width . 0)
              (border-width . 0)
+             ;; A square border around a RoundRect looks
+             ;; strange. No border for the child frame.
              (child-frame-border-width . 0)
              (no-other-frame . t)
              (no-accept-focus . t)
@@ -854,7 +1061,6 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
              (no-special-glyphs . t)
              (mouse-wheel-frame . ,parent)
              (unsplittable . t)
-             (alpha . (100 . 100))
              (visibility . nil)))))
     (setq radio-f--child-frame frame)
     (set-face-background
@@ -902,11 +1108,11 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
             (let ((artwork-marker (copy-marker (point) nil)))
               (radio-f--fetch-artwork
                .visual-url
-               (lambda (image-data)
+               (lambda (image-data image-type)
                  (when (and (buffer-live-p buffer)
                             (marker-position artwork-marker))
                    (let ((image
-                          (radio-f--stylize-artwork image-data)))
+                          (radio-f--stylize-artwork image-data image-type)))
                      (when image
                        (radio-f--insert-frame-artwork
                         buffer artwork-marker image))))))))
@@ -953,11 +1159,11 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
               (let ((artwork-marker (copy-marker (point) nil)))
                 (radio-f--fetch-artwork
                  .visual-url
-                 (lambda (image-data)
+                 (lambda (image-data image-type)
                    (when (and (buffer-live-p buffer)
                               (marker-position artwork-marker))
                      (let ((image
-                            (radio-f--stylize-artwork image-data)))
+                            (radio-f--stylize-artwork image-data image-type)))
                        (when image
                          (radio-f--insert-window-artwork
                           buffer artwork-marker image))))))))
@@ -1061,7 +1267,7 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
             (radio-f--reinitialize-timeline)
           (insert
            (propertize
-            (format "(%s/%s)"
+            (format "%s/%s"
                     (radio-f--format-track-time played)
                     (radio-f--format-track-time length))
             'face 'radio-f-timeline
@@ -1338,7 +1544,6 @@ remote control interface."
 (defvar radio-f--previous-volume nil
   "Record the value of `radio-f--current-volume' before volume changes.")
 
-
 (defun radio-f-volume-up ()
   "Increase playback volume by two points."
   (interactive)
@@ -1385,9 +1590,9 @@ remote control interface."
 (defun radio-f-reset-volume ()
   "Reset volume to its default level, as defined in `radio-f-default-volume'."
   (interactive)
-  (setq radio-f--current-volume radio-f-default-volume)
+  (setq radio-f--current-volume radio-f-preferred-volume)
   (radio-f--send-command 'volume
-                           radio-f-default-volume)
+                           radio-f-preferred-volume)
   (let ((message-log-max nil))
     (let ((message-log-max nil))
       (message "Radio F reset to: %d"
@@ -1627,6 +1832,18 @@ ERR is the error sent to the Emacs \*Message\* buffer."
                 (window-pixel-height win))))
         (window-resize win delta nil nil t)))))
 
+(defun radio-f--dump-stations ()
+  "Dump all supported Radio F stations into the buffer defined
+in `radio-f--alist-buffer-name'."
+  (interactive)
+  (let ((stations (radio-f--list-station-names)))
+    (with-current-buffer
+        (get-buffer-create radio-f--alist-buffer-name)
+      (let ((inhibit-read-only t))
+        (goto-char (point-max))
+        (prin1 stations (current-buffer))
+        (insert "\n")))))
+
 (defun radio-f--kill-timer ()
   "Turn off the JSON timer and reset the variables that use it."
   (interactive)
@@ -1647,6 +1864,8 @@ STATION is the desired station to play.  When called with no arguments,
 the station played is governed by the custom variable
 `radio-f-default-station'."
   (interactive)
+  ;; Load the preferred providers before doing anything else.
+  (radio-f--load-providers)
   ;; Provide a good view setting for TUI Emacs.
   (unless (display-graphic-p)
     (setq radio-f-view-style 'window
@@ -1656,11 +1875,11 @@ the station played is governed by the custom variable
   (radio-f-down)
   (radio-f--clear-mpv-socket)
   (setq station (or station
-                    radio-f-default-station))
+                    radio-f-preferred-station))
   (radio-f--prune-error-log)
   (let ((chosen-station (if (or (null station)
                                 (string-empty-p station))
-                            radio-f-default-station
+                            radio-f-preferred-station
                           station)))
     (setq radio-f--current-station chosen-station)
     (setq radio-f--current-volume radio-f-default-volume)
@@ -1723,7 +1942,9 @@ the station played is governed by the custom variable
 
 ;;;###autoload
 (defun radio-f-change-to-any-station (&optional station)
-  "Switch to a different STATION."
+  "Switch to a different STATION.
+
+STATION is any station from all providers."
   (interactive)
   ;; Try to keep the station order consistent by asking the
   ;; reader to ignore completion history, but doesn't always
@@ -1732,7 +1953,7 @@ the station played is governed by the custom variable
     (setq station
            (completing-read
             "Choose Station: "
-           (radio-f--list-station-names)
+           (radio-f--all-stations)
            nil t nil t nil nil)))
    (setq radio-f--current-station station)
    (radio-f--delete-views)
@@ -1754,27 +1975,36 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
   (let ((radio-f--view-visible-p nil))
     (radio-f)))
 
-(defun radio-f-play-default-station ()
-  "Switch back to the default station."
+(defun radio-f-play-preferred-station ()
+  "Switch back to the preferred station."
   (interactive)
   (radio-f-change-to-any-station
-   radio-f-default-station))
+   radio-f-preferred-station))
 
+;; SURPRISE!!
 (defun radio-f-surprise-me ()
   "Tune to a random station."
   (interactive)
-  (let ((station
-         (car (nth (random (length radio-f-stations))
-                   radio-f-stations))))
-    (radio-f-change-station station)))
+  (let* ((stations
+          (radio-f--all-stations))
+         (station
+          (nth (random (length stations))
+               stations))
+         (name
+          (plist-get (cdr station) :name)))
+    (radio-f-change-to-any-station name)))
 
 (defun radio-f-browse-station-page ()
   "Open a browser to the page of the currently playing station."
   (interactive)
-  (browse-url (radio-f--list-url-elements
-               radio-f-url
-               radio-f--current-station)))
-
+  (let* ((station
+          (radio-f--get-current-station-data))
+         (provider
+          (plist-get station :provider))
+         (template
+          (radio-f--get-station-page-template provider)))
+    (browse-url
+     (radio-f--expand-url template station))))
 
 
 ;; == Housekeeping ======

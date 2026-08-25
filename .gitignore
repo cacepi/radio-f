@@ -10,25 +10,45 @@ info/
 md/
 old/
 
+# My working directory is usually so jam packed with "stuff"
+# that my untracked files can easily be 50+.
+#
+# IOW:  I'm a slob and I have to tell git to Fuhgeddaboudit.
+
+# Dev
+*.diff
+*.patch
+*.tex*
+
+# WWW
+*.html
+*.json
+*.xml
+
+# Images
+*.svg
+*.webp
+
+# Fonts
+*.otf
+*.ttf
+*.woff
+*.woff2
+
+# Playlists
+*.m3u*
+*.smi*
+*.as*
+*.pls
+*.xspf
+
 # Emacs files
 *.elc
 *.eln
+# Testing and dev modules are entitled *.elisp
+*.elisp
+# Or *.lisp. Like I said, I'm a slob.
 *.lisp
 *~
 # *scratch*, *Messages*, etc.
 \**
-
-# Dev files
-*.diff
-*.patch
-*.texinfo
-
-# Other files
-*.html
-*.json
-*.otf
-*.svg
-*.ttf
-*.webp
-*.woff
-*.woff2

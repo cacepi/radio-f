@@ -1,31 +1,44 @@
-;; radio-f-stations.el --- Station definitions for Radio F -*- lexical-binding: t; -*-
+;; radio-f-radio-france.el --- Radio France plugin for Radio F -*- lexical-binding: t; -*-
 
-(defconst radio-f-api-url
+(defconst radio-f--radio-france-api-url
   "https://api.radiofrance.fr/livemeta/live/[id]/[endpoint]"
   "Template used to retrieve JSON data from Radio France")
 
-(defconst radio-f-url
+(defconst radio-f--radio-france-url
   "https://www.radiofrance.fr/[www]/[www-suffix]"
   "Template used to return a station's URL on the Radio France web site.")
 
-(defconst radio-f-hls
+(defconst radio-f--radio-france-hls
   "https://stream.radiofrance.fr/[tag]/[tag].m3u8?id=radiofrance"
   "Template used to return an HLS audio stream for playback.")
 
-(defconst radio-f-aac
+(defconst radio-f--radio-france-aac
   "https://icecast.radiofrance.fr/[tag]-hifi.aac?id=radiofrance"
   "Template used to return an AAC audio stream for playback.")
 
-(defconst radio-f-mp3
+(defconst radio-f--radio-france-mp3
   "http://[mp3-prefix].[mp3-domain].fr/live/[tag]-midfi.mp3"
   "Template used to return an MP3 audio stream for playback.")
 
-(defconst radio-f-visual-url
+(defconst radio-f--radio-france-visual-url
   "https://www.radiofrance.fr/pikapi/images/[cover]/400x400"
   "Template used to retrieve the artwork image for the presentation views.")
 
-(defconst radio-f-stations
-  '((franceinter
+(defconst radio-f--radio-france-streams
+  `((hls     . ,radio-f--radio-france-hls)
+    (aac     . ,radio-f--radio-france-aac)
+    (mp3     . ,radio-f--radio-france-mp3)
+    (default . ,radio-f--radio-france-mp3))
+  "Audio stream templates provided by Radio France.")
+
+(defconst radio-f--radio-france-stations
+  '((fip
+     :name "FIP" :provider radio-france :id "7"
+     :endpoint "new_apprf_fip" :www "fip"
+     :tag "fip" :www-suffix "titres-diffuses"
+     :metadata inter :mp3-prefix icecast
+     :mp3-domain radiofrance)
+    (franceinter
      :name "France Inter" :provider radio-france :id "1"
      :endpoint "new_apprf_inter" :www "franceinter"
      :tag "franceinter" :www-suffix "grille-programmes"
@@ -50,12 +63,6 @@
      :endpoint "new_apprf_mouv" :www "mouv"
      :tag "mouv" :www-suffix "titres-diffuses"
      :metadata inter :mp3-prefix icecast
-     :mp3-domain radiofrance)
-    (fip
-     :name "FIP" :provider radio-france :id "7"
-     :endpoint "apprf_fip_player" :www "fip"
-     :tag "fip" :www-suffix "titres-diffuses"
-     :metadata inter :mp3-prefix icecastf
      :mp3-domain radiofrance)
     (fiprock
      :name "FIP Rock" :provider radio-france :id "64"
@@ -447,54 +454,7 @@
      :endpoint "transistor_musical_player" :www "francebleu"
      :tag "fb100pour100annees80" :www-suffix "chansons-annees-80"
      :metadata inter :mp3-prefix icecast :mp3-domain radiofrance))
-  "Input data used by the URL templates to retrieve information
-from Radio France.")
+  "Input data used by the URL templates to retrieve metadata, stream types, and web
+links for the presentation views.")
 
-
-(defun radio-f--list-station-names ()
-  "List all station names, with the default station appearing first."
-  (let* ((stations
-          (mapcar
-           (lambda (station)
-             (plist-get (cdr station) :name))
-           radio-f-stations))
-         (default radio-f-default-station))
-    (if (member default stations)
-        (cons default (delete default (copy-sequence stations)))
-      stations)))
-
-(defun radio-f--list-favorite-stations ()
-  "List favorite station names, with the default station appearing first."
-  (let* ((stations
-          (mapcar
-           (lambda (station)
-             (plist-get (cdr station) :name))
-           radio-f-stations))
-         (stations
-          (if radio-f-favorite-stations
-              (seq-filter
-               (lambda (name)
-                 (member name radio-f-favorite-stations))
-               stations)
-            stations))
-         (default radio-f-default-station))
-    (prin1 stations)
-    (if (member default stations)
-        (cons default
-              (delete default (copy-sequence stations)))
-      stations)))
-
-(defun radio-f--dump-stations ()
-  "Dump all Radio F supported stations into the buffer defined
-in `radio-f--alist-buffer-name'."
-  (interactive)
-  (let ((stations (radio-f--list-station-names)))
-    (with-current-buffer
-        (get-buffer-create radio-f--alist-buffer-name)
-      (let ((inhibit-read-only t))
-        (goto-char (point-max))
-        (prin1 stations (current-buffer))
-        (insert "\n")))))
-
-
-(provide 'radio-f-stations)
+(provide 'radio-f-radio-france)
