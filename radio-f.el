@@ -1,8 +1,8 @@
-;;; radio-f.el --- A streaming library for Radio France stations -*- lexical-binding: t; -*-
+;;; radio-f.el --- A streaming library to access radio stations in Emacs -*- lexical-binding: t; -*-
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.1.1.2
+;; Version: 0.2.1
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -12,9 +12,8 @@
 ;; Copyright (C) 2026 Jason Martens.
 ;;
 ;; This program is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; it under the terms of the GNU General Public License version 3, as
+;; published by the Free Software Foundation.
 ;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,17 +25,17 @@
 
 ;;; Commentary:
 
-;; Radio F is a streaming library for stations under the Radio France banner.
+;; Radio F is a streaming library to access radio stations in Emacs.
 ;;
-;; * Supports all Radio France stations and web streams.
+;; * Supports all Radio France and RTÉ stations and web streams.
 ;; * Customizable information display, with artwork, track data, selectable
 ;;   view style, and more.
 ;; * Uses your choice of  mpv, VLC, and EMMS as audio backends, with access
 ;;   to a selection of most commonly accessed controls: volume up/down,
 ;;   mute/unmute, pause, play, etc.
 ;;
-;; Installation is via a simple `use-package' definition placed in your
-;; `.emacs' or `init.el':
+;; Installation is done with the following sample `use-package' definition
+;; placed in the user's Emacs configuration file:
 ;;
 ;; (use-package radio-f
 ;;   :vc (:url "https://github.com/cacepi/radio-f" :rev :newest)
@@ -44,9 +43,9 @@
 ;;   :bind
 ;;   (("C-c f r" . radio-f)))
 ;;
-;; and evaluting the definition with `eval-defun'.  This will compile the Radio F
-;; sources and install them just like Emacs does with any package installed with
-;; `package-install'.
+;; and evaluting the definition with `eval-defun'.  This will compile
+;; the Radio F sources and install them just like Emacs does with any
+;; package installed via `package-install'.
 ;;
 ;; See README.md for full documentation.
 
@@ -67,22 +66,25 @@ the Radio France banner."
   :group 'multimedia)
 
 (defcustom radio-f-providers
-  '(radio-france rte)
+  '(radio-france rte sbfm)
   "Radio providers available to Radio F."
   :type '(set
           (const :tag "Radio France" radio-france)
           (const :tag "RTÉ" rte)
-          (const :tag "BBC" bbc))
+          (const :tag "Shonan Beach FM" sbfm))
   :group 'radio-f)
 
 (defcustom radio-f-preferred-station "FIP"
   "The station to preferably play when launching Radio F.
 
-Radio F determines available stations by examining those defined in `radio-f-providers'. If the preferred station is not available from those providers, the first station listed by the first provider named in `radio-f-providers' is played instead."
+Radio F determines available stations by examining the providers included
+in `radio-f-providers'.  If the preferred station is not available from
+those providers, the first station listed by the first provider named in
+`radio-f-providers' is played instead."
   :type 'string
   :group 'radio-f)
 
-(defcustom radio-f-view-style 'window
+(defcustom radio-f-view-style 'frame
   "View style for Radio F.
 
 Window view displays the track information in a standard Emacs window.
@@ -119,10 +121,6 @@ When nil, include all stations supplied by the providers enabled in
   :type '(repeat string)
   :group 'radio-f)
 
-(defun radio-f--favorite-stations ()
-  "Return the effective list of favorite stations."
-  (or radio-f-favorite-stations
-      (radio-f--list-station-names)))
 
 
 ;; == Custom Appearances ========================
@@ -186,7 +184,7 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   :type 'integer
   :group 'radio-f-audio)
 
-(defcustom radio-f-stream-type 'aac
+(defcustom radio-f-stream-type 'hls
   "Choice of audio stream type."
   :type '(choice
           (const :tag "Variable bitrate AAC encoded HLS stream." hls)
@@ -255,13 +253,13 @@ in both frame and window view."
   "C-c f r"   #'radio-f
   "C-c f a"   #'radio-f-change-to-any-station
   "C-c f c"   #'radio-f-change-station
-  "C-c f d"   #'radio-f-play-default-station
+  "C-c f h"   #'radio-f-play-preferred-station
   "C-c f m"   #'radio-f-dark-mode
   "C-c f o"   #'radio-f-down
   "C-c f v"   #'radio-f-toggle-view
   "C-c f w"   #'radio-f-browse-station-page
   "C-c f ?"   #'radio-f-surprise-me
-  "<f7>"      #'radio-f-play-default-station
+  "<f7>"      #'radio-f-play-preferred-station
   "<f8>"      #'radio-f-pause-audio    ;; hit again to unpause
   "<f9>"      #'radio-f-change-station
   "<f10>"     #'radio-f-mute-audio     ;; hit again to unmute
@@ -278,6 +276,12 @@ in both frame and window view."
 
 
 ;; == Variables for station/stream control ======
+
+(defconst radio-f--all-providers
+  '(radio-france rte sbfm)
+  "All Providers supported by Radio F.")
+
+
 
 (defvar radio-f--current-station nil
   "Saves the identity of the currently playing station.")
@@ -318,6 +322,8 @@ in both frame and window view."
                radio-f--radio-france-stations)
               ('rte
                radio-f--rte-stations)
+              ('sbfm
+               radio-f--sbfm-stations)
               (_ nil)))
           radio-f-providers)))
 
@@ -326,12 +332,13 @@ in both frame and window view."
   "Return all stations supported by Radio F."
   (radio-f--load-all-providers)
   (append radio-f--radio-france-stations
-          radio-f--rte-stations))
+          radio-f--rte-stations
+          radio-f--sbfm-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station from the first provider defined in `radio-f-providers'."
   (let ((stations
-         (radio-f--list-station-names)))
+         (radio-f--all-station-names)))
     (if (member radio-f-preferred-station stations)
         radio-f-preferred-station
       (car stations))))
@@ -344,54 +351,25 @@ in both frame and window view."
        (require 'radio-f-radio-france))
       ('rte
        (require 'radio-f-rte))
-      ('bbc
-       (require 'radio-f-bbc)))))
+      ('sbfm
+       (require 'radio-f-sbfm)))))
 
-;; I told you, it's a surprise. Don't spoil it.
 (defun radio-f--load-all-providers ()
   "Load all provider modules supported by Radio F."
-  (dolist (provider radio-f--available-providers)
+  (dolist (provider radio-f-providers)
     (pcase provider
       ('radio-france
        (require 'radio-f-radio-france))
       ('rte
        (require 'radio-f-rte))
-      ('bbc
-       (require 'radio-f-bbc)))))
+      ('sbfm
+       (require 'radio-f-sbfm)))))
 
-(defun radio-f--list-station-names ()
-  "List all station names, with the preferred station appearing first."
-  (let* ((stations
-          (mapcar
-           (lambda (station)
-             (plist-get (cdr station) :name))
-           (radio-f--stations)))
-         (default radio-f-preferred-station))
-    (if (member default stations)
-        (cons default
-              (delete default
-                      (copy-sequence stations)))
-      stations)))
+(defun radio-f--favorite-stations ()
+  "Return the effective list of favorite stations."
+  (or radio-f-favorite-stations
+      (radio-f--all-station-names)))
 
-(defun radio-f--list-favorite-stations ()
-  "List favorite station names, with the preferred station appearing first."
-  (let* ((stations
-          (mapcar
-           (lambda (station)
-             (plist-get (cdr station) :name))
-           (radio-f--stations)))
-         (stations
-          (if radio-f-favorite-stations
-              (seq-filter
-               (lambda (name)
-                 (member name radio-f-favorite-stations))
-               stations)
-            stations))
-         (default radio-f-preferred-station))
-    (if (member default stations)
-        (cons default
-              (delete default (copy-sequence stations)))
-      stations)))
 
 (defun radio-f--get-current-station-data ()
   "Return the metadata plist for the current station."
@@ -410,6 +388,8 @@ in both frame and window view."
      radio-f--radio-france-url)
     ('rte
      radio-f--rte-url)
+    ('sbfm
+     radio-f--sbfm-url)
     (_
      nil)))
 
@@ -424,6 +404,8 @@ stream type, return the provider's default stream template."
             radio-f--radio-france-streams)
            ('rte
             radio-f--rte-streams)
+           ('sbfm
+            radio-f--sbfm-streams)
            (_ nil))))
     (or (cdr (assq radio-f-stream-type streams))
         (cdr (assq 'default streams)))))
@@ -458,6 +440,8 @@ The URl is determined by examining the streams that a provider has available. If
   (pcase provider
     ('radio-france
      radio-f--radio-france-api-url)
+    ('sbfm
+     radio-f--sbfm-api-url)
     ('rte
      radio-f--rte-api-url)
     (_
@@ -474,6 +458,10 @@ OBJECT refers to a JSON object or vector of objects."
      (member (cdr entry)
              '("Le direct")))
    object))
+
+
+
+;; Networking functions
 
 (defun radio-f--fetch-json ()
   "Fetch metadata JSON for the current station."
@@ -516,7 +504,6 @@ OBJECT refers to a JSON object or vector of objects."
              (kill-buffer retrieval-buffer)))))
      nil t nil)))
 
-
 (defun radio-f--json-postmaster (raw-json-string)
   "Parse RAW-JSON-STRING and process changed station metadata."
 (let* ((json-object-type 'alist)
@@ -534,6 +521,7 @@ OBJECT refers to a JSON object or vector of objects."
         (pcase provider
           ('rte
            (aref data 0))
+          ('sbfm data)
           ('radio-france
            (cdr (assoc "now" data)))))
        item-id
@@ -546,8 +534,7 @@ OBJECT refers to a JSON object or vector of objects."
     ;; sometimes *during a playing track*, where the values
     ;; have placeholder info like "Le direct" or "La radio
     ;; la plus" etc.  Just throw away the whole object.
-    (unless (and (not (eq provider 'rte))
-                 (radio-f--ordures-p now))
+    (unless (radio-f--ordures-p now)
       (pcase metadata
         ;; FIP-family Radio France metadata.
         ('fip
@@ -653,6 +640,23 @@ OBJECT refers to a JSON object or vector of objects."
                (cdr (assoc "endDate_ts" now))
                visual-url
                (cdr (assoc "thumbnail" now))))
+        ('sbfm
+         (setq item-id
+               (cdr (assoc "datetime" now))
+               artist
+               (cdr (assoc "aartist" now))
+               title
+               (cdr (assoc "title" now))
+               start
+               (float-time
+                (date-to-time
+                 (cdr (assoc "datetime" now))))
+               end
+               (float-time
+                (date-to-time
+                 (cdr (assoc "datetime" now))))
+               visual-url
+               (cdr (assoc "imagepath" now))))
         (_
          (message
           "Radio F: Unknown metadata schema: %S"
@@ -1275,7 +1279,7 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
 
 
 
-;; == Track Timer ======
+;; == Track Timeline ======
 
 (defvar radio-f--timeline-timer nil
   "Timer used to update the current track timeline.")
@@ -1330,23 +1334,23 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
 
 
 
-;; == Timer functions ===========================
+;; == Timing control =============================
 
-(defun radio-f--stop-timeline ()
-  "Stop the track timeline timer."
+(defun radio-f--kill-timeline ()
+  "Turn off the track timeline timer and reset the variables that use it."
   (when (timerp radio-f--timeline-timer)
     (cancel-timer radio-f--timeline-timer)
     (setq radio-f--timeline-timer nil)))
 
-(defun radio-f--stop-timer ()
-  "Stop the Radio F fetch timer."
+(defun radio-f--kill-timer ()
+  "Turn off the JSON timer and reset the variables that use it."
   (when (timerp radio-f--timer)
     (cancel-timer radio-f--timer)
-    (setq radio-f--timeline-timer nil)))
+    (setq radio-f--timer nil)))
 
 
 
-;; == Transport control ==
+;; == Transport control =========================
 
 (defun radio-f--send-command (command &optional value)
   "Send COMMAND to the configured external player.
@@ -1733,6 +1737,41 @@ remote control interface."
   "%a %b %d %H:%M:%S %Z %Y")
 
 
+;; I told you, it's a surprise. Don't spoil it.
+(defun radio-f--all-station-names ()
+  "List all station names, with the preferred station appearing first."
+  (let* ((stations
+          (mapcar
+           (lambda (station)
+             (plist-get (cdr station) :name))
+           (radio-f--stations)))
+         (default radio-f-preferred-station))
+    (if (member default stations)
+        (cons default
+              (delete default
+                      (copy-sequence stations)))
+      stations)))
+
+(defun radio-f--favorite-stations-names ()
+  "List favorite station names, with the preferred station appearing first."
+  (let* ((stations
+          (mapcar
+           (lambda (station)
+             (plist-get (cdr station) :name))
+           (radio-f--stations)))
+         (stations
+          (if radio-f-favorite-stations
+              (seq-filter
+               (lambda (name)
+                 (member name radio-f-favorite-stations))
+               stations)
+            stations))
+         (default radio-f-preferred-station))
+    (if (member default stations)
+        (cons default
+              (delete default (copy-sequence stations)))
+      stations)))
+
 (defun radio-f--record-track-log ()
   "Log the current time and track data to the buffer defined in `radio-f--track-log-buffer-name'.  Time is listed in the user's local timezone, not CET/CDT."
        (interactive)
@@ -1836,20 +1875,13 @@ ERR is the error sent to the Emacs \*Message\* buffer."
   "Dump all supported Radio F stations into the buffer defined
 in `radio-f--alist-buffer-name'."
   (interactive)
-  (let ((stations (radio-f--list-station-names)))
+  (let ((stations (radio-f--all-station-names)))
     (with-current-buffer
         (get-buffer-create radio-f--alist-buffer-name)
       (let ((inhibit-read-only t))
         (goto-char (point-max))
         (prin1 stations (current-buffer))
         (insert "\n")))))
-
-(defun radio-f--kill-timer ()
-  "Turn off the JSON timer and reset the variables that use it."
-  (interactive)
-  (when (timerp radio-f--timer)
-    (cancel-timer radio-f--timer)
-    (setq radio-f--timer nil)))
 
 
 
@@ -1899,7 +1931,7 @@ the station played is governed by the custom variable
   (interactive)
   (radio-f-audio-stop)
   (radio-f--delete-views)
-  (radio-f--stop-timeline)
+  (radio-f--kill-timeline)
   (radio-f--kill-timer)
   (setq radio-f--current-station nil
         radio-f--player-process nil
@@ -1926,7 +1958,7 @@ the station played is governed by the custom variable
   (let* ((favorite-picked
           (completing-read
            "Choose Station: "
-           (radio-f--list-favorite-stations)
+           (radio-f--favorite-stations-names)
            nil t nil t nil nil)))
     (setq radio-f--current-station favorite-picked)
     (radio-f--delete-views)
@@ -1953,7 +1985,7 @@ STATION is any station from all providers."
     (setq station
            (completing-read
             "Choose Station: "
-           (radio-f--all-stations)
+           (radio-f--all-station-names)
            nil t nil t nil nil)))
    (setq radio-f--current-station station)
    (radio-f--delete-views)
@@ -2005,6 +2037,7 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
           (radio-f--get-station-page-template provider)))
     (browse-url
      (radio-f--expand-url template station))))
+
 
 
 ;; == Housekeeping ======

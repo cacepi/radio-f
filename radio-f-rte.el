@@ -3,13 +3,14 @@
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
 ;; Created: Sat 22 Aug 26
-;; Keywords: streaming, radio, Ireland
+;; Keywords: hypermedia, network, streaming, radio, RTÉ
 
 ;; This file is NOT part of Emacs.
 
 ;;; Commentary:
 
-;; RTÈ Plugin for Radio F. 5 stations.
+;; RTÈ plugin for Radio F.
+;; 5 stations.
 
 ;;; Code:
 
@@ -40,21 +41,27 @@
 
 (defconst radio-f--rte-stations
   '((radio1
-     :name "RTE Radio 1" :provider rte :id "radio1"
-     :tag "rteradio1" :channel "9" :www "radio1")
+     :name "RTE Radio 1" :provider rte :metadata rte
+     :id "radio1" :tag "rteradio1" :channel "9"
+     :www "radio1")
     (2fm
-     :name "RTE 2FM" :provider rte :metadata rte :id "2fm"
-     :tag "rte2fm" :channel "1" :www "2fm")
+     :name "RTE 2FM" :provider rte :metadata rte
+     :id "2fm" :tag "rte2fm" :channel "1" :www "2fm")
     (rnag
-     :name "RTE Raidió na Gaeltachta" :provider rte :metadata rte :id "rnag"
-     :tag "rteraidionagaeltachta" :channel "17" :www "rnag")
+     :name "RTE Raidió na Gaeltachta" :provider rte
+     :metadata rte :id "rnag" :tag "rteraidionagaeltachta"
+     :channel "17" :www "rnag")
     (lyricfm
-     :name "RTE Lyric FM" :provider rte :metadata rte :id "lyric"
-     :tag "rtelyricfm" :channel "16" :www "lyricfm")
+     :name "RTE Lyric FM" :provider rte :metadata rte
+     :id "lyric" :tag "rtelyricfm" :channel "16"
+     :www "lyricfm")
     (gold
-     :name "RTE Gold" :provider rte :metadata rte :id "gold"
-     :tag "rtegold" :channel "22" :www "gold"))
+     :name "RTE Gold" :provider rte :metadata rte
+     :id "gold" :tag "rtegold" :channel "22"
+     :www "gold"))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
 (provide 'radio-f-rte)
+
+;;; radio-f-rte.el ends here

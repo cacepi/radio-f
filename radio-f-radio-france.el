@@ -1,4 +1,18 @@
-;; radio-f-radio-france.el --- Radio France plugin for Radio F -*- lexical-binding: t; -*-
+;;; radio-f-radio-france.el --- Radio France plugin for Radio F -*- lexical-binding: t; -*-
+
+;; Author: Jason Martens
+;; URL: https://github.com/cacepi/radio-f
+;; Created: Sat 22 Aug 26
+;; Keywords: hypermedia, network, streaming, radio, Radio France
+
+;; This file is NOT part of Emacs.
+
+;;; Commentary:
+;;
+;; Radio France plugin for Radio F.
+;; 79 stations.
+
+;;; Code:
 
 (defconst radio-f--radio-france-api-url
   "https://api.radiofrance.fr/livemeta/live/[id]/[endpoint]"
@@ -28,7 +42,7 @@
   `((hls     . ,radio-f--radio-france-hls)
     (aac     . ,radio-f--radio-france-aac)
     (mp3     . ,radio-f--radio-france-mp3)
-    (default . ,radio-f--radio-france-mp3))
+    (default . ,radio-f--radio-france-hls))
   "Audio stream templates provided by Radio France.")
 
 (defconst radio-f--radio-france-stations
@@ -36,8 +50,7 @@
      :name "FIP" :provider radio-france :id "7"
      :endpoint "new_apprf_fip" :www "fip"
      :tag "fip" :www-suffix "titres-diffuses"
-     :metadata inter :mp3-prefix icecast
-     :mp3-domain radiofrance)
+     :metadata inter :mp3-prefix icecast :mp3-domain radiofrance)
     (franceinter
      :name "France Inter" :provider radio-france :id "1"
      :endpoint "new_apprf_inter" :www "franceinter"
@@ -127,7 +140,7 @@
      :www-suffix "radio-cultes" :metadata inter
      :mp3-prefix icecast :mp3-domain radiofrance)
     ;; The ici stations have their home page set by a cookie,
-    ;; so it's not possible to browse to them directly. Send the
+    ;; so it's not possible to browse to them directly.  Send
     ;; the user to /francebleu so they may select their
     ;; preferred station.
     (rcfm ;; Corsica.  You just know Napoleon would never have used vi.
@@ -457,4 +470,8 @@
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
+
+
 (provide 'radio-f-radio-france)
+
+;;; radio-f-radio-france.el ends here
