@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.2.1
+;; Version: 0.2.2
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -23,16 +23,17 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Commentary:
 
+;;; Commentary:
+;;
 ;; Radio F is a streaming library to access radio stations in Emacs.
 ;;
-;; * Supports all Radio France and RTÉ stations and web streams.
-;; * Customizable information display, with artwork, track data, selectable
-;;   view style, and more.
-;; * Uses your choice of  mpv, VLC, and EMMS as audio backends, with access
-;;   to a selection of most commonly accessed controls: volume up/down,
-;;   mute/unmute, pause, play, etc.
+;; * Supports 150+ stations from Radio France, BBC, RTÉ, and more.
+;; * Customizable information display, with artwork, track data, and
+;;   selectable view style.
+;; * Uses your choice of  mpv, VLC, and EMMS as audio backends, with
+;;   access to a selection of most commonly accessed controls: volume
+;;   up/down, mute/unmute, pause, play, etc.
 ;;
 ;; Installation is done with the following sample `use-package' definition
 ;; placed in the user's Emacs configuration file:
@@ -48,6 +49,8 @@
 ;; package installed via `package-install'.
 ;;
 ;; See README.md for full documentation.
+
+
 
 ;;; Code:
 
@@ -66,9 +69,10 @@ the Radio France banner."
   :group 'multimedia)
 
 (defcustom radio-f-providers
-  '(radio-france rte sbfm)
+  '(radio-france bbc rte sbfm)
   "Radio providers available to Radio F."
   :type '(set
+          (const :tag "BBC" bbc)
           (const :tag "Radio France" radio-france)
           (const :tag "RTÉ" rte)
           (const :tag "Shonan Beach FM" sbfm))
@@ -278,7 +282,7 @@ in both frame and window view."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f--all-providers
-  '(radio-france rte sbfm)
+  '(bbc radio-france rte sbfm)
   "All Providers supported by Radio F.")
 
 
@@ -318,6 +322,8 @@ in both frame and window view."
          (mapcar
           (lambda (provider)
             (pcase provider
+              ('bbc
+               radio-f--the-beeb-stations)
               ('radio-france
                radio-f--radio-france-stations)
               ('rte
@@ -331,7 +337,8 @@ in both frame and window view."
 (defun radio-f--all-stations ()
   "Return all stations supported by Radio F."
   (radio-f--load-all-providers)
-  (append radio-f--radio-france-stations
+  (append radio-f--the-beeb-stations
+          radio-f--radio-france-stations
           radio-f--rte-stations
           radio-f--sbfm-stations))
 
@@ -347,6 +354,8 @@ in both frame and window view."
   "Load provider modules, as defined in `radio-f-providers'."
   (dolist (provider radio-f-providers)
     (pcase provider
+      ('bbc
+       (require 'radio-f-the-beeb))
       ('radio-france
        (require 'radio-f-radio-france))
       ('rte
@@ -358,6 +367,8 @@ in both frame and window view."
   "Load all provider modules supported by Radio F."
   (dolist (provider radio-f-providers)
     (pcase provider
+      ('bbc
+       (require 'radio-f-the-beeb))
       ('radio-france
        (require 'radio-f-radio-france))
       ('rte
@@ -384,6 +395,8 @@ in both frame and window view."
 (defun radio-f--get-station-page-template (provider)
   "Return the station page URL template for PROVIDER."
   (pcase provider
+    ('bbc
+     radio-f--the-beeb-url)
     ('radio-france
      radio-f--radio-france-url)
     ('rte
@@ -400,6 +413,8 @@ Prefer `radio-f-stream-type'.  If PROVIDER does not support that
 stream type, return the provider's default stream template."
   (let ((streams
          (pcase provider
+           ('bbc
+            radio-f--the-beeb-streams)
            ('radio-france
             radio-f--radio-france-streams)
            ('rte
@@ -438,7 +453,9 @@ The URl is determined by examining the streams that a provider has available. If
 (defun radio-f--get-api-template (provider)
   "Return the metadata URL template for PROVIDER."
   (pcase provider
-    ('radio-france
+    ('bbc
+     radio-f--the-beeb-api-url)
+     ('radio-france
      radio-f--radio-france-api-url)
     ('sbfm
      radio-f--sbfm-api-url)
@@ -506,36 +523,82 @@ OBJECT refers to a JSON object or vector of objects."
 
 (defun radio-f--json-postmaster (raw-json-string)
   "Parse RAW-JSON-STRING and process changed station metadata."
-(let* ((json-object-type 'alist)
-       (json-array-type 'vector)
-       (json-key-type 'string)
-       (data
-        (json-read-from-string raw-json-string))
-       (station
-        (radio-f--get-current-station-data))
-       (provider
-        (plist-get station :provider))
-       (metadata
-        (plist-get station :metadata))
-       (now
-        (pcase provider
-          ('rte
-           (aref data 0))
-          ('sbfm data)
-          ('radio-france
-           (cdr (assoc "now" data)))))
-       item-id
-       artist
-       title
-       start
-       end
-       visual-url)
+  (let* ((json-object-type 'alist)
+         (json-array-type 'vector)
+         (json-key-type 'string)
+         (data
+          (json-read-from-string raw-json-string))
+         (station
+          (radio-f--get-current-station-data))
+         (provider
+          (plist-get station :provider))
+         (metadata
+          (plist-get station :metadata))
+         (now
+          (pcase provider
+            ('bbc
+             (let ((broadcasts
+                    (cdr (assoc "data" data)))
+                   (current-time
+                    (float-time)))
+               (seq-find
+                (lambda (broadcast)
+                  (let ((start
+                         (float-time
+                          (date-to-time
+                           (cdr (assoc "start" broadcast)))))
+                        (end
+                         (float-time
+                          (date-to-time
+                           (cdr (assoc "end" broadcast))))))
+                    (and (<= start current-time)
+                         (< current-time end))))
+                broadcasts)))
+            ('radio-france
+             (cdr (assoc "now" data)))
+            ('rte
+             (aref data 0))
+            ('sbfm data)))
+         item-id
+         artist
+         title
+         start
+         end
+         visual-url)
     ;; Radio France loves to send out "trash" JSON objects,
     ;; sometimes *during a playing track*, where the values
     ;; have placeholder info like "Le direct" or "La radio
     ;; la plus" etc.  Just throw away the whole object.
     (unless (radio-f--ordures-p now)
       (pcase metadata
+        ('bbc
+         (let ((network
+                (cdr (assoc "network" now)))
+               (titles
+                (cdr (assoc "titles" now)))
+               (image-url
+                (cdr (assoc "image_url" now))))
+           (setq item-id
+                 (cdr (assoc "id" now))
+                 artist
+                 (cdr (assoc "short_title" network))
+                 title
+                 (cdr (assoc "primary" titles))
+                 start
+                 (float-time
+                  (date-to-time
+                   (cdr (assoc "start" now))))
+                 end
+                 (float-time
+                  (date-to-time
+                   (cdr (assoc "end" now))))
+                 visual-url
+                 (and image-url
+                      (replace-regexp-in-string
+                       "{recipe}"
+                       "400x400"
+                       image-url
+                       t t)))))
         ;; FIP-family Radio France metadata.
         ('fip
          (setq item-id
@@ -578,10 +641,10 @@ OBJECT refers to a JSON object or vector of objects."
                        cover
                        radio-f--radio-france-visual-url
                        t t)))))
-         ;; "Ici" are the local Radio France stations.
-         ;; Same basic schema as inter, but there are a
-         ;; couple of things I need to confirm first
-         ;; before I can fold them in with the others.
+        ;; "Ici" are the local Radio France stations.
+        ;; Same basic schema as inter, but there are a
+        ;; couple of things I need to confirm first
+        ;; before I can fold them in with the others.
         ('ici
          (setq item-id
                (cdr (assoc "stepId" now))

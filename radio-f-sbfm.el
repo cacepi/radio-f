@@ -7,15 +7,29 @@
 
 ;; This file is NOT part of Emacs.
 
+;; Copyright (C) 2026 Jason Martens.
+;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License version 3, as
+;; published by the Free Software Foundation.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 ;;; Commentary:
-
-;; Shonan Beach FM is a small, privately owned Japanese station
-;; in Kanagawa Prefecture. Jazz format with a text-to-speech
-;; news reader.  As a small station, it has a seat-of-the-pants
-;; feel to it that I just love.
-;; Only one stream type: mp3
+;;
+;; Shonan Beach FM is a small, community owned Japanese station
+;; in Kanagawa Prefecture.  Jazz format (thumbs up) with a
+;; text-to-speech news reader.  As a small station, it has a
+;; "seat of the pants" feel to it that I just love.  I imagine
+;; pirate radio from a ship in the North Sea during the '60s
+;; sounded like this.  Single mp3 stream.
 
 
 
