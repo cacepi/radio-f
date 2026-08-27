@@ -41,7 +41,7 @@
   "Template used to return a station's URL on the Radio France web site.")
 
 (defconst radio-f--radio-france-hls
-  "https://stream.radiofrance.fr/[tag]/[tag].m3u8?id=radiofrance"
+  "https://stream.radiofrance.fr/[tag]/[tag]_hifi.m3u8?id=radiofrance"
   "Template used to return an HLS audio stream for playback.")
 
 (defconst radio-f--radio-france-aac
@@ -50,7 +50,7 @@
 
 (defconst radio-f--radio-france-mp3
   "http://[mp3-prefix].[mp3-domain].fr/live/[tag]-midfi.mp3"
-  "Template used to return an MP3 audio stream for playback.")
+  "Template used to return a low bitrate AAC audio stream for playback.")
 
 (defconst radio-f--radio-france-visual-url
   "https://www.radiofrance.fr/pikapi/images/[cover]/400x400"
@@ -58,8 +58,8 @@
 
 (defconst radio-f--radio-france-streams
   `((hls     . ,radio-f--radio-france-hls)
-    (aac     . ,radio-f--radio-france-aac)
-    (mp3     . ,radio-f--radio-france-mp3)
+    (mid     . ,radio-f--radio-france-aac)
+    (low     . ,radio-f--radio-france-mp3)
     (default . ,radio-f--radio-france-hls))
   "Audio stream templates provided by Radio France.")
 

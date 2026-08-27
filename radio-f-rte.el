@@ -35,28 +35,28 @@
 
 (defconst radio-f--rte-streams
   `((hls     . ,radio-f--rte-hls)
-    (aac     . ,radio-f--rte-aac)
+    (midcfo     . ,radio-f--rte-aac)
     (default . ,radio-f--rte-hls))
   "Audio stream templates provided by RTÉ.")
 
 (defconst radio-f--rte-stations
   '((radio1
-     :name "RTE Radio 1" :provider rte :metadata rte
+     :name "RTÉ Radio 1" :provider rte :metadata rte
      :id "radio1" :tag "rteradio1" :channel "9"
      :www "radio1")
     (2fm
-     :name "RTE 2FM" :provider rte :metadata rte
+     :name "RTÉ 2FM" :provider rte :metadata rte
      :id "2fm" :tag "rte2fm" :channel "1" :www "2fm")
     (rnag
-     :name "RTE Raidió na Gaeltachta" :provider rte
+     :name "RTÉ Raidió na Gaeltachta" :provider rte
      :metadata rte :id "rnag" :tag "rteraidionagaeltachta"
      :channel "17" :www "rnag")
     (lyricfm
-     :name "RTE Lyric FM" :provider rte :metadata rte
+     :name "RTÉ Lyric FM" :provider rte :metadata rte
      :id "lyric" :tag "rtelyricfm" :channel "16"
      :www "lyricfm")
     (gold
-     :name "RTE Gold" :provider rte :metadata rte
+     :name "RTÉ Gold" :provider rte :metadata rte
      :id "gold" :tag "rtegold" :channel "22"
      :www "gold"))
   "Input data used by the URL templates to retrieve metadata, stream types, and web

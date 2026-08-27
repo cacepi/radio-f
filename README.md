@@ -1,12 +1,12 @@
 # Radio F
 
-Radio F is a streaming library for stations under the Radio France banner.
+Radio F is a streaming library to access radio stations in Emacs.
 
 <img src="https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/img/dark-mode.jpg" width="635" height="529" alt="Image of Radio F interface.">
 
 ## Features
-* Supports all Radio France stations and web streams.
-* Customizable information display, with artwork, track data, selectable view style, and more.
+* Supports over 150 stations and web streams from Radio France, BBC, RTÉ, and more.
+* Customizable information display, with artwork, track data, and selectable view style.
 * Uses your choice of [mpv](https://mpv.io/), [VLC](https://www.videolan.org/), and [EMMS](https://www.gnu.org/software/emms/) as audio backends, with access to a selection of most commonly accessed controls: volume up/down, mute/unmute, pause, play, etc.
 
 Radio F is licensed under the GNU General Public License, Version 3. See [LICENSE](https://github.com/cacepi/radio-f/blob/main/LICENSE) for details.
@@ -28,7 +28,7 @@ Installation is via a simple `use-package` definition placed in the user's `init
   (("C-c f r" . radio-f)))
  ```
 
-and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed with `package-install`.
+and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed with `package-install` Native object code will also install if the Emacs instance supports native compilation.
 
 <!-- This will compile the Radio F sources and place them in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.
 
@@ -52,34 +52,24 @@ This function can be run non-interactively with optional argument for a specific
 
 Consult the [station list](#stations) for available stations.
 
-<a id="change-station"></a> **`radio-f-change-station`**:
-Select a different station in your favorites list to play.  Refer to [the favorites setting](#radio-f-favorite-stations) to see how to make your own favorites list.
+<a id="change-station"></a> **`radio-f-change-station`**: Select a different station in your favorites list to play.  Refer to [the favorites setting](#radio-f-favorite-stations) to see how to make your own favorites list.
 
-<a id="change-station"></a> **`radio-f-change-to-any-station`**:
-A variant of the above, except it bypasses your favorites and shows all stations supported by Radio F  Like `radio-f`, this function also accepts a station argument.
+<a id="change-to-any-station"></a> **`radio-f-change-to-any-station`**: A variant of the above, except it bypasses your favorites and shows all stations supported by Radio F  Like `radio-f`, this function also accepts a station argument.
 
-<a id="play-default-station"></a> **`radio-f-play-default-station`**:
-Returns you to the [default station](#radio-f-default-station).
+<a id="play-preferred-station"></a> **`radio-f-play-preferred-station`**: Return to the [preferred station](#radio-f-preferred-station).
 
-**`radio-f-surprise-me`**:
-Plays a random station.
+**`radio-f-surprise-me`**: Play a random station chosen from all providers.
 
-<a id="dark-mode"></a>**`radio-f-dark-mode`**:
-Start Radio F with no view.  See the [View Styles](#view-styles) section for more details.
+<a id="dark-mode"></a>**`radio-f-dark-mode`**: Start Radio F with no view.  See the [View Styles](#view-styles) section for more details.
 
-**`radio-f-down`**:
-Exits Radio F.
+**`radio-f-down`**: Exit Radio F.
 
 ## Helper Functions
-<a id="resize-window-view"></a>**`radio-f-resize-window-view`**:
-
-Sometimes window view can get fail to properly size itself after changing the station.  This function resizes the view to the smallest it needs to be to display all the information that's inside the buffer.
+<a id="resize-window-view"></a>**`radio-f-resize-window-view`**: Sometimes window view can get fail to properly size itself after changing the station.  This function resizes the view to the smallest it needs to be to display all the information that's inside the buffer.
 
 This function is bound to `C-c f '` by default.
 
-<a id="browse-station-page"></a>**`radio-f-browse-station-page`**:
-
-Opens your browser for the page of the currently playing station.
+<a id="browse-station-page"></a>**`radio-f-browse-station-page`**: Opens your browser for the page of the currently playing station.
 
 This function is bound to `C-c f w` by default.
 
@@ -106,7 +96,31 @@ A word of caution: the view toggle works by running `make-frame-visible` and `ma
 
 ## Custom Variables
 
-<a id="radio-f-player-program"></a>**`radio-f-player-program`**: preferred player program. Accepted values are:
+<a id="radio-f-providers"></a>**`radio-f-providers`**: A list of the station carriers Radio F supports. At the moment, Radio F has support for the following providers:
+
+`radio-france`: Radio France (French National Radio)
+`rte`: RTÈ (Irish National Radio)
+`bbc`:  The British Broadcasting Corporation (UK National Radio)\*
+`sbfm`: Shonan Beach FM
+
+The default is all providers.
+
+<a id="radio-f-preferred-station"></a> **`radio-f-preferred-station`**: The preferred station to play when Radio F starts.  Refer to the [station list](#stations) for all the stations supported under Radio F.
+
+The default is `"FIP"`.
+
+\* The following stations are available in the UK only:
+
+<pre>
+"BBC Radio Five Live Sports Extra"
+"BBC Radio Five Sports Extra 2"
+"BBC Radio Five Sports Extra 3"
+"CBeebies Radio"
+"BBC Radio Six Indie Forever"
+"BBC Sounds News"
+</pre>
+
+<a id="radio-f-player-program"></a>**`radio-f-player-program`**: Preferred player program. Accepted values are:
 
 * `emms`- [Emacs Multimedia System](https://www.gnu.org/software/emms/)
 * `vlc` - [VLC Media Player](https://www.videolan.org/vlc/)
@@ -124,105 +138,80 @@ A word of caution: the view toggle works by running `make-frame-visible` and `ma
 The default is `vlc`.
 
 
-<a id="radio-f-stream-type"></a>**`radio-f-stream-type`**: choice of audio stream.
+<a id="radio-f-stream-type"></a>**`radio-f-stream-type`**: Choice of audio stream.
 
-* `'hls` plays a variable bitrate AAC encoded HLS stream.
-* `'aac` plays a fixed bitrate AAC encoded stream at 192kbps.
-*  `'mp3` plays a fixed bitrate MP3 encoded stream at 128kbps.
+* `'hls` plays a variable bitrate HLS stream.
+* `'mid` plays a "mid-fi" stream.
+*  `'low` plays a "lofi" stream at varying bit rates, depending on the playing station.
 
 The default is `'hls`.
 
-<a id="radio-f-view-style"></a>**`radio-f-view-style`**: Sets the preferred view Style. Can be either `'frame` or `'window`. Refer to the [View Styles section](#view-styles) for more details.
+<a id="radio-f-view-style"></a>**`radio-f-view-style`**: Set the preferred view Style. Can be either `'frame` or `'window`. Refer to the [View Styles section](#view-styles) for more details.
 
 The default is `'frame`.
 
-<a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: list favorite stations for completion.  A nil value shows all stations.
+<a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 79 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 156 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
-`customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see.
+`customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
 Or if you really hate to use Custom - and who doesn't? - you can copy the stations you want from the [station list](#station-list) and place them in your `use-package` definition for Radio F.  For example:
 
 ```elisp
-:init  ;; Can be in :config instead if you want.
+:config
 (setq radio-f-favorite-stations
     "ici Bearn" "FIP" "FIP Rock" "FIP Jazz" "FIP Groove" "FIP Monde"
     "FIP Nouveautés" "FIP Reggae" "FIP Electro" "FIP Metal" "FIP Pop"
-    "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes")
+    "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes" "RTÉ Radio 1"
+    "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM")
 ```
 
-will only show those 14 stations when you run `radio-f-change-station` instead of all 79.
+will only show those 19 stations when you run [`radio-f-change-station`](#change-station) instead of all 156.
 
-<a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**:
+Remember, you can always see every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
-The size, in pixels, of the artwork image's height and width.
+<a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
 The default is `240`.
 
-<a id="radio-f-show-artwork"></a>**`radio-f-show-artwork`**:
-
-Show artwork in either frame of window view: `t` shows artwork, `nil` disables it.
+<a id="radio-f-show-artwork"></a>**`radio-f-show-artwork`**: Show artwork in either frame of window view: `t` shows artwork, `nil` disables it.
 
 The default is `t`.
 
-<a id="radio-f-show-track-info"></a>**`radio-f-show-track-info`**:
-
-Show track info in either frame of window view: `t` shows track info, `nil` disables it.
+<a id="radio-f-show-track-info"></a>**`radio-f-show-track-info`**: Show track info in either frame of window view. A value of `t` shows track info, `nil` disables it.
 
 The default is `t`.
 
-<a id="radio-f-show-track-timeline"></a>**`radio-f-show-track-timeline`**:
+<a id="radio-f-show-track-timeline"></a>**`radio-f-show-track-timeline`**: Display a timer showing the playing time of the current track. A value of `t` shows the timer, `nil` shows no timer.
 
-Display a timer showing the playing time of the current track: `t` shows the timer, `nil` shows no timer.
+The default is `nil`.
 
-The default is `t`.
-
-<a id="radio-f-artwork-border-width"></a>**`radio-f-frame-artwork-border-width`**:
-
-Width of the border, in pixels, that's around the artwork image. Set this to `0` if you don't want a border.
+<a id="radio-f-artwork-border-width"></a>**`radio-f-frame-artwork-border-width`**: Width of the border, in pixels, that surrounds the artwork image. Set this to `0` if you don't want a border.
 
 The default is `2`.
 
-<a id="radio-f-artwork-radius"></a>**`radio-f-artwork-radius`**:
-
-Radius in pixels of the artwork's rounded corners in both frame and window view.  Set this to `0` if you don't want to round off the corners.
+<a id="radio-f-artwork-radius"></a>**`radio-f-artwork-radius`**: Radius in pixels of the artwork's rounded corners in both frame and window view.  Set this to `0` if you don't want to round off the corners.
 
 The default is `16`.
 
-<a id="radio-f-default-volume"></a>**`radio-f-default-volume`**:
-
-Set the initial volume level for station playback.  The same level is used for both mpv and VLC.
+<a id="radio-f-default-volume"></a>**`radio-f-default-volume`**: Set the initial volume level for station playback.  The same level is used for both mpv and VLC.
 
 This setting is not available in EMMS.
 
 The default is `70`.
 
-<a id="radio-f-default-station"></a> **`radio-f-default-station`**:
-
-The station played when Radio F starts.
-
-Refer to the [station list](#stations) for all the stations supported under Radio F.
-
-The default is `"FIP"`.
-
 ## Faces:
 
-<a id="radio-f-default-face"></a>**`radio-f-default`**:
-
-Define the underlying base face applied to the text in the track info buffer.  This face is used in both frame and window view.
+<a id="radio-f-default-face"></a>**`radio-f-default`**: Define the underlying base face applied to the text in the track info buffer.  This face is used in both frame and window view.
 
 The default is `:inherit (variable-pitch)`.
 
-<a id="radio-f-bold-face"></a>**`radio-f-bold`**:
-
-Face used for the artist of the playing track.  This face is used in both frame and window view.
+<a id="radio-f-bold-face"></a>**`radio-f-bold`**: Face used for the artist of the playing track.  This face is used in both frame and window view.
 
 The default is `:inherit (radio-f-default) :weight bold`.
 
-<a id="radio-f-timer-face"></a>**`radio-f-timer`**:
-
-Face used for the track timeline.  This face is used in both frame and window view.
+<a id="radio-f-timer-face"></a>**`radio-f-timer`**: Face used for the track timeline.  This face is used in both frame and window view.
 
 The default is `:inherit (default) :height 0.9 :weight bold`.
 
@@ -234,7 +223,7 @@ The default is `:inherit (default) :height 0.9 :weight bold`.
   "C-c f r"   #'radio-f
   "C-c f a"   #'radio-f-change-to-any-station
   "C-c f c"   #'radio-f-change-station
-  "C-c f d"   #'radio-f-play-default-station
+  "C-c f d"   #'radio-f-play-preferred-station
   "C-c f m"   #'radio-f-dark-mode
   "C-c f o"   #'radio-f-down
   "C-c f v"   #'radio-f-toggle-view
@@ -274,13 +263,15 @@ Have fun!
 
 ## Future Plans:
 
-- Support for more stations, such the BBC, RTE, etc.
+- Support for more station providers, such CBC, RNZ, WDR, etc.
 
 - A record of the songs played during a listening session.
 
 You can do this already by visiting Radio France's website with the function `radio-f-browse-station-page`, but that only works with select stations.  I think a more personalized version can made by constructing a track log and generate a PDF file or similar upon exiting Radio F.
 
 ## Not Future Plans:
+
+- Support for NHK stations.  Unfortunately, NHK blocks station access to anyone outside of Japan.
 
 - More audio backends.  Playback has three player choices, one of which itself supports several, several, _several_ various playback engines.  Those three should cover 99%+ of people who would be interested in this project.
 
@@ -291,22 +282,25 @@ You can do this already by visiting Radio France's website with the function `ra
 How to make a favorites list again:  copy the stations you want from the station list and place them in your `use-package` definition for Radio F.  For example:
 
 ```elisp
-:init  ;; Can be in :config instead if you want.
+:config
 (setq radio-f-favorite-stations
     "ici Bearn" "FIP" "FIP Rock" "FIP Jazz" "FIP Groove" "FIP Monde"
     "FIP Nouveautés" "FIP Reggae" "FIP Electro" "FIP Metal" "FIP Pop"
-    "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes")
+    "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes" "RTÉ Radio 1"
+    "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM")
 ```
 
-will only show those 14 stations when you run `radio-f-change-station` instead of all 79.
+will only show those 19 stations when you run `radio-f-change-station` instead of all 156.
+
+The list:
 
 <pre>
-"FIP"
 "France Inter"
 "France Info"
 "France Musique"
 "France Culture"
 "Mouv'"
+"FIP"
 "FIP Rock"
 "FIP Jazz"
 "FIP Groove"
@@ -380,6 +374,83 @@ will only show those 14 stations when you run `radio-f-change-station` instead o
 "Mon tout petit France Inter"
 "100% Chanson Française"
 "100% années 80"
+"Shonan Beach FM"
+"BBC Radio One"
+"BBC Radio One Anthems"
+"BBC Radio One Dance"
+"BBC Radio One Extra"
+"BBC Radio Two"
+"BBC Radio Three"
+"BBC Radio Three Unwind"
+"BBC Radio Four FM"
+"BBC Radio Four Extra"
+"BBC Radio Five Live"
+"BBC Radio Six Music"
+"BBC Asian Network"
+"BBC World Service"
+"BBC Radio Scotland"
+"BBC Radio Scotland Extra"
+"BBC Orkney"
+"BBC Shetland"
+"BBC Foyle"
+"BBC Ulster"
+"BBC Radio nan Gàidheal"
+"BBC Radio Five Live Sports Extra"
+"BBC Radio Five Sports Extra 2"
+"BBC Radio Five Sports Extra 3"
+"CBeebies Radio"
+"BBC Radio Six Indie Forever"
+"BBC Sounds News"
+"BBC Radio Wales Extra"
+"BBC Radio Wales"
+"BBC Cymru"
+"BBC Cymru 2"
+"BBC Berkshire"
+"BBC Bristol"
+"BBC Cambridge"
+"BBC Cornwall"
+"BBC Coventry Warwickshire"
+"BBC Cumbria"
+"BBC Derby"
+"BBC Devon"
+"BBC Essex"
+"BBC Gloucestershire"
+"BBC Guernsey"
+"BBC Hereford Worcester"
+"BBC Humberside"
+"BBC Jersey"
+"BBC Kent"
+"BBC Lancashire"
+"BBC Leeds"
+"BBC Leicster"
+"BBC Lincolnshire"
+"BBC London"
+"BBC Manchester"
+"BBC Merseyside"
+"BBC Newcastle"
+"BBC Norfolk"
+"BBC Northampton"
+"BBC Nottingham"
+"BBC Oxford"
+"BBC Sheffield"
+"BBC Shropshire"
+"BBC Solent"
+"BBC Solent West Dorset"
+"BBC Somerset Sound"
+"BBC Stoke"
+"BBC Suffolk"
+"BBC Surrey"
+"BBC Sussex"
+"BBC Tees"
+"BBC Three Counties Radio"
+"BBC Wiltshire"
+"BBC West Midlands"
+"BBC York"
+"RTÉ Radio 1"
+"RTÉ 2FM"
+"RTÉ Raidió na Gaeltachta"
+"RTÉ Lyric FM"
+"RTÉ Gold"
 </pre>
 
 
@@ -393,10 +464,10 @@ Radio F uses the Emacs `svg` library to generate the rounded corners for the vie
 
 ### Radio F est en direct.
 
-Radio F plays back live radio, and the JSON feed can go sideways from time to time, mainly due to station breaks or interruptions of regularly scheduled programming with live coverage. In those cases, the metadata usually contains a single value, "Le direct" ("live coverage" in French) and has no other useful information.
+Radio F plays back live radio, and JSON feeds can go sideways from time to time, mainly due to station breaks or interruptions of regularly scheduled programming with live coverage. For example, Radio France handles such interruptions by issuing JSON that contains a single key value, "Le direct" ("live coverage" in French), and has no other useful information.
 
 <!-- La radio la plus éclectique du monde -->
 
-This means a user can start Radio F when the JSON feed is in a "Le direct" state, and no track info will appear on startup.  This is intentional: if there's nothing to show... well, you know the rest.
+This means a user can start Radio F when a JSON feed is in a "Le direct" state, and no track info will appear on startup.  This is intentional: if there's nothing to show... well, you know the rest.
 
 _C'est la vie, mon ami._

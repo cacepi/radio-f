@@ -9,6 +9,7 @@
 
 ;; This file is NOT part of Emacs.
 
+
 ;; Copyright (C) 2026 Jason Martens.
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -192,8 +193,8 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   "Choice of audio stream type."
   :type '(choice
           (const :tag "Variable bitrate AAC encoded HLS stream." hls)
-          (const :tag "AAC stream." aac)
-          (const :tag "MP3 stream." mp3))
+          (const :tag "Mid bitrate audio stream." mid)
+          (const :tag "Low bitrate audio stream." low))
   :group 'radio-f-audio)
 
 
@@ -625,9 +626,9 @@ OBJECT refers to a JSON object or vector of objects."
          (setq item-id
                (cdr (assoc "stepId" now))
                artist
-               (cdr (assoc "secondLine" now))
-               title
                (cdr (assoc "firstLine" now))
+               title
+               (cdr (assoc "secondLine" now))
                start
                (cdr (assoc "startTime" now))
                end

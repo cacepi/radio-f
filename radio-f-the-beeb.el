@@ -46,8 +46,8 @@
 
 (defconst radio-f--the-beeb-streams
   `((hls     . ,radio-f--the-beeb-high)
-    (aac     . ,radio-f--the-beeb-low)
-    (default . ,radio-f--the-beeb-low))
+    (low     . ,radio-f--the-beeb-low)
+    (default . ,radio-f--the-beeb-high))
   "Audio stream templates provided by the BBC.")
 
 ;; A little commentary here:
@@ -73,7 +73,8 @@
     (radio-three
      :name "BBC Radio Three" :id "bbc_radio_three" :provider bbc :metadata bbc)
     (three-unwind
-     :name "BBC Radio Three Unwind" :id "bbc_radio_three_unwind" :provider bbc :metadata bbc)
+     :name "BBC Radio Three Unwind" :id "bbc_radio_three_unwind"
+     :provider bbc :metadata bbc)
     (four-fm
      :name "BBC Radio Four FM" :id "bbc_radio_fourfm" :provider bbc :metadata bbc)
     (four-extra
@@ -85,11 +86,14 @@
     (asian-network
      :name "BBC Asian Network" :id "bbc_asian_network" :provider bbc :metadata bbc)
     (world-service
-     :name "BBC World Service" :id "bbc_world_service" :provider bbc :metadata bbc)
+     :name "BBC World Service" :id "bbc_world_service"
+     :provider bbc :metadata bbc)
     (radio-scotland
-     :name "BBC Radio Scotland" :id "bbc_radio_scotland_fm" :provider bbc :metadata bbc)
+     :name "BBC Radio Scotland" :id "bbc_radio_scotland_fm"
+     :provider bbc :metadata bbc)
     (radio-scotland-extra
-     :name "BBC Radio Scotland Extra" :id "bbc_radio_scotland_mw" :provider bbc :metadata bbc)
+     :name "BBC Radio Scotland Extra" :id "bbc_radio_scotland_mw"
+     :provider bbc :metadata bbc)
     (orkney
      :name "BBC Orkney" :id "bbc_radio_orkney" :provider bbc :metadata bbc)
     (shetland
@@ -99,18 +103,26 @@
     (ulster
      :name "BBC Ulster" :id "bbc_radio_ulster" :provider bbc :metadata bbc)
     (nan-gaidheal
-     :name "BBC Radio nan Gàidheal" :id "bbc_radio_nan_gaidheal" :provider bbc :metadata bbc)
+     :name "BBC Radio nan Gàidheal" :id "bbc_radio_nan_gaidheal"
+     :provider bbc :metadata bbc)
     ;; UK exclusive stations.
     (sports-extra
-     :name "BBC Radio Five Live Sports Extra" :id "bbc_radio_five_live_sports_extra" :provider bbc :metadata bbc)
+     :name "BBC Radio Five Live Sports Extra"
+     :id "bbc_radio_five_live_sports_extra"
+     :provider bbc :metadata bbc)
     (sports-extra-2
-     :name "BBC Radio Five Sports Extra 2" :id "bbc_radio_five_sports_extra_2" :provider bbc :metadata bbc)
+     :name "BBC Radio Five Sports Extra 2"
+     :id "bbc_radio_five_sports_extra_2"
+     :provider bbc :metadata bbc)
     (sports-extra-3
-     :name "BBC Radio Five Sports Extra 3" :id "bbc_radio_five_sports_extra_3" :provider bbc :metadata bbc)
+     :name "BBC Radio Five Sports Extra 3"
+     :id "bbc_radio_five_sports_extra_3"
+     :provider bbc :metadata bbc)
     (cbeebies-radio
      :name "CBeebies Radio" :id "cbeebies_radio" :provider bbc :metadata bbc)
     (six-indie-forever
-     :name "BBC Radio Six Indie Forever" :id "bbc_six_indie_forever" :provider bbc :metadata bbc)
+     :name "BBC Radio Six Indie Forever" :id "bbc_six_indie_forever"
+     :provider bbc :metadata bbc)
     (sounds-news
      :name "BBC Sounds News" :id "bbc_sounds_news" :provider bbc :metadata bbc)
     ;; The BBC doesn't want the world to learn Welsh.
@@ -132,7 +144,8 @@
     (cornwall
      :name "BBC Cornwall" :id "bbc_radio_cornwall" :provider bbc :metadata bbc)
     (coventry
-     :name "BBC Coventry Warwickshire" :id "bbc_radio_coventry_warwickshire" :provider bbc :metadata bbc)
+     :name "BBC Coventry Warwickshire" :id "bbc_radio_coventry_warwickshire"
+     :provider bbc :metadata bbc)
     (cumbria
      :name "BBC Cumbria" :id "bbc_radio_cumbria" :provider bbc :metadata bbc)
     (derby
@@ -142,11 +155,13 @@
     (essex
      :name "BBC Essex" :id "bbc_radio_essex" :provider bbc :metadata bbc)
     (gloucester
-     :name "BBC Gloucestershire" :id "bbc_radio_gloucestershire" :provider bbc :metadata bbc)
+     :name "BBC Gloucestershire" :id "bbc_radio_gloucestershire"
+     :provider bbc :metadata bbc)
     (guernsey
      :name "BBC Guernsey" :id "bbc_radio_guernsey" :provider bbc :metadata bbc)
     (hereford
-     :name "BBC Hereford Worcester" :id "bbc_radio_hereford_worcester" :provider bbc :metadata bbc)
+     :name "BBC Hereford Worcester" :id "bbc_radio_hereford_worcester"
+     :provider bbc :metadata bbc)
     (humberside
      :name "BBC Humberside" :id "bbc_radio_humberside" :provider bbc :metadata bbc)
     (jersey
@@ -184,9 +199,11 @@
     (solent
      :name "BBC Solent" :id "bbc_radio_solent" :provider bbc :metadata bbc)
     (solent-west-dorset
-     :name "BBC Solent West Dorset" :id "bbc_radio_solent_west_dorset" :provider bbc :metadata bbc)
+     :name "BBC Solent West Dorset" :id "bbc_radio_solent_west_dorset"
+     :provider bbc :metadata bbc)
     (somerset-sound
-     :name "BBC Somerset Sound" :id "bbc_radio_somerset_sound" :provider bbc :metadata bbc)
+     :name "BBC Somerset Sound" :id "bbc_radio_somerset_sound"
+     :provider bbc :metadata bbc)
     (stoke
      :name "BBC Stoke" :id "bbc_radio_stoke" :provider bbc :metadata bbc)
     (suffolk
@@ -198,7 +215,8 @@
     (tees
      :name "BBC Tees" :id "bbc_tees" :provider bbc :metadata bbc)
     (three-counties
-     :name "BBC Three Counties Radio" :id "bbc_three_counties_radio" :provider bbc :metadata bbc)
+     :name "BBC Three Counties Radio" :id "bbc_three_counties_radio"
+     :provider bbc :metadata bbc)
     (wiltshire
      :name "BBC Wiltshire" :id "bbc_radio_wiltshire" :provider bbc :metadata bbc)
     (bbc-wm
