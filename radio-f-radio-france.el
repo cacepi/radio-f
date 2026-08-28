@@ -42,24 +42,24 @@
 
 (defconst radio-f--radio-france-hls
   "https://stream.radiofrance.fr/[tag]/[tag]_hifi.m3u8?id=radiofrance"
-  "Template used to return an HLS audio stream for playback.")
+  "Template used to return a level one audio stream for playback.")
 
 (defconst radio-f--radio-france-aac
   "https://icecast.radiofrance.fr/[tag]-hifi.aac?id=radiofrance"
-  "Template used to return an AAC audio stream for playback.")
+  "Template used to return a level two stream for playback.")
 
 (defconst radio-f--radio-france-mp3
   "http://[mp3-prefix].[mp3-domain].fr/live/[tag]-midfi.mp3"
-  "Template used to return a low bitrate AAC audio stream for playback.")
+  "Template used to return a level three audio stream for playback.")
 
 (defconst radio-f--radio-france-visual-url
   "https://www.radiofrance.fr/pikapi/images/[cover]/400x400"
   "Template used to retrieve the artwork image for the presentation views.")
 
 (defconst radio-f--radio-france-streams
-  `((hls     . ,radio-f--radio-france-hls)
-    (mid     . ,radio-f--radio-france-aac)
-    (low     . ,radio-f--radio-france-mp3)
+  `((one     . ,radio-f--radio-france-hls)
+    (two     . ,radio-f--radio-france-aac)
+    (three   . ,radio-f--radio-france-mp3)
     (default . ,radio-f--radio-france-hls))
   "Audio stream templates provided by Radio France.")
 
@@ -102,19 +102,19 @@
      :mp3-prefix icecast :mp3-domain radiofrance)
     (fipjazz
      :name "FIP Jazz" :provider radio-france :id "65"
-     :endpoint "new_apprf_fip" :www "fip" :tag: "fipjazz"
+     :endpoint "new_apprf_fip" :www "fip" :tag "fipjazz"
      :www-suffix "radio-jazz" :metadata inter
      :mp3-prefix icecast :mp3-domain radiofrance)
     (fipgroove
      :name "FIP Groove" :provider radio-france :id "66"
      :endpoint "new_apprf_fip" :www "fip"
-     :tag: "fipgroove" :www-suffix "radio-groove"
+     :tag "fipgroove" :www-suffix "radio-groove"
      :metadata inter :mp3-prefix icecast
      :mp3-domain radiofrance)
     (fipmonde
      :name "FIP Monde" :provider radio-france :id "69"
      :endpoint "new_apprf_fip" :www "fip"
-     :tag: "fipmonde" :www-suffix "radio-monde"
+     :tag "fipworld" :www-suffix "radio-monde"
      :metadata inter :mp3-prefix icecast
      :mp3-domain radiofrance)
     (fipnouveautes
@@ -149,7 +149,7 @@
      :mp3-prefix icecast :mp3-domain radiofrance)
     (fipsacre
      :name "FIP Sacré Français!" :provider radio-france :id "96"
-     :endpoint "new_apprf_fip" :www "fip" :tag "sacrefrancais"
+     :endpoint "new_apprf_fip" :www "fip" :tag "fipsacrefrancais"
      :www-suffix "radio-sacre-francais" :metadata inter
      :mp3-prefix icecast :mp3-domain radiofrance)
     (fipcultes

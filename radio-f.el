@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.2.2
+;; Version: 0.2.3
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -189,12 +189,13 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   :type 'integer
   :group 'radio-f-audio)
 
-(defcustom radio-f-stream-type 'hls
+(defcustom radio-f-stream-level 'one
   "Choice of audio stream type."
   :type '(choice
-          (const :tag "Variable bitrate AAC encoded HLS stream." hls)
-          (const :tag "Mid bitrate audio stream." mid)
-          (const :tag "Low bitrate audio stream." low))
+          (const :tag "Highest quality or bitrate stream available." one)
+          (const :tag "Lower bitrate than a level one stream." two)
+          (const :tag "Even lower bitrate." three)
+          (const :tag "Lowest quality, or bitrate, available." four))
   :group 'radio-f-audio)
 
 
@@ -442,7 +443,9 @@ stream type, return the provider's default stream template."
 (defun radio-f--get-stream-url ()
   "Return the streaming URL for the current station.
 
-The URl is determined by examining the streams that a provider has available. If the user has specificed a stream type that the provider does not have, the stream returned"
+The URl is determined by examining the streams that a provider has
+available. If the user has specificed a stream type that the provider
+does not have, the stream returned is the highest level stream."
   (let* ((station
           (radio-f--get-current-station-data))
          (provider
@@ -520,7 +523,7 @@ OBJECT refers to a JSON object or vector of objects."
                  (radio-f--json-postmaster decoded-json))))
            (when (buffer-live-p retrieval-buffer)
              (kill-buffer retrieval-buffer)))))
-     nil t nil)))
+     nil t t)))
 
 (defun radio-f--json-postmaster (raw-json-string)
   "Parse RAW-JSON-STRING and process changed station metadata."
@@ -779,7 +782,7 @@ CALLBACK is called with two arguments: the image data and its MIME type."
                    (message "Could not find end of HTTP headers")))))
          (when (buffer-live-p retrieval-buffer)
            (kill-buffer retrieval-buffer)))))
-   nil t nil))
+   nil t t))
 
 (defun radio-f--stylize-artwork (image-data image-type)
   "Return a presentation image made from IMAGE-DATA.
@@ -1139,6 +1142,9 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
     (radio-f--position-child-frame frame)
     (when radio-f--view-visible-p
       (make-frame-visible frame))
+    ;; Make background alpha zero on systems that support it.
+    (when (memq window-system '(ns pgtk))
+      (set-frame-parameter radio-f--child-frame 'alpha-background 0))
     (add-hook 'window-size-change-functions
               #'radio-f--reposition-on-resize)
     frame))
@@ -1888,7 +1894,7 @@ NUMBER is the alpha value from from 0-100.
 Does not work reliably in many operating systems and graphical
 environments, X11 and Wayland in particular."
   (interactive "nInput transparency level (0-100): ")
-    (set-frame-parameter radio-f--child-frame 'alpha number))
+    (set-frame-parameter radio-f--child-frame 'alpha-background number))
 
 (defun radio-f--log-error (context err)
   "Log an error to /tmp/fip-errors.log with timestamp and CONTEXT.

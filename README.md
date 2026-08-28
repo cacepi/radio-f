@@ -11,11 +11,11 @@ Radio F is a streaming library to access radio stations in Emacs.
 
 Radio F is licensed under the GNU General Public License, Version 3. See [LICENSE](https://github.com/cacepi/radio-f/blob/main/LICENSE) for details.
 
-## Installation Requirements
+## Requirements
 * A working version of either [mpv](https://mpv.io/), [VLC](https://www.videolan.org/) or [EMMS](https://www.gnu.org/software/emms/).
 * A working version of [git](https://git-scm.com/) anywhere in your `$PATH` to download the source code.
 
-## Instalation
+## Installation
 
 Installation is via a simple `use-package` definition placed in the user's `init.el` file:
 
@@ -28,7 +28,7 @@ Installation is via a simple `use-package` definition placed in the user's `init
   (("C-c f r" . radio-f)))
  ```
 
-and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed with `package-install` Native object code will also install if the Emacs instance supports native compilation.
+and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed with `package-install` Native compiled files will also install if the Emacs instance supports native compilation.
 
 <!-- This will compile the Radio F sources and place them in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.
 

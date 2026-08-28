@@ -15,10 +15,10 @@
 ;;; Code:
 
 (defconst radio-f--rte-hls "https://www.rte.ie/manifests/[id].m3u8"
-     "Template used to generate the URL for RTÉ audio streaming.")
+     "Template used to return a level one stream for playback.")
 
 (defconst radio-f--rte-aac "https://icecast1.rte.ie/[id]"
-    "Template used to generate the URL for RTÉ audio streaming.")
+    "Template used to return a level two stream for playback.")
 
 (defconst radio-f--rte-api-url
   "https://www.rte.ie/feeds/livelistings/playlist/?source=rte.ie&platform=iphone&channelid=[channel]"
@@ -34,8 +34,8 @@
 ;;   "Template used to retrieve daily schedule JSON data from RTÉ.")
 
 (defconst radio-f--rte-streams
-  `((hls     . ,radio-f--rte-hls)
-    (midcfo     . ,radio-f--rte-aac)
+  `((one     . ,radio-f--rte-hls)
+    (two     . ,radio-f--rte-aac)
     (default . ,radio-f--rte-hls))
   "Audio stream templates provided by RTÉ.")
 

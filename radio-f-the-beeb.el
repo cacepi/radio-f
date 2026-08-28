@@ -36,17 +36,17 @@
   "Recipe used to retrieve JSON data from the BBC.")
 
 (defconst radio-f--the-beeb-high "https://lsn.lv/bbcradio.m3u8?station=[id]&bitrate=320000"
-  "Template used to generate the URL for BBC high bitrate audio streaming.")
+  "Template used to return a level one stream for playback.")
 
 (defconst radio-f--the-beeb-low "https://lsn.lv/bbcradio.m3u8?station=[id]&bitrate=96000"
-  "Template used to generate the URL for BBC low bitrate audio streaming.")
+  "Template used to return a level two stream for playback.")
 
 (defconst radio-f--the-beeb-url "https://www.bbc.co.uk/sounds/play/live/[id]/"
   "Template used to generate the URL for BBC station home pages.")
 
 (defconst radio-f--the-beeb-streams
-  `((hls     . ,radio-f--the-beeb-high)
-    (low     . ,radio-f--the-beeb-low)
+  `((one     . ,radio-f--the-beeb-high)
+    (two     . ,radio-f--the-beeb-low)
     (default . ,radio-f--the-beeb-high))
   "Audio stream templates provided by the BBC.")
 
