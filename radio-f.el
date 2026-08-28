@@ -189,13 +189,13 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   :type 'integer
   :group 'radio-f-audio)
 
-(defcustom radio-f-stream-level 'one
+(defcustom radio-f-stream-level 'One
   "Choice of audio stream type."
   :type '(choice
-          (const :tag "Highest quality or bitrate stream available." one)
-          (const :tag "Lower bitrate than a level one stream." two)
-          (const :tag "Even lower bitrate." three)
-          (const :tag "Lowest quality, or bitrate, available." four))
+          (const :tag "Highest quality or bitrate stream available." One)
+          (const :tag "Lower quality/bitrate than a level one stream." Two)
+          (const :tag "Lower quality/bitrate than a level two stream." Three)
+          (const :tag "Lowest quality/bitrate available." Four))
   :group 'radio-f-audio)
 
 
@@ -409,22 +409,17 @@ in both frame and window view."
      nil)))
 
 (defun radio-f--get-stream-template (provider)
-  "Return an audio stream template for PROVIDER.
-
-Prefer `radio-f-stream-type'.  If PROVIDER does not support that
-stream type, return the provider's default stream template."
-  (let ((streams
-         (pcase provider
-           ('bbc
-            radio-f--the-beeb-streams)
-           ('radio-france
-            radio-f--radio-france-streams)
-           ('rte
-            radio-f--rte-streams)
-           ('sbfm
-            radio-f--sbfm-streams)
-           (_ nil))))
-    (or (cdr (assq radio-f-stream-type streams))
+  "Return the stream template for PROVIDER."
+  (let* ((streams
+          (pcase provider
+            ('bbc radio-f--the-beeb-streams)
+            ('radio-france radio-f--radio-france-streams)
+            ('rte radio-f--rte-streams)
+            ('sbfm radio-f--sbfm-streams)))
+         (level
+          (or radio-f--session-stream-level
+              radio-f-stream-level)))
+    (or (cdr (assq level streams))
         (cdr (assq 'default streams)))))
 
 (defun radio-f--expand-url (template station)
@@ -603,7 +598,7 @@ OBJECT refers to a JSON object or vector of objects."
                        "400x400"
                        image-url
                        t t)))))
-        ;; FIP-family Radio France metadata.
+        ;; FIP Radio France metadata.
         ('fip
          (setq item-id
                (cdr (assoc "stepId" now))
@@ -1617,6 +1612,38 @@ remote control interface."
 
 (defvar radio-f--previous-volume nil
   "Record the value of `radio-f--current-volume' before volume changes.")
+
+(defvar radio-f--session-stream-level nil
+  "Record a different stream level for `radio-f-audio-start` to use if the
+user has requested it.")
+
+
+(defun radio-f-change-stream-level ()
+  "Change the stream level for the current Radio F session."
+  (interactive)
+  (let* ((station (radio-f--get-current-station-data))
+         (provider (plist-get station :provider))
+         (streams
+          (pcase provider
+            ('bbc radio-f--the-beeb-streams)
+            ('radio-france radio-f--radio-france-streams)
+            ('rte radio-f--rte-streams)
+            ('sbfm radio-f--sbfm-streams)))
+         (levels
+          (seq-filter
+           (lambda (level)
+             (memq level '(One Two Three Four)))
+           (mapcar #'car streams)))
+         (level
+          (intern
+           (completing-read
+            "Select new stream level: "
+            (mapcar #'symbol-name levels)
+            nil t nil t nil nil))))
+         ;; Set session stream level and restart stream.
+         (setq radio-f--session-stream-level level)
+         (radio-f-audio-stop)
+         (radio-f-audio-start)))
 
 (defun radio-f-volume-up ()
   "Increase playback volume by two points."

@@ -34,9 +34,9 @@
 ;;   "Template used to retrieve daily schedule JSON data from RTÉ.")
 
 (defconst radio-f--rte-streams
-  `((one     . ,radio-f--rte-hls)
-    (two     . ,radio-f--rte-aac)
-    (default . ,radio-f--rte-hls))
+  `((One     . ,radio-f--rte-hls)
+    (Two     . ,radio-f--rte-aac)
+    (Lowest  . ,radio-f--rte-aac))
   "Audio stream templates provided by RTÉ.")
 
 (defconst radio-f--rte-stations

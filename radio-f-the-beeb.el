@@ -45,9 +45,9 @@
   "Template used to generate the URL for BBC station home pages.")
 
 (defconst radio-f--the-beeb-streams
-  `((one     . ,radio-f--the-beeb-high)
-    (two     . ,radio-f--the-beeb-low)
-    (default . ,radio-f--the-beeb-high))
+  `((One     . ,radio-f--the-beeb-high)
+    (Two     . ,radio-f--the-beeb-low)
+    (Lowest  . ,radio-f--the-beeb-low))
   "Audio stream templates provided by the BBC.")
 
 ;; A little commentary here:

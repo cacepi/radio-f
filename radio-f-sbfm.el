@@ -46,8 +46,8 @@
   "Template used to return a station's URL on the Shonan Beach FM web site.")
 
 (defconst radio-f--sbfm-streams
-  `((one     . ,radio-f--sbfm-mp3)
-    (default . ,radio-f--sbfm-mp3))
+  `((One     . ,radio-f--sbfm-mp3)
+    (Lowest  . ,radio-f--sbfm-mp3))
   "Audio stream templates provided by Shonan Beach FM.")
 
 (defconst radio-f--sbfm-stations
