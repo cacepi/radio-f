@@ -67,11 +67,11 @@
   "Audio stream templates provided by Radio France.")
 
 (defconst radio-f--radio-france-stations
-  '((fip
+  '((fip ;; Fip runs programs that aren't recognized in the new_apprf_fip endpoint.
      :name "FIP" :provider radio-france :id "7"
-     :endpoint "new_apprf_fip" :www "fip"
+     :endpoint "apprf_fip_player" :www "fip"
      :tag "fip" :www-suffix "titres-diffuses"
-     :metadata inter :mp3-prefix "direct"
+     :metadata fip :mp3-prefix "direct"
      :mp3-domain "radiofrance")
     (franceinter
      :name "France Inter" :provider radio-france :id "1"

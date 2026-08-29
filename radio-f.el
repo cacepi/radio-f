@@ -598,14 +598,15 @@ OBJECT refers to a JSON object or vector of objects."
                        "400x400"
                        image-url
                        t t)))))
-        ;; FIP Radio France metadata.
+        ;; Fip uses a unique endpoint, as the new_apprf_fip
+        ;; endpoint does not include program artwork.
         ('fip
          (setq item-id
                (cdr (assoc "stepId" now))
                artist
-               (cdr (assoc "interpreters" now))
+               (cdr (assoc "firstLine" now))
                title
-               (cdr (assoc "title" now))
+               (cdr (assoc "secondLine" now))
                start
                (cdr (assoc "startTime" now))
                end
@@ -1637,7 +1638,7 @@ user has requested it.")
          (level
           (intern
            (completing-read
-            "Select new stream level: "
+            "Select stream level: "
             (mapcar #'symbol-name levels)
             nil t nil t nil nil))))
          ;; Set session stream level and restart stream.
