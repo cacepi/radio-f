@@ -1,4 +1,4 @@
-;;; radio-f.el --- A streaming library to access radio stations in Emacs -*- lexical-binding: t; -*-
+;;; radio-f.el --- A streaming library to access radio stations through Emacs -*- lexical-binding: t; -*-
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
@@ -27,27 +27,14 @@
 
 ;;; Commentary:
 ;;
-;; Radio F is a streaming library to access radio stations in Emacs.
+;; Radio F is a streaming library to access radio stations through Emacs.
 ;;
 ;; * Supports 150+ stations from Radio France, BBC, RTÉ, and more.
 ;; * Customizable information display, with artwork, track data, and
 ;;   selectable view style.
-;; * Uses your choice of  mpv, VLC, and EMMS as audio backends, with
-;;   access to a selection of most commonly accessed controls: volume
+;; * Uses your choice of mpv, VLC, and EMMS as audio backends, with
+;;   access to a selection of most commonly used controls: volume
 ;;   up/down, mute/unmute, pause, play, etc.
-;;
-;; Installation is done with the following sample `use-package' definition
-;; placed in the user's Emacs configuration file:
-;;
-;; (use-package radio-f
-;;   :vc (:url "https://github.com/cacepi/radio-f" :rev :newest)
-;;   :commands (radio-f)
-;;   :bind
-;;   (("C-c f r" . radio-f)))
-;;
-;; and evaluting the definition with `eval-defun'.  This will compile
-;; the Radio F sources and install them just like Emacs does with any
-;; package installed via `package-install'.
 ;;
 ;; See README.md for full documentation.
 
@@ -190,12 +177,14 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   :group 'radio-f-audio)
 
 (defcustom radio-f-stream-level 'One
-  "Choice of audio stream type."
+  "Choice of audio stream level.  Higher numbers represent increasingly lower quality or bitrate."
   :type '(choice
-          (const :tag "Highest quality or bitrate stream available." One)
-          (const :tag "Lower quality/bitrate than a level one stream." Two)
-          (const :tag "Lower quality/bitrate than a level two stream." Three)
-          (const :tag "Lowest quality/bitrate available." Four))
+          (const :tag "Level One: highest quality or bitrate stream available." One)
+          (const :tag "Level Two: lower quality/bitrate than a level one stream." Two)
+          (const :tag "Level Three: lower quality/bitrate than a level two stream." Three)
+          (const :tag "Level Four: lower quality/bitrate than a level three stream." Four)
+          (const :tag "Level Five: lower quality/bitrate than a level four stream." Five)
+          (const :tag "Level Six: Lowest quality/bitrate available." Six))
   :group 'radio-f-audio)
 
 
