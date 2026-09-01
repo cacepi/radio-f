@@ -35,7 +35,7 @@
 
 ;;; Code:
 
-(defconst radio-f--sbfm-mp3 "https://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_a"
+(defconst radio-f--sbfm-level-one "https://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_a"
     "Template used to a level one stream for playback.")
 
 (defconst radio-f--sbfm-api-url
@@ -46,15 +46,31 @@
   "Template used to return a station's URL on the Shonan Beach FM web site.")
 
 (defconst radio-f--sbfm-streams
-  `((One     . ,radio-f--sbfm-mp3)
-    (Lowest  . ,radio-f--sbfm-mp3))
+  `((One     . ,radio-f--sbfm-level-one)
+    (Lowest  . ,radio-f--sbfm-level-one))
   "Audio stream templates provided by Shonan Beach FM.")
 
 (defconst radio-f--sbfm-stations
   '((sbfm
-     :name "Shonan Beach FM" :provider sbfm :metadata sbfm))
+     :name "Shonan Beach FM" :plugin sbfm :metadata sbfm
+     :processor radio-f--sbfm-processor))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
+
+
+
+(defun radio-f--sbfm-processor (data station)
+  (let* ((now data))
+    `((item-id    . ,(cdr (assoc "datetime" now)))
+      (artist     . ,(cdr (assoc "aartist" now)))
+      (title      . ,(cdr (assoc "title" now)))
+      (start      . ,(float-time
+                      (date-to-time (cdr (assoc "datetime" now)))))
+      (end        . ,(float-time
+                      (date-to-time (cdr (assoc "datetime" now)))))
+      (visual-url . ,(cdr (assoc "imagepath" now))))))
+
+
 
 (provide 'radio-f-sbfm)
 

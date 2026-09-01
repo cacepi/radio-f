@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.2.3
+;; Version: 0.2.6
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -56,9 +56,12 @@
 the Radio France banner."
   :group 'multimedia)
 
-(defcustom radio-f-providers
+(defcustom radio-f-plugins
   '(radio-france bbc rte sbfm)
-  "Radio providers available to Radio F."
+  "List of plugins that provide stations to Radio F. When a plugin is
+enabled, all stations defined by that plugin are available for playback.
+
+The default is all available plugins."
   :type '(set
           (const :tag "BBC" bbc)
           (const :tag "Radio France" radio-france)
@@ -70,9 +73,9 @@ the Radio France banner."
   "The station to preferably play when launching Radio F.
 
 Radio F determines available stations by examining the providers included
-in `radio-f-providers'.  If the preferred station is not available from
-those providers, the first station listed by the first provider named in
-`radio-f-providers' is played instead."
+in `radio-f-plugins'.  If the preferred station is not available from
+those plugins, the first station listed by the first plugin named in
+`radio-f-plugins' is played instead."
   :type 'string
   :group 'radio-f)
 
@@ -108,8 +111,8 @@ The value may be one of:
 (defcustom radio-f-favorite-stations nil
   "Stations to present as favorites for completion.
 
-When nil, include all stations supplied by the providers enabled in
-`radio-f-providers'."
+When nil, include all stations supplied by the plugins enabled in
+`radio-f-plugins'."
   :type '(repeat string)
   :group 'radio-f)
 
@@ -272,9 +275,9 @@ in both frame and window view."
 
 ;; == Variables for station/stream control ======
 
-(defconst radio-f--all-providers
+(defconst radio-f--all-plugins
   '(bbc radio-france rte sbfm)
-  "All Providers supported by Radio F.")
+  "All Plugins supported by Radio F.")
 
 
 
@@ -308,45 +311,41 @@ in both frame and window view."
   "Identifier for the currently accepted program or track.")
 
 (defun radio-f--stations ()
-  "Return stations supplied by enabled providers."
+  "Return stations supplied by enabled plugins."
   (apply #'append
          (mapcar
-          (lambda (provider)
-            (pcase provider
-              ('bbc
-               radio-f--the-beeb-stations)
-              ('radio-france
-               radio-f--radio-france-stations)
-              ('rte
-               radio-f--rte-stations)
-              ('sbfm
-               radio-f--sbfm-stations)
+          (lambda (plugin)
+            (pcase plugin
+              ('bbc radio-f--bbc-stations)
+              ('radio-france radio-f--radio-france-stations)
+              ('rte radio-f--rte-stations)
+              ('sbfm radio-f--sbfm-stations)
               (_ nil)))
-          radio-f-providers)))
+          radio-f-plugins)))
 
 ;; It's a surprise!
 (defun radio-f--all-stations ()
   "Return all stations supported by Radio F."
-  (radio-f--load-all-providers)
-  (append radio-f--the-beeb-stations
+  (radio-f--load-all-plugins)
+  (append radio-f--bbc-stations
           radio-f--radio-france-stations
           radio-f--rte-stations
           radio-f--sbfm-stations))
 
 (defun radio-f--set-initial-station ()
-  "Return the preferred station, or the first available station from the first provider defined in `radio-f-providers'."
+  "Return the preferred station, or the first available station from the first plugin defined in `radio-f-plugins'."e
   (let ((stations
          (radio-f--all-station-names)))
     (if (member radio-f-preferred-station stations)
         radio-f-preferred-station
       (car stations))))
 
-(defun radio-f--load-providers ()
-  "Load provider modules, as defined in `radio-f-providers'."
-  (dolist (provider radio-f-providers)
-    (pcase provider
+(defun radio-f--load-plugins ()
+  "Load plugin modules, as defined in `radio-f-plugins'."
+  (dolist (plugin radio-f-plugins)
+    (pcase plugin
       ('bbc
-       (require 'radio-f-the-beeb))
+       (require 'radio-f-bbc))
       ('radio-france
        (require 'radio-f-radio-france))
       ('rte
@@ -354,12 +353,12 @@ in both frame and window view."
       ('sbfm
        (require 'radio-f-sbfm)))))
 
-(defun radio-f--load-all-providers ()
-  "Load all provider modules supported by Radio F."
-  (dolist (provider radio-f-providers)
-    (pcase provider
+(defun radio-f--load-all-plugins ()
+  "Load all plugin modules supported by Radio F."
+  (dolist (plugin radio-f-plugins)
+    (pcase plugin
       ('bbc
-       (require 'radio-f-the-beeb))
+       (require 'radio-f-bbc))
       ('radio-france
        (require 'radio-f-radio-france))
       ('rte
@@ -383,11 +382,11 @@ in both frame and window view."
        radio-f--current-station))
     (radio-f--stations))))
 
-(defun radio-f--get-station-page-template (provider)
-  "Return the station page URL template for PROVIDER."
-  (pcase provider
+(defun radio-f--get-station-page-template (plugin)
+  "Return the station page URL template for PLUGIN."
+  (pcase plugin
     ('bbc
-     radio-f--the-beeb-url)
+     radio-f--bbc-url)
     ('radio-france
      radio-f--radio-france-url)
     ('rte
@@ -397,11 +396,11 @@ in both frame and window view."
     (_
      nil)))
 
-(defun radio-f--get-stream-template (provider)
-  "Return the stream template for PROVIDER."
+(defun radio-f--get-stream-template (plugin)
+  "Return the stream template for PLUGIN."
   (let* ((streams
-          (pcase provider
-            ('bbc radio-f--the-beeb-streams)
+          (pcase plugin
+            ('bbc radio-f--bbc-streams)
             ('radio-france radio-f--radio-france-streams)
             ('rte radio-f--rte-streams)
             ('sbfm radio-f--sbfm-streams)))
@@ -427,42 +426,31 @@ in both frame and window view."
 (defun radio-f--get-stream-url ()
   "Return the streaming URL for the current station.
 
-The URl is determined by examining the streams that a provider has
-available. If the user has specificed a stream type that the provider
+The URl is determined by examining the streams that a plugin has
+available. If the user has specificed a stream type that the plugin
 does not have, the stream returned is the highest level stream."
   (let* ((station
           (radio-f--get-current-station-data))
-         (provider
-          (plist-get station :provider))
+         (plugin
+          (plist-get station :plugin))
          (template
-          (radio-f--get-stream-template provider)))
+          (radio-f--get-stream-template plugin)))
     (radio-f--expand-url template station)))
 
-(defun radio-f--get-api-template (provider)
-  "Return the metadata URL template for PROVIDER."
-  (pcase provider
+(defun radio-f--get-api-template (plugin)
+  "Return the metadata URL template for PLUGIN."
+  (pcase plugin
     ('bbc
-     radio-f--the-beeb-api-url)
-     ('radio-france
+     radio-f--bbc-api-url)
+    ('radio-france
      radio-f--radio-france-api-url)
     ('sbfm
      radio-f--sbfm-api-url)
     ('rte
      radio-f--rte-api-url)
     (_
-     (error "Radio F: No metadata template for provider %S"
-            provider))))
-
-;; "La radio la plus éclectique du monde"
-(defun radio-f--ordures-p (object)
-  "Return non-nil when OBJECT contains unusable metadata.
-
-OBJECT refers to a JSON object or vector of objects."
-  (seq-some
-   (lambda (entry)
-     (member (cdr entry)
-             '("Le direct")))
-   object))
+     (error "Radio F: No metadata template for plugin %S"
+            plugin))))
 
 
 
@@ -470,14 +458,10 @@ OBJECT refers to a JSON object or vector of objects."
 
 (defun radio-f--fetch-json ()
   "Fetch metadata JSON for the current station."
-  (let* ((station
-          (radio-f--get-current-station-data))
-         (provider
-          (plist-get station :provider))
-         (template
-          (radio-f--get-api-template provider))
-         (url
-          (radio-f--expand-url template station)))
+  (let* ((station (radio-f--get-current-station-data))
+         (plugin (plist-get station :plugin))
+         (template (radio-f--get-api-template plugin))
+         (url (radio-f--expand-url template station)))
     ;; Testing.  Move along.
     ;; (message "Radio F metadata URL: %s" url)
     (url-retrieve
@@ -514,227 +498,34 @@ OBJECT refers to a JSON object or vector of objects."
   (let* ((json-object-type 'alist)
          (json-array-type 'vector)
          (json-key-type 'string)
-         (data
-          (json-read-from-string raw-json-string))
-         (station
-          (radio-f--get-current-station-data))
-         (provider
-          (plist-get station :provider))
-         (metadata
-          (plist-get station :metadata))
-         (now
-          (pcase provider
-            ('bbc
-             (let ((broadcasts
-                    (cdr (assoc "data" data)))
-                   (current-time
-                    (float-time)))
-               (seq-find
-                (lambda (broadcast)
-                  (let ((start
-                         (float-time
-                          (date-to-time
-                           (cdr (assoc "start" broadcast)))))
-                        (end
-                         (float-time
-                          (date-to-time
-                           (cdr (assoc "end" broadcast))))))
-                    (and (<= start current-time)
-                         (< current-time end))))
-                broadcasts)))
-            ('radio-france
-             (cdr (assoc "now" data)))
-            ('rte
-             (aref data 0))
-            ('sbfm data)))
-         item-id
-         artist
-         title
-         start
-         end
-         visual-url)
-    ;; Radio France loves to send out "trash" JSON objects,
-    ;; sometimes *during a playing track*, where the values
-    ;; have placeholder info like "Le direct" or "La radio
-    ;; la plus" etc.  Just throw away the whole object.
-    (unless (radio-f--ordures-p now)
-      (pcase metadata
-        ('bbc
-         (let ((network
-                (cdr (assoc "network" now)))
-               (titles
-                (cdr (assoc "titles" now)))
-               (image-url
-                (cdr (assoc "image_url" now))))
-           (setq item-id
-                 (cdr (assoc "id" now))
-                 artist
-                 (cdr (assoc "short_title" network))
-                 title
-                 (cdr (assoc "primary" titles))
-                 start
-                 (float-time
-                  (date-to-time
-                   (cdr (assoc "start" now))))
-                 end
-                 (float-time
-                  (date-to-time
-                   (cdr (assoc "end" now))))
-                 visual-url
-                 (and image-url
-                      (replace-regexp-in-string
-                       "{recipe}"
-                       "400x400"
-                       image-url
-                       t t)))))
-        ;; Fip uses a unique endpoint, as the new_apprf_fip
-        ;; endpoint does not include program artwork.
-        ('fip
-         (setq item-id
-               (cdr (assoc "stepId" now))
-               artist
-               (cdr (assoc "firstLine" now))
-               title
-               (cdr (assoc "secondLine" now))
-               start
-               (cdr (assoc "startTime" now))
-               end
-               (cdr (assoc "endTime" now))
-               visual-url
-               (let ((cover
-                      (cdr (assoc "cover" now))))
-                 (and cover
-                      (replace-regexp-in-string
-                       "\\[cover\\]"
-                       cover
-                       radio-f--radio-france-visual-url
-                       t t)))))
-        ;; France Inter-style Radio France metadata.
-        ('inter
-         (setq item-id
-               (cdr (assoc "stepId" now))
-               artist
-               (cdr (assoc "firstLine" now))
-               title
-               (cdr (assoc "secondLine" now))
-               start
-               (cdr (assoc "startTime" now))
-               end
-               (cdr (assoc "endTime" now))
-               visual-url
-               (let ((cover
-                      (cdr (assoc "cover" now))))
-                 (and cover
-                      (replace-regexp-in-string
-                       "\\[cover\\]"
-                       cover
-                       radio-f--radio-france-visual-url
-                       t t)))))
-        ;; "Ici" are the local Radio France stations.
-        ;; Same basic schema as inter, but there are a
-        ;; couple of things I need to confirm first
-        ;; before I can fold them in with the others.
-        ('ici
-         (setq item-id
-               (cdr (assoc "stepId" now))
-               artist
-               (cdr (assoc "secondLine" now))
-               title
-               (cdr (assoc "firstLine" now))
-               start
-               (cdr (assoc "startTime" now))
-               end
-               (cdr (assoc "endTime" now))
-               visual-url
-               (let ((cover
-                      (cdr (assoc "cover" now))))
-                 (and cover
-                      (replace-regexp-in-string
-                       "\\[cover\\]"
-                       cover
-                       radio-f--radio-france-visual-url
-                       t t)))))
-        ;; Info is unique; its "cover" key points to
-        ;; a "Le direct" image.
-        ('info
-         (setq item-id
-               (cdr (assoc "stepId" now))
-               artist
-               (cdr (assoc "secondLine" now))
-               title
-               (cdr (assoc "firstLine" now))
-               start
-               (cdr (assoc "startTime" now))
-               end
-               (cdr (assoc "endTime" now))
-               visual-url
-               (let ((cover
-                      (cdr (assoc "cover_square" now))))
-                 (and cover
-                      (replace-regexp-in-string
-                       "\\[cover\\]"
-                       cover
-                       radio-f--radio-france-visual-url
-                       t t)))))
-        ;; RTÉ live-listings metadata.
-        ('rte
-         (setq item-id
-               (cdr (assoc "listingId" now))
-               artist
-               (cdr (assoc "channel" now))
-               title
-               (cdr (assoc "progName" now))
-               start
-               (float-time
-                (date-to-time
-                 (cdr (assoc "progDate" now))))
-               end
-               (cdr (assoc "endDate_ts" now))
-               visual-url
-               (cdr (assoc "thumbnail" now))))
-        ('sbfm
-         (setq item-id
-               (cdr (assoc "datetime" now))
-               artist
-               (cdr (assoc "aartist" now))
-               title
-               (cdr (assoc "title" now))
-               start
-               (float-time
-                (date-to-time
-                 (cdr (assoc "datetime" now))))
-               end
-               (float-time
-                (date-to-time
-                 (cdr (assoc "datetime" now))))
-               visual-url
-               (cdr (assoc "imagepath" now))))
-        (_
-         (message
-          "Radio F: Unknown metadata schema: %S"
-          provider)))
-      ;; Don't call the views if "item-id" hasn't changed.
-      ;; Instead, Wait for a fetch to return fresh JSON.
-      (unless (equal item-id radio-f--current-item-id)
-        (setq radio-f--current-item-id item-id
-              radio-f--current-track-info
-              `((item-id     . ,item-id)
-                (artist      . ,artist)
-                (title       . ,title)
-                (start       . ,start)
-                (end         . ,end)
-                (fetch-time  . ,(floor (float-time)))
-                (visual-url  . ,visual-url)))
-        (radio-f--record-track-log)
-        (pcase radio-f-view-style
-          ('window
-           (radio-f--create-window-view))
-          ('frame
-           (radio-f--create-frame-view))
-          (_
-           (message
-            "Radio F: unknown view style: %S. Check your view style settings."
-            radio-f-view-style)))))))
+         (data (json-read-from-string raw-json-string))
+         (station (radio-f--get-current-station-data))
+         (metadata (plist-get station :metadata))
+         (processor (plist-get station :processor))
+         (track-info (funcall processor data station))
+         (item-id (alist-get 'item-id track-info))
+         (artist (alist-get 'artist track-info))
+         (title (alist-get 'title track-info))
+         (start (alist-get 'start track-info))
+         (end (alist-get 'end track-info))
+         (visual-url (alist-get 'visual-url track-info)))
+    ;; Don't call the views if "item-id" hasn't changed.
+    ;; Instead, Wait for a fetch to return fresh JSON.
+    (unless (equal item-id radio-f--current-item-id)
+      (setq radio-f--current-item-id item-id
+            radio-f--current-track-info
+            (cons `(fetch-time . ,(floor (float-time)))
+                  track-info))
+    (radio-f--record-track-log)
+    (pcase radio-f-view-style
+      ('window
+       (radio-f--create-window-view))
+      ('frame
+       (radio-f--create-frame-view))
+      (_
+       (message
+        "Radio F: unknown view style: %S. Check your view style settings."
+        radio-f-view-style))))))
 
 (defun radio-f--fetch-artwork (visual-url callback)
   "Retrieve the image returned by VISUAL-URL.
@@ -1612,10 +1403,10 @@ user has requested it.")
   "Change the stream level for the current Radio F session."
   (interactive)
   (let* ((station (radio-f--get-current-station-data))
-         (provider (plist-get station :provider))
+         (plugin (plist-get station :plugin))
          (streams
-          (pcase provider
-            ('bbc radio-f--the-beeb-streams)
+          (pcase plugin
+            ('bbc radio-f--bbc-streams)
             ('radio-france radio-f--radio-france-streams)
             ('rte radio-f--rte-streams)
             ('sbfm radio-f--sbfm-streams)))
@@ -1983,8 +1774,8 @@ STATION is the desired station to play.  When called with no arguments,
 the station played is governed by the custom variable
 `radio-f-default-station'."
   (interactive)
-  ;; Load the preferred providers before doing anything else.
-  (radio-f--load-providers)
+  ;; Load the preferred plugins before doing anything else.
+  (radio-f--load-plugins)
   ;; Provide a good view setting for TUI Emacs.
   (unless (display-graphic-p)
     (setq radio-f-view-style 'window
@@ -2063,7 +1854,7 @@ the station played is governed by the custom variable
 (defun radio-f-change-to-any-station (&optional station)
   "Switch to a different STATION.
 
-STATION is any station from all providers."
+STATION is any station from all plugins."
   (interactive)
   ;; Try to keep the station order consistent by asking the
   ;; reader to ignore completion history, but doesn't always
@@ -2118,10 +1909,10 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
   (interactive)
   (let* ((station
           (radio-f--get-current-station-data))
-         (provider
-          (plist-get station :provider))
+         (plugin
+          (plist-get station :plugin))
          (template
-          (radio-f--get-station-page-template provider)))
+          (radio-f--get-station-page-template plugin)))
     (browse-url
      (radio-f--expand-url template station))))
 

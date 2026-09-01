@@ -14,10 +14,10 @@
 
 ;;; Code:
 
-(defconst radio-f--rte-hls "https://www.rte.ie/manifests/[id].m3u8"
+(defconst radio-f--rte-level-one "https://www.rte.ie/manifests/[id].m3u8"
      "Template used to return a level one stream for playback.")
 
-(defconst radio-f--rte-aac "https://icecast1.rte.ie/[id]"
+(defconst radio-f--rte-level-two "https://icecast1.rte.ie/[id]"
     "Template used to return a level two stream for playback.")
 
 (defconst radio-f--rte-api-url
@@ -34,33 +34,53 @@
 ;;   "Template used to retrieve daily schedule JSON data from RTÉ.")
 
 (defconst radio-f--rte-streams
-  `((One     . ,radio-f--rte-hls)
-    (Two     . ,radio-f--rte-aac)
-    (Lowest  . ,radio-f--rte-aac))
+  `((One     . ,radio-f--rte-level-one)
+    (Two     . ,radio-f--rte-level-two)
+    (default . ,radio-f--rte-level-two))
   "Audio stream templates provided by RTÉ.")
 
 (defconst radio-f--rte-stations
   '((radio1
-     :name "RTÉ Radio 1" :provider rte :metadata rte
-     :id "radio1" :tag "rteradio1" :channel "9"
-     :www "radio1")
+     :name "RTÉ Radio 1" :id "radio1" :tag "rteradio1"
+     :channel "9" :www "radio1"
+     :plugin rte :metadata rte
+     :processor radio-f--rte-processor)
     (2fm
-     :name "RTÉ 2FM" :provider rte :metadata rte
-     :id "2fm" :tag "rte2fm" :channel "1" :www "2fm")
+     :name "RTÉ 2FM" :id "2fm" :tag "rte2fm"
+     :channel "1" :www "2fm"
+     :plugin rte :metadata rte
+     :processor radio-f--rte-processor)
     (rnag
-     :name "RTÉ Raidió na Gaeltachta" :provider rte
-     :metadata rte :id "rnag" :tag "rteraidionagaeltachta"
-     :channel "17" :www "rnag")
+     :name "RTÉ Raidió na Gaeltachta" :id "rnag" :tag "rteraidionagaeltachta"
+     :channel "17" :www "rnag"
+     :plugin rte :metadata rte
+     :processor radio-f--rte-processor)
     (lyricfm
-     :name "RTÉ Lyric FM" :provider rte :metadata rte
-     :id "lyric" :tag "rtelyricfm" :channel "16"
-     :www "lyricfm")
+     :name "RTÉ Lyric FM" :id "lyric" :tag "rtelyricfm"
+     :channel "16" :www "lyricfm"
+     :plugin rte :metadata rte
+     :processor radio-f--rte-processor)
     (gold
-     :name "RTÉ Gold" :provider rte :metadata rte
-     :id "gold" :tag "rtegold" :channel "22"
-     :www "gold"))
+     :name "RTÉ Gold" :id "gold" :tag "rtegold"
+     :channel "22" :www "gold"
+     :plugin rte :metadata rte
+     :processor radio-f--rte-processor))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
+
+
+
+(defun radio-f--rte-processor (data station)
+  (let* ((now (aref data 0)))
+    `((item-id    . ,(cdr (assoc "listingId" now)))
+      (artist     . ,(cdr (assoc "channel" now)))
+      (title      . ,(cdr (assoc "progName" now)))
+      (start      . ,(float-time
+                      (date-to-time (cdr (assoc "progDate" now)))))
+      (end        . ,(cdr (assoc "endDate_ts" now)))
+      (visual-url . ,(cdr (assoc "thumbnail" now))))))
+
+
 
 (provide 'radio-f-rte)
 
