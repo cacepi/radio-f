@@ -647,6 +647,9 @@ OBJECT refers to a JSON object or vector of objects."
 
 
 (defun radio-f--radio-france-processor (data station)
+    "Normalize Radio France DATA for STATION.
+
+STATION is any station that the Radio France plugin provides."
   (let* ((now (cdr (assoc "now" data)))
          ;; First, make an empty alist that looks like this:
          (metadata (plist-get station :metadata))
@@ -656,26 +659,30 @@ OBJECT refers to a JSON object or vector of objects."
     ;; Throw out the entire object should it contain no-no words.
     (unless (radio-f--ordures-p now)
       ;; Account for all the values that differ from schema to schema.
+      (setq artist (cdr (assoc "firstLine" now))
+            title  (cdr (assoc "secondLine" now)))
       (cond
-       ((memq metadata '(inter fip))
-        (setq artist (cdr (assoc "firstLine" now))
-              title  (cdr (assoc "secondLine" now))))
-       ((memq metadata '(ici info))
-        (setq artist (cdr (assoc "secondLine" now))
-              title  (cdr (assoc "firstLine" now)))))
-      (cond
-       ((memq metadata '(inter fip ici))
+       ((memq metadata '(inter info ici))
         (setq visual-url
               (format
                "https://www.radiofrance.fr/pikapi/images/%s/400x400"
-               (cdr (assoc "cover" now)))))
+               (cdr (assoc "cover" now)))
+              item-id
+              (cdr (assoc "stepId" now))))
+       ((eq metadata 'fip)
+        (setq visual-url
+              (format
+               "https://www.radiofrance.fr/pikapi/images/%s/400x400"
+               (cdr (assoc "cover" now)))
+              item-id
+              (cdr (assoc "firstLineSongUuid" now))))
        ((eq metadata 'info)
         (setq visual-url
-              (radio-f--expand-url
-               radio-f--radio-france-visual-url
-               station))))
+              (format
+               "https://www.radiofrance.fr/pikapi/images/%s/400x400"
+               (cdr (assoc "cover_square" now))))))
       ;; Fill in the returned values.  Postmaster takes it from there.
-      `((item-id    . ,(cdr (assoc "stepId" now)))
+      `((item-id    . ,item-id)
         (artist     . ,artist)
         (title      . ,title)
         (start      . ,(cdr (assoc "startTime" now)))
