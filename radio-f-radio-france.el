@@ -29,7 +29,6 @@
 ;; 79 stations.
 
 
-
 ;;; Code:
 
 (defconst radio-f--radio-france-api-url
@@ -44,9 +43,6 @@
   "https://icecast.radiofrance.fr/[tag]-hifi.aac?id=radiofrance"
   "Template used to return a level two stream for playback.")
 
-;; Currently unused, as some stations aren't secure HTTP, and I've
-;; added enough tags already to make it sort of worthless as a
-;; template.  Pourquoi, Radio France?
 (defconst radio-f--radio-france-level-three
   "https://[mp3-prefix].[mp3-domain].fr/live/[tag]-midfi.mp3"
   "Template used to return a level three audio stream for playback.")
@@ -628,12 +624,11 @@
 links for the presentation views.")
 
 
-
 ;; == Processing ================================
 
 ;; Radio France loves to send out "trash" JSON objects, sometimes *during
 ;; a playing track*, where the values have placeholder info like "Le
-;; direct" or "La radio la plus..." etc.  Throw away the whole object.
+;; direct" or the UUID for the Fip logo.  Throw away the whole object.
 
 (defun radio-f--ordures-p (object)
   "Return non-nil when OBJECT contains unusable metadata.
@@ -642,25 +637,25 @@ OBJECT refers to a JSON object or vector of objects."
   (seq-some
    (lambda (entry)
      (member (cdr entry)
-             '("Le direct")))
+             '("Le direct"
+               "34e98566-058b-428f-a39e-d74bdef1cf77")))
    object))
 
-
 (defun radio-f--radio-france-processor (data station)
-    "Normalize Radio France DATA for STATION.
-
-STATION is any station that the Radio France plugin provides."
+    "Process Radio France DATA for STATION."
   (let* ((now (cdr (assoc "now" data)))
          ;; First, make an empty alist that looks like this:
          (metadata (plist-get station :metadata))
          artist
          title
          visual-url)
-    ;; Throw out the entire object should it contain no-no words.
+    ;; Throw out the entire object should it contain the no-no words.
     (unless (radio-f--ordures-p now)
       ;; Account for all the values that differ from schema to schema.
       (setq artist (cdr (assoc "firstLine" now))
-            title  (cdr (assoc "secondLine" now)))
+            title  (cdr (assoc "secondLine" now))
+            start  (cdr (assoc "startTime" now))
+            end    (cdr (assoc "endTime" now)))
       (cond
        ((memq metadata '(inter info ici))
         (setq visual-url
@@ -685,8 +680,8 @@ STATION is any station that the Radio France plugin provides."
       `((item-id    . ,item-id)
         (artist     . ,artist)
         (title      . ,title)
-        (start      . ,(cdr (assoc "startTime" now)))
-        (end        . ,(cdr (assoc "endTime" now)))
+        (start      . ,start)
+        (end        . ,end)
         (visual-url . ,visual-url)))))
 
 (provide 'radio-f-radio-france)

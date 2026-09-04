@@ -2,13 +2,12 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.2.6.1
+;; Version: 0.2.7
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
 
 ;; This file is NOT part of Emacs.
-
 
 ;; Copyright (C) 2026 Jason Martens.
 ;;
@@ -29,7 +28,8 @@
 ;;
 ;; Radio F is a streaming library to access radio stations through Emacs.
 ;;
-;; * Supports 150+ stations from Radio France, BBC, RTÉ, and more.
+;; * Supports 150+ stations and live streams from Radio France, BBC,
+;;   RTÉ, and more.
 ;; * Customizable information display, with artwork, track data, and
 ;;   selectable view style.
 ;; * Uses your choice of mpv, VLC, and EMMS as audio backends, with
@@ -37,7 +37,6 @@
 ;;   up/down, mute/unmute, pause, play, etc.
 ;;
 ;; See README.md for full documentation.
-
 
 
 ;;; Code:
@@ -57,7 +56,7 @@ the Radio France banner."
   :group 'multimedia)
 
 (defcustom radio-f-plugins
-  '(radio-france bbc rte sbfm)
+  '(radio-france bbc rte sbfm ard)
   "List of plugins that provide stations to Radio F. When a plugin is
 enabled, all stations defined by that plugin are available for playback.
 
@@ -66,7 +65,8 @@ The default is all available plugins."
           (const :tag "BBC" bbc)
           (const :tag "Radio France" radio-france)
           (const :tag "RTÉ" rte)
-          (const :tag "Shonan Beach FM" sbfm))
+          (const :tag "Shonan Beach FM" sbfm)
+          (const :tag "ARD" ard))
   :group 'radio-f)
 
 (defcustom radio-f-preferred-station "FIP"
@@ -117,7 +117,6 @@ When nil, include all stations supplied by the plugins enabled in
   :group 'radio-f)
 
 
-
 ;; == Custom Appearances ========================
 
 (defgroup radio-f-appearance nil
@@ -166,7 +165,6 @@ nil disables it."
   :group 'radio-f-appearance)
 
 
-
 ;; == Custom Audio settings =====================
 
 (defgroup radio-f-audio nil
@@ -191,7 +189,6 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   :group 'radio-f-audio)
 
 
-
 ;; == Custom Face settings  =====================
 
 (defgroup radio-f-faces nil
@@ -214,7 +211,6 @@ in both frame and window view."
   '((t :iherit (default) :weight medium :height 0.9))
   "Face used for the track timeline."
   :group 'radio-f-faces)
-
 
 
 ;; == Modes ============
@@ -272,14 +268,11 @@ in both frame and window view."
   :group 'radio-f)
 
 
-
 ;; == Variables for station/stream control ======
 
 (defconst radio-f--all-plugins
-  '(bbc radio-france rte sbfm)
+  '(bbc radio-france rte sbfm ard)
   "All Plugins supported by Radio F.")
-
-
 
 (defvar radio-f--current-station nil
   "Saves the identity of the currently playing station.")
@@ -290,7 +283,6 @@ in both frame and window view."
     (file-name-directory
      (or load-file-name (buffer-file-name))))
     "Stores the full pathname for the Radio F package.")
-
 
 
 ;; == Metadata system ===
@@ -320,6 +312,7 @@ in both frame and window view."
               ('radio-france radio-f--radio-france-stations)
               ('rte radio-f--rte-stations)
               ('sbfm radio-f--sbfm-stations)
+              ('ard radio-f--ard-stations)
               (_ nil)))
           radio-f-plugins)))
 
@@ -330,7 +323,8 @@ in both frame and window view."
   (append radio-f--bbc-stations
           radio-f--radio-france-stations
           radio-f--rte-stations
-          radio-f--sbfm-stations))
+          radio-f--sbfm-stations
+          radio-f--ard-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station from the first plugin defined in `radio-f-plugins'."e
@@ -351,7 +345,9 @@ in both frame and window view."
       ('rte
        (require 'radio-f-rte))
       ('sbfm
-       (require 'radio-f-sbfm)))))
+       (require 'radio-f-sbfm))
+      ('ard
+       (require 'radio-f-ard)))))
 
 (defun radio-f--load-all-plugins ()
   "Load all plugin modules supported by Radio F."
@@ -364,13 +360,14 @@ in both frame and window view."
       ('rte
        (require 'radio-f-rte))
       ('sbfm
-       (require 'radio-f-sbfm)))))
+       (require 'radio-f-sbfm))
+      ('ard
+       (require 'radio-f-ard)))))
 
 (defun radio-f--favorite-stations ()
   "Return the effective list of favorite stations."
   (or radio-f-favorite-stations
       (radio-f--all-station-names)))
-
 
 (defun radio-f--get-current-station-data ()
   "Return the metadata plist for the current station."
@@ -393,6 +390,8 @@ in both frame and window view."
      radio-f--rte-url)
     ('sbfm
      radio-f--sbfm-url)
+    ('ard
+     radio-f--ard-url)
     (_
      nil)))
 
@@ -403,7 +402,8 @@ in both frame and window view."
             ('bbc radio-f--bbc-streams)
             ('radio-france radio-f--radio-france-streams)
             ('rte radio-f--rte-streams)
-            ('sbfm radio-f--sbfm-streams)))
+            ('sbfm radio-f--sbfm-streams)
+            ('ard (radio-f--set-ard-streams))))
          (level
           (or radio-f--session-stream-level
               radio-f-stream-level)))
@@ -448,13 +448,14 @@ does not have, the stream returned is the highest level stream."
      radio-f--sbfm-api-url)
     ('rte
      radio-f--rte-api-url)
+    ('ard
+     (radio-f--set-ard-api-url))
     (_
      (error "Radio F: No metadata template for plugin %S"
             plugin))))
 
 
-
-;; Networking functions
+;; == Networking functions ======================
 
 (defun radio-f--fetch-json ()
   "Fetch metadata JSON for the current station."
@@ -498,8 +499,14 @@ does not have, the stream returned is the highest level stream."
   (let* ((json-object-type 'alist)
          (json-array-type 'vector)
          (json-key-type 'string)
-         (data (json-read-from-string raw-json-string))
          (station (radio-f--get-current-station-data))
+         ;; (_ (message "Radio F: station=%S content-type=%S"
+         ;;    (car station)
+         ;;    (plist-get station :raw)))
+       (data
+        (if (plist-get station :raw)
+            raw-json-string
+          (json-read-from-string raw-json-string)))
          (metadata (plist-get station :metadata))
          (processor (plist-get station :processor))
          (track-info (funcall processor data station))
@@ -633,7 +640,6 @@ The size of the image is set to the value of the custom variable
      :height radio-f-artwork-size)))
 
 
-
 ;; == View control ======
 
 (defvar radio-f--view-visible-p t
@@ -750,7 +756,6 @@ a small external margin of one character height."
       (when (window-live-p window)
         (radio-f--position-child-frame
          radio-f--child-frame)))))
-
 
 (defun radio-f-resize-window-view ()
   "Shrink the window view if it is larger than its buffer."
@@ -869,12 +874,10 @@ alist data from `radio-f--current-track-info', pass it to
       (kill-buffer buffer))))
 
 
-
 ;; == Frame view ========
 
 (defvar radio-f--child-frame nil
   "Floating controller child frame.")
-
 
 (defun radio-f--create-child-frame (buffer)
   "Create a child frame displaying BUFFER.
@@ -977,7 +980,6 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
     buffer))
 
 
-
 ;; == Window view =======
 
 (defun radio-f--create-window-view ()
@@ -1033,7 +1035,6 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
   "Reconstruct and return the current window view buffer."
   (when radio-f--current-track-info
     (radio-f--refresh-window-view-buffer)))
-
 
 
 ;; == Inserts ===========
@@ -1124,12 +1125,10 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
             'radio-f-track-timeline t)))))))
 
 
-
 ;; == Track Timeline ======
 
 (defvar radio-f--timeline-timer nil
   "Timer used to update the current track timeline.")
-
 
 (defun radio-f--format-track-time (seconds)
   "Format SECONDS as M:SS, or H:MM:SS when program is one hour or longer."
@@ -1179,7 +1178,6 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
         (run-at-time 1 1 #'radio-f--update-track-timeline)))
 
 
-
 ;; == Timing control =============================
 
 (defun radio-f--kill-timeline ()
@@ -1193,7 +1191,6 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
   (when (timerp radio-f--timer)
     (cancel-timer radio-f--timer)
     (setq radio-f--timer nil)))
-
 
 
 ;; == Transport control =========================
@@ -1385,7 +1382,6 @@ remote control interface."
     ready))
 
 
-
 ;; == Playback controls =========================
 
 (defvar radio-f--current-volume nil
@@ -1397,7 +1393,6 @@ remote control interface."
 (defvar radio-f--session-stream-level nil
   "Record a different stream level for `radio-f-audio-start` to use if the
 user has requested it.")
-
 
 (defun radio-f-change-stream-level ()
   "Change the stream level for the current Radio F session."
@@ -1600,7 +1595,6 @@ user has requested it.")
   (setq radio-f--player-process nil))
 
 
-
 ;; == Private helper functions ==================
 
 (defconst radio-f--track-log-buffer-name
@@ -1613,7 +1607,6 @@ user has requested it.")
 
 (defconst radio-f--current-date-time-format
   "%a %b %d %H:%M:%S %Z %Y")
-
 
 ;; I told you, it's a surprise. Don't spoil it.
 (defun radio-f--all-station-names ()
@@ -1762,7 +1755,6 @@ in `radio-f--alist-buffer-name'."
         (insert "\n")))))
 
 
-
 ;; == Public functions ==
 
 ;;;###autoload
@@ -1816,6 +1808,7 @@ the station played is governed by the custom variable
         radio-f--cover-uuid nil
         radio-f--current-track-info nil
         radio-f--timer nil
+        radio-f--current-item-id nil
         radio-f--timeline-timer nil
         radio-f--child-frame nil
         radio-f--current-volume nil
@@ -1915,7 +1908,6 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
           (radio-f--get-station-page-template plugin)))
     (browse-url
      (radio-f--expand-url template station))))
-
 
 
 ;; == Housekeeping ======

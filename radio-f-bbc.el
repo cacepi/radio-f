@@ -7,7 +7,6 @@
 
 ;; This file is NOT part of Emacs.
 
-
 ;; Copyright (C) 2026 Jason Martens.
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -27,7 +26,6 @@
 ;;
 ;; BBC Plugin for Radio F.
 ;; 71 stations.  God Save The King.
-
 
 
 ;;; Code:
@@ -55,13 +53,9 @@
 ;; *every single thing* across several JSON schema, audio streams,
 ;; and its web pages for individual stations is thar :id key.  Need
 ;; the web site for a station?  Put :id here.  Need the low bitrate
-;; stream?  Put :id there.  That's how you build ana API. Very
+;; stream?  Put :id there.  That's how you build an API. Very
 ;; simple, very efficient, very... actually, I don't know if The Beeb
 ;; does "demure."
-
-
-
-
 
 (defconst radio-f--bbc-stations
   '((radio-one

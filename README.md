@@ -120,6 +120,40 @@ The default is `"FIP"`.
 "BBC Sounds News"
 </pre>
 
+As most BBC foreign language stations only have a few hours of airtime a day, the following BBC stations are likewise unsupported:
+
+<pre>
+"BBC Afrique Radio"
+"BBC Amharic Radio"
+"BBC Arabic Radio"
+"BBC Burmese Radio"
+"BBC Dari Radio"
+"BBC Gahuza Radio"
+"BBC Hausa Radio"
+"BBC Korean Radio"
+"BBC Nepali Radio"
+"BBC Oromo Radio"
+"BBC Pashto Radio"
+"BBC Somali Radio"
+"BBC Swahili Radio"
+"BBC Tigrinya Radio"
+"BBC Uzbek Radio"
+</pre>
+
+The following stations are copies of BBC World Service, and so are not provided.
+
+<pre>
+"BBC World Service Americas"
+"BBC World Service Australasia"
+"BBC World Service East Africa"
+"BBC World Service East Asia"
+"BBC World Service Europe"
+"BBC World Service News Internet"
+"BBC World Service South Asia"
+"BBC World Service UK"
+"BBC World Service West Africa"
+</pre>
+
 <a id="radio-f-player-program"></a>**`radio-f-player-program`**: Preferred player program. Accepted values are:
 
 * `emms`- [Emacs Multimedia System](https://www.gnu.org/software/emms/)
