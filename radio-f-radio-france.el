@@ -32,27 +32,27 @@
 ;;; Code:
 
 (defconst radio-f--radio-france-api-url
-  "https://api.radiofrance.fr/livemeta/live/[id]/[endpoint]"
+  "https://api.radiofrance.fr/livemeta/live/<<id>>/<<endpoint>>"
   "Template used to retrieve JSON data from Radio France")
 
 (defconst radio-f--radio-france-level-one
-  "https://stream.radiofrance.fr/[tag]/[tag]_hifi.m3u8?id=radiofrance"
+  "https://stream.radiofrance.fr/<<tag>>/<<tag>>_hifi.m3u8?id=radiofrance"
   "Template used to return a level one audio stream for playback.")
 
 (defconst radio-f--radio-france-level-two
-  "https://icecast.radiofrance.fr/[tag]-hifi.aac?id=radiofrance"
+  "https://icecast.radiofrance.fr/<<tag>>-hifi.aac?id=radiofrance"
   "Template used to return a level two stream for playback.")
 
 (defconst radio-f--radio-france-level-three
-  "https://[mp3-prefix].[mp3-domain].fr/live/[tag]-midfi.mp3"
+  "https://<<mp3-prefix>>.<<mp3-domain>>.fr/live/<<tag>>-midfi.mp3"
   "Template used to return a level three audio stream for playback.")
 
 (defconst radio-f--radio-france-visual-url
-  "https://www.radiofrance.fr/pikapi/images/[cover]/400x400"
+  "https://www.radiofrance.fr/pikapi/images/<<cover>>/400x400"
   "Template used to retrieve the artwork image for the presentation views.")
 
 (defconst radio-f--radio-france-url
-  "https://www.radiofrance.fr/[www]/[www-suffix]"
+  "https://www.radiofrance.fr/<<www>>/<<www-suffix>>"
   "Template used to return a station's URL on the Radio France web site.")
 
 (defconst radio-f--radio-france-streams

@@ -30,16 +30,16 @@
 
 ;;; Code:
 
-(defconst radio-f--bbc-api-url "https://rms.api.bbc.co.uk/v2/broadcasts/poll/[id]"
+(defconst radio-f--bbc-api-url "https://rms.api.bbc.co.uk/v2/broadcasts/poll/<<id>>"
   "Recipe used to retrieve JSON data from the BBC.")
 
-(defconst radio-f--bbc-level-one "https://lsn.lv/bbcradio.m3u8?station=[id]&bitrate=320000"
+(defconst radio-f--bbc-level-one "https://lsn.lv/bbcradio.m3u8?station=<<id>>&bitrate=320000"
   "Template used to return a level one stream for playback.")
 
-(defconst radio-f--bbc-level-two "https://lsn.lv/bbcradio.m3u8?station=[id]&bitrate=96000"
+(defconst radio-f--bbc-level-two "https://lsn.lv/bbcradio.m3u8?station=<<id>>&bitrate=96000"
   "Template used to return a level two stream for playback.")
 
-(defconst radio-f--bbc-url "https://www.bbc.co.uk/sounds/play/live/[id]/"
+(defconst radio-f--bbc-url "https://www.bbc.co.uk/sounds/play/live/<<id>>/"
   "Template used to generate the URL for BBC station home pages.")
 
 (defconst radio-f--bbc-streams

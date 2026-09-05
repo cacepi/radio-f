@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.2.7
+;; Version: 0.2.8
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -413,7 +413,7 @@ in both frame and window view."
 (defun radio-f--expand-url (template station)
   "Expand URL TEMPLATE using values from STATION."
   (let ((url template))
-    (while (string-match "\\[\\([^]]+\\)\\]" url)
+    (while (string-match "<<\\([^>]+\\)>>" url)
       (let* ((name (match-string 1 url))
              (key (intern (concat ":" name)))
              (value (plist-get station key)))
@@ -453,7 +453,6 @@ does not have, the stream returned is the highest level stream."
     (_
      (error "Radio F: No metadata template for plugin %S"
             plugin))))
-
 
 ;; == Networking functions ======================
 
@@ -570,75 +569,83 @@ CALLBACK is called with two arguments: the image data and its MIME type."
 (defun radio-f--stylize-artwork (image-data image-type)
   "Return a presentation image made from IMAGE-DATA.
 
-When SVG support is available, stylize the artwork with rounded corners
-and a rounded border; otherwise it returns a normally resized webp image
-without the effect.
-
-The size of the image is set to the value of the custom variable
-`radio-f-artwork-size'.  The border color is taken from the face
-`radio-f-regular'."
-  (if (and (featurep 'svg)
-           (image-type-available-p 'svg)
-           (> radio-f-artwork-radius 0))
-      (let* ((size radio-f-artwork-size)
-             (radius radio-f-artwork-radius)
-             (stroke-width (* 2 radio-f-artwork-border-width))
-             (half-stroke (/ stroke-width 2.0))
-             (border-color
-              (or (face-foreground 'radio-f-regular nil t)
-                  (face-foreground 'default nil t)))
-             (svg (svg-create size size))
-             (clip-path
-              (svg-clip-path
-               svg
-               :id "radio-f-artwork-clip")))
-        (svg-rectangle
-         clip-path
-         0 0 size size
-         :rx radius
-         :ry radius)
-        (svg-embed
-         svg
-         image-data
-         image-type
-         t
-         :x 0
-         :y 0
-         :width size
-         :height size
-         :preserveAspectRatio "xMidYMid slice"
-         :clip-path "url(#radio-f-artwork-clip)")
-        ;; Inset another rectangle inside the first
-        ;; so that the stroke won't bleed into the
-        ;; corners of the radius mask.
-        (when (> radio-f-artwork-border-width 0)
+The image is resized proportionally so its largest dimension is
+`radio-f-artwork-size'.  When SVG support is available, add rounded
+corners and an optional border; otherwise return the resized image
+without those effects."
+  (let* ((type
+          (pcase image-type
+            ("image/webp" 'webp)
+            ("image/jpeg" 'jpeg)
+            ("image/png"  'png)))
+         (source-image
+          (create-image image-data type t))
+         (source-size
+          (image-size source-image t))
+         (source-width
+          (car source-size))
+         (source-height
+          (cdr source-size))
+         (size radio-f-artwork-size)
+         (scale
+          (/ (float size)
+             (max source-width source-height)))
+         (width
+          (round (* source-width scale)))
+         (height
+          (round (* source-height scale))))
+    (if (and (featurep 'svg)
+             (image-type-available-p 'svg)
+             (> radio-f-artwork-radius 0))
+        (let* ((radius radio-f-artwork-radius)
+               (stroke-width (* 2 radio-f-artwork-border-width))
+               (half-stroke (/ stroke-width 2.0))
+               (border-color
+                (or (face-foreground 'radio-f-regular nil t)
+                    (face-foreground 'default nil t)))
+               (svg (svg-create width height))
+               (clip-path
+                (svg-clip-path
+                 svg
+                 :id "radio-f-artwork-clip")))
           (svg-rectangle
+           clip-path
+           0 0 width height
+           :rx radius
+           :ry radius)
+          (svg-embed
            svg
-           half-stroke
-           half-stroke
-           (- size stroke-width)
-           (- size stroke-width)
-           :rx (max 0 (- radius half-stroke))
-           :ry (max 0 (- radius half-stroke))
-           :fill "none"
-           :stroke border-color
-           :stroke-width stroke-width))
-        (svg-image
-         svg
-         :width size
-         :height size))
-    ;; If no SVG support, just return the image
-    ;; after resizing.
-    (create-image
-     image-data
-     (pcase image-type
-       ("image/webp" 'webp)
-       ("image/jpeg" 'jpeg)
-       ("image/png"  'png))
-     t
-     :width radio-f-artwork-size
-     :height radio-f-artwork-size)))
-
+           image-data
+           image-type
+           t
+           :x 0
+           :y 0
+           :width width
+           :height height
+           :preserveAspectRatio "xMidYMid meet"
+           :clip-path "url(#radio-f-artwork-clip)")
+          (when (> radio-f-artwork-border-width 0)
+            (svg-rectangle
+             svg
+             half-stroke
+             half-stroke
+             (- width stroke-width)
+             (- height stroke-width)
+             :rx (max 0 (- radius half-stroke))
+             :ry (max 0 (- radius half-stroke))
+             :fill "none"
+             :stroke border-color
+             :stroke-width stroke-width))
+          (svg-image
+           svg
+           :width width
+           :height height))
+      (create-image
+       image-data
+       type
+       t
+       :width width
+       :height height))))
 
 ;; == View control ======
 
@@ -1404,7 +1411,8 @@ user has requested it.")
             ('bbc radio-f--bbc-streams)
             ('radio-france radio-f--radio-france-streams)
             ('rte radio-f--rte-streams)
-            ('sbfm radio-f--sbfm-streams)))
+            ('sbfm radio-f--sbfm-streams)
+            ('ard (radio-f--set-ard-streams))))
          (levels
           (seq-filter
            (lambda (level)
