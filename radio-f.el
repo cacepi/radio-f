@@ -569,23 +569,26 @@ CALLBACK is called with two arguments: the image data and its MIME type."
 (defun radio-f--stylize-artwork (image-data image-type)
   "Return a presentation image made from IMAGE-DATA.
 
-The image is resized proportionally so its largest dimension is
-`radio-f-artwork-size'.  When SVG support is available, add rounded
-corners and an optional border; otherwise return the resized image
-without those effects."
+IMAGE-DATA and IMAGE-TYPE both come from the image returned
+by `radio-f--fetch-artwork'.
+
+The returned image's aspect ratio is preserved, with its height
+or width, whichever is higher, set to the value of the custom variable
+`radio-f-artwork-size'.  The border color is taken from the face
+`radio-f-regular'.
+
+When SVG support is available, stylize the artwork with rounded corners
+and a rounded border; otherwise it returns a normally resized webp image
+without the effect."
   (let* ((type
           (pcase image-type
             ("image/webp" 'webp)
             ("image/jpeg" 'jpeg)
             ("image/png"  'png)))
-         (source-image
-          (create-image image-data type t))
-         (source-size
-          (image-size source-image t))
-         (source-width
-          (car source-size))
-         (source-height
-          (cdr source-size))
+         (source-image (create-image image-data type t))
+         (source-size (image-size source-image t))
+         (source-width (car source-size))
+         (source-height (cdr source-size))
          (size radio-f-artwork-size)
          (scale
           (/ (float size)

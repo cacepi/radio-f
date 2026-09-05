@@ -28,7 +28,7 @@ Installation is via a simple `use-package` definition placed in the user's `init
   (("C-c f r" . radio-f)))
  ```
 
-and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed with `package-install` Native compiled files will also install if the Emacs instance supports native compilation.
+and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed via `package-install` This will also install natively compiled files if your Emacs instance supports native compilation.
 
 <!-- This will compile the Radio F sources and place them in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.
 
@@ -58,7 +58,7 @@ Consult the [station list](#stations) for available stations.
 
 <a id="play-preferred-station"></a> **`radio-f-play-preferred-station`**: Return to the [preferred station](#radio-f-preferred-station).
 
-**`radio-f-surprise-me`**: Play a random station chosen from all providers.
+**`radio-f-surprise-me`**: Play a random station chosen from all carriers.
 
 <a id="dark-mode"></a>**`radio-f-dark-mode`**: Start Radio F with no view.  See the [View Styles](#view-styles) section for more details.
 
@@ -96,14 +96,15 @@ A word of caution: the view toggle works by running `make-frame-visible` and `ma
 
 ## Custom Variables
 
-<a id="radio-f-providers"></a>**`radio-f-providers`**: A list of the station carriers Radio F supports. At the moment, Radio F has support for the following providers:
+<a id="radio-f-plugins"></a>**`radio-f-plugins`**: A list of the station carriers Radio F supports. At the moment, Radio F has support for the following carriers:
 
 `radio-france`: Radio France (French National Radio)
 `rte`: RTÈ (Irish National Radio)
 `bbc`:  The British Broadcasting Corporation (UK National Radio)\*
 `sbfm`: Shonan Beach FM
+`ard`: German National Radio
 
-The default is all providers.
+The default is all plugins.
 
 <a id="radio-f-preferred-station"></a> **`radio-f-preferred-station`**: The preferred station to play when Radio F starts.  Refer to the [station list](#stations) for all the stations supported under Radio F.
 
@@ -120,7 +121,7 @@ The default is `"FIP"`.
 "BBC Sounds News"
 </pre>
 
-As most BBC foreign language stations only have a few hours of airtime a day, the following BBC stations are likewise unsupported:
+<!-- As most BBC foreign language stations only have a few hours of airtime a day, the following BBC stations are likewise unsupported:
 
 <pre>
 "BBC Afrique Radio"
@@ -153,6 +154,7 @@ The following stations are copies of BBC World Service, and so are not provided.
 "BBC World Service UK"
 "BBC World Service West Africa"
 </pre>
+-->
 
 <a id="radio-f-player-program"></a>**`radio-f-player-program`**: Preferred player program. Accepted values are:
 
@@ -186,7 +188,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 156 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 171 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -198,10 +200,11 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "ici Bearn" "FIP" "FIP Rock" "FIP Jazz" "FIP Groove" "FIP Monde"
     "FIP Nouveautés" "FIP Reggae" "FIP Electro" "FIP Metal" "FIP Pop"
     "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes" "RTÉ Radio 1"
-    "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM")
+    "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM"
+    "Deutschlandfunk Nova" "Bayern 3")
 ```
 
-will only show those 19 stations when you run [`radio-f-change-station`](#change-station) instead of all 156.
+will only show those 21 stations when you run [`radio-f-change-station`](#change-station) instead of all 171.
 
 Remember, you can always see every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
@@ -297,11 +300,11 @@ Have fun!
 
 ## Future Plans:
 
-- Support for more station providers, such CBC, RNZ, WDR, etc.
+- Support for more station carriers, such CBC, RNZ, RSE, RAI, etc.
 
 - A record of the songs played during a listening session.
 
-You can do this already by visiting Radio France's website with the function `radio-f-browse-station-page`, but that only works with select stations.  I think a more personalized version can made by constructing a track log and generate a PDF file or similar upon exiting Radio F.
+Most stations include a tracklist on their website, which you can visit with `radio-f-browse-station-page`, but if a station doesn't provide one, you're out of luck.  I think a more personalized version can made by constructing a track log and generate a PDF file or similar upon exiting Radio F.
 
 ## Not Future Plans:
 
@@ -321,10 +324,11 @@ How to make a favorites list again:  copy the stations you want from the station
     "ici Bearn" "FIP" "FIP Rock" "FIP Jazz" "FIP Groove" "FIP Monde"
     "FIP Nouveautés" "FIP Reggae" "FIP Electro" "FIP Metal" "FIP Pop"
     "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes" "RTÉ Radio 1"
-    "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM")
+    "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM"
+    "Deutschlandfunk Nova" "Bayern 3")
 ```
 
-will only show those 19 stations when you run `radio-f-change-station` instead of all 156.
+will only show those 21 stations when you run `radio-f-change-station` instead of all 171.
 
 The list:
 
@@ -485,6 +489,20 @@ The list:
 "RTÉ Raidió na Gaeltachta"
 "RTÉ Lyric FM"
 "RTÉ Gold"
+"Deutschlandfunk"
+"Deutschlandfunk Kultur"
+"Deutschlandfunk Nova"
+"Bayern 1 Oberbayern"
+"Bayern 1 Franken"
+"Bayern 1 Mainfranken"
+"Bayern 1 Niederbayern/Oberpfalz"
+"Bayern 1 Schwaben"
+"Bayern 2"
+"Bayern 3"
+"BR 24"
+"BR Klassik"
+"BR Schlager"
+"BR Heimat"
 </pre>
 
 
