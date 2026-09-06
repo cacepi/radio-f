@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.2.8
+;; Version: 0.3.0
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -55,17 +55,20 @@
 the Radio France banner."
   :group 'multimedia)
 
-(defcustom radio-f-plugins
-  '(radio-france bbc rte sbfm ard)
-  "List of plugins that provide stations to Radio F. When a plugin is
-enabled, all stations defined by that plugin are available for playback.
+(defcustom radio-f-carriers
+  '(radio-france bbc rte sbfm br bremen dlr ard)
+  "List of carriers that provide stations to Radio F. When a carrier is
+enabled, all stations defined by that carrier are available for playback.
 
-The default is all available plugins."
+The default is all available carriers."
   :type '(set
           (const :tag "BBC" bbc)
           (const :tag "Radio France" radio-france)
           (const :tag "RTÉ" rte)
           (const :tag "Shonan Beach FM" sbfm)
+          (const :tag "Bayerischer Rundfunks" br)
+          (const :tag "Radio Bremen" bremen)
+          (const :tag "Deutschlandradio" dlr)
           (const :tag "ARD" ard))
   :group 'radio-f)
 
@@ -73,9 +76,9 @@ The default is all available plugins."
   "The station to preferably play when launching Radio F.
 
 Radio F determines available stations by examining the providers included
-in `radio-f-plugins'.  If the preferred station is not available from
-those plugins, the first station listed by the first plugin named in
-`radio-f-plugins' is played instead."
+in `radio-f-carriers'.  If the preferred station is not available from
+those carriers, the first station listed by the first carrier named in
+`radio-f-carriers' is played instead."
   :type 'string
   :group 'radio-f)
 
@@ -111,8 +114,8 @@ The value may be one of:
 (defcustom radio-f-favorite-stations nil
   "Stations to present as favorites for completion.
 
-When nil, include all stations supplied by the plugins enabled in
-`radio-f-plugins'."
+When nil, include all stations supplied by the carriers enabled in
+`radio-f-carriers'."
   :type '(repeat string)
   :group 'radio-f)
 
@@ -137,7 +140,7 @@ track info; nil disables track info."
           (const :tag "Don't Show Track Info" nil))
   :group 'radio-f-appearance)
 
-(defcustom radio-f-show-artwork t
+(defcustom radio-f-show-artwork nil
   "Display artwork in the presentation views.  A non-nil value displays
 the artwork; nil disables artwork."
   :type '(choice
@@ -151,7 +154,7 @@ the border."
   :type 'integer
   :group 'radio-f-appearance)
 
-(defcustom radio-f-artwork-radius 16
+(defcustom radio-f-artwork-radius 12
   "Radius of the corners, in pixels, of the track artwork.  A value of
 zero disables the artwork radius."
   :type 'integer
@@ -270,9 +273,9 @@ in both frame and window view."
 
 ;; == Variables for station/stream control ======
 
-(defconst radio-f--all-plugins
+(defconst radio-f--all-carriers
   '(bbc radio-france rte sbfm ard)
-  "All Plugins supported by Radio F.")
+  "All Carriers supported by Radio F.")
 
 (defvar radio-f--current-station nil
   "Saves the identity of the currently playing station.")
@@ -303,41 +306,45 @@ in both frame and window view."
   "Identifier for the currently accepted program or track.")
 
 (defun radio-f--stations ()
-  "Return stations supplied by enabled plugins."
+  "Return stations supplied by enabled carriers."
   (apply #'append
          (mapcar
-          (lambda (plugin)
-            (pcase plugin
+          (lambda (carrier)
+            (pcase carrier
               ('bbc radio-f--bbc-stations)
               ('radio-france radio-f--radio-france-stations)
               ('rte radio-f--rte-stations)
               ('sbfm radio-f--sbfm-stations)
+              ('br radio-f--br-stations)
               ('ard radio-f--ard-stations)
               (_ nil)))
-          radio-f-plugins)))
+          radio-f-carriers)))
 
 ;; It's a surprise!
 (defun radio-f--all-stations ()
   "Return all stations supported by Radio F."
-  (radio-f--load-all-plugins)
+  (radio-f--load-all-carriers)
   (append radio-f--bbc-stations
           radio-f--radio-france-stations
           radio-f--rte-stations
           radio-f--sbfm-stations
+          radio-f--br-stations
+          radio-f--bremen-stations
+          radio-f--dlr-stations
           radio-f--ard-stations))
 
 (defun radio-f--set-initial-station ()
-  "Return the preferred station, or the first available station from the first plugin defined in `radio-f-plugins'."e
+  "Return the preferred station, or the first available station from the first carrier defined in `radio-f-carriers'."
   (let ((stations
          (radio-f--all-station-names)))
     (if (member radio-f-preferred-station stations)
         radio-f-preferred-station
       (car stations))))
 
-(defun radio-f--load-plugins ()
-  "Load plugin modules, as defined in `radio-f-plugins'."
-  (dolist (plugin radio-f-plugins)
-    (pcase plugin
+(defun radio-f--load-carriers ()
+  "Load carrier modules, as defined in `radio-f-carriers'."
+  (dolist (carrier radio-f-carriers)
+    (pcase carrier
       ('bbc
        (require 'radio-f-bbc))
       ('radio-france
@@ -346,13 +353,19 @@ in both frame and window view."
        (require 'radio-f-rte))
       ('sbfm
        (require 'radio-f-sbfm))
-      ('ard
+      ('br
+       (require 'radio-f-br))
+      ('bremen
+       (require 'radio-f-bremen))
+      ('dlr
+       (require 'radio-f-dlr))
+            ('ard
        (require 'radio-f-ard)))))
 
-(defun radio-f--load-all-plugins ()
-  "Load all plugin modules supported by Radio F."
-  (dolist (plugin radio-f-plugins)
-    (pcase plugin
+(defun radio-f--load-all-carriers ()
+  "Load all carrier modules supported by Radio F."
+  (dolist (carrier radio-f-carriers)
+    (pcase carrier
       ('bbc
        (require 'radio-f-bbc))
       ('radio-france
@@ -361,6 +374,12 @@ in both frame and window view."
        (require 'radio-f-rte))
       ('sbfm
        (require 'radio-f-sbfm))
+      ('br
+       (require 'radio-f-br))
+      ('bremen
+       (require 'radio-f-bremen))
+      ('dlr
+       (require 'radio-f-dlr))
       ('ard
        (require 'radio-f-ard)))))
 
@@ -379,9 +398,9 @@ in both frame and window view."
        radio-f--current-station))
     (radio-f--stations))))
 
-(defun radio-f--get-station-page-template (plugin)
-  "Return the station page URL template for PLUGIN."
-  (pcase plugin
+(defun radio-f--get-station-page-template (carrier)
+  "Return the station page URL template for CARRIER."
+  (pcase carrier
     ('bbc
      radio-f--bbc-url)
     ('radio-france
@@ -390,19 +409,28 @@ in both frame and window view."
      radio-f--rte-url)
     ('sbfm
      radio-f--sbfm-url)
+    ('br
+     radio-f--br-url)
+    ('bremen
+     radio-f--br-url)
+    ('dlr
+     radio-f--br-url)
     ('ard
-     radio-f--ard-url)
+     (radio-f--set-ard-url))
     (_
      nil)))
 
-(defun radio-f--get-stream-template (plugin)
-  "Return the stream template for PLUGIN."
+(defun radio-f--get-stream-template (carrier)
+  "Return the stream template for CARRIER."
   (let* ((streams
-          (pcase plugin
+          (pcase carrier
             ('bbc radio-f--bbc-streams)
             ('radio-france radio-f--radio-france-streams)
             ('rte radio-f--rte-streams)
             ('sbfm radio-f--sbfm-streams)
+            ('br radio-f--br-streams)
+            ('bremen radio-f--bremen-streams)
+            ('dlr radio-f--dlr-streams)
             ('ard (radio-f--set-ard-streams))))
          (level
           (or radio-f--session-stream-level
@@ -426,41 +454,44 @@ in both frame and window view."
 (defun radio-f--get-stream-url ()
   "Return the streaming URL for the current station.
 
-The URl is determined by examining the streams that a plugin has
-available. If the user has specificed a stream type that the plugin
+The URl is determined by examining the streams that a carrier has
+available. If the user has specificed a stream type that the carrier
 does not have, the stream returned is the highest level stream."
   (let* ((station
           (radio-f--get-current-station-data))
-         (plugin
-          (plist-get station :plugin))
+         (carrier
+          (plist-get station :carrier))
          (template
-          (radio-f--get-stream-template plugin)))
+          (radio-f--get-stream-template carrier)))
     (radio-f--expand-url template station)))
 
-(defun radio-f--get-api-template (plugin)
-  "Return the metadata URL template for PLUGIN."
-  (pcase plugin
+(defun radio-f--get-api-template (carrier)
+  "Return the metadata URL template for CARRIER."
+  (pcase carrier
     ('bbc
      radio-f--bbc-api-url)
     ('radio-france
      radio-f--radio-france-api-url)
-    ('sbfm
-     radio-f--sbfm-api-url)
     ('rte
      radio-f--rte-api-url)
-    ('ard
-     (radio-f--set-ard-api-url))
+    ('sbfm
+     radio-f--sbfm-api-url)
+    ('br
+     radio-f--br-api-url)
+    ('bremen
+     radio-f--bremen-api-url)
+    ('ard  radio-f--ard-api-url)
     (_
-     (error "Radio F: No metadata template for plugin %S"
-            plugin))))
+     (error "Radio F: No metadata template for carrier %S"
+            carrier))))
 
 ;; == Networking functions ======================
 
 (defun radio-f--fetch-json ()
   "Fetch metadata JSON for the current station."
   (let* ((station (radio-f--get-current-station-data))
-         (plugin (plist-get station :plugin))
-         (template (radio-f--get-api-template plugin))
+         (carrier (plist-get station :carrier))
+         (template (radio-f--get-api-template carrier))
          (url (radio-f--expand-url template station)))
     ;; Testing.  Move along.
     ;; (message "Radio F metadata URL: %s" url)
@@ -1408,13 +1439,16 @@ user has requested it.")
   "Change the stream level for the current Radio F session."
   (interactive)
   (let* ((station (radio-f--get-current-station-data))
-         (plugin (plist-get station :plugin))
+         (carrier (plist-get station :carrier))
          (streams
-          (pcase plugin
+          (pcase carrier
             ('bbc radio-f--bbc-streams)
             ('radio-france radio-f--radio-france-streams)
             ('rte radio-f--rte-streams)
             ('sbfm radio-f--sbfm-streams)
+            ('br radio-f--br-streams)
+            ('bremen radio-f--bremen-streams)
+            ('dlr radio-f--dlr-streams)
             ('ard (radio-f--set-ard-streams))))
          (levels
           (seq-filter
@@ -1777,8 +1811,8 @@ STATION is the desired station to play.  When called with no arguments,
 the station played is governed by the custom variable
 `radio-f-default-station'."
   (interactive)
-  ;; Load the preferred plugins before doing anything else.
-  (radio-f--load-plugins)
+  ;; Load the preferred carriers before doing anything else.
+  (radio-f--load-carriers)
   ;; Provide a good view setting for TUI Emacs.
   (unless (display-graphic-p)
     (setq radio-f-view-style 'window
@@ -1820,8 +1854,8 @@ the station played is governed by the custom variable
         radio-f--current-track-info nil
         radio-f--timer nil
         radio-f--current-item-id nil
-        radio-f--timeline-timer nil
         radio-f--child-frame nil
+        radio-f--timeline-timer nil
         radio-f--current-volume nil
         radio-f--previous-volume nil
         radio-f--view-visible-p t)
@@ -1858,7 +1892,7 @@ the station played is governed by the custom variable
 (defun radio-f-change-to-any-station (&optional station)
   "Switch to a different STATION.
 
-STATION is any station from all plugins."
+STATION is any station from all carriers."
   (interactive)
   ;; Try to keep the station order consistent by asking the
   ;; reader to ignore completion history, but doesn't always
@@ -1913,10 +1947,10 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
   (interactive)
   (let* ((station
           (radio-f--get-current-station-data))
-         (plugin
-          (plist-get station :plugin))
+         (carrier
+          (plist-get station :carrier))
          (template
-          (radio-f--get-station-page-template plugin)))
+          (radio-f--get-station-page-template carrier)))
     (browse-url
      (radio-f--expand-url template station))))
 

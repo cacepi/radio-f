@@ -43,27 +43,27 @@
   '((radio1
      :name "RTÉ Radio 1" :id "radio1" :tag "rteradio1"
      :channel "9" :www "radio1"
-     :plugin rte :metadata rte
+     :carrier rte :metadata rte
      :processor radio-f--rte-processor)
     (2fm
      :name "RTÉ 2FM" :id "2fm" :tag "rte2fm"
      :channel "1" :www "2fm"
-     :plugin rte :metadata rte
+     :carrier rte :metadata rte
      :processor radio-f--rte-processor)
     (rnag
      :name "RTÉ Raidió na Gaeltachta" :id "rnag" :tag "rteraidionagaeltachta"
      :channel "17" :www "rnag"
-     :plugin rte :metadata rte
+     :carrier rte :metadata rte
      :processor radio-f--rte-processor)
     (lyricfm
      :name "RTÉ Lyric FM" :id "lyric" :tag "rtelyricfm"
      :channel "16" :www "lyricfm"
-     :plugin rte :metadata rte
+     :carrier rte :metadata rte
      :processor radio-f--rte-processor)
     (gold
      :name "RTÉ Gold" :id "gold" :tag "rtegold"
      :channel "22" :www "gold"
-     :plugin rte :metadata rte
+     :carrier rte :metadata rte
      :processor radio-f--rte-processor))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")

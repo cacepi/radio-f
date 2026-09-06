@@ -52,7 +52,7 @@
 
 (defconst radio-f--sbfm-stations
   '((sbfm
-     :name "Shonan Beach FM" :plugin sbfm :metadata sbfm
+     :name "Shonan Beach FM" :carrier sbfm :metadata sbfm
      :processor radio-f--sbfm-processor))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")

@@ -25,73 +25,138 @@
 
 ;;; Commentary:
 ;;
-;; ARD plugin for Radio F:
-;; 3 stations from Deutschland Radio.
-;; ("Dokumente und Debatten," the 4th station, is unavailable.)
+;; ARD plugin for Radio F: 83 Stations.
+;; Three stations from Deutschland Radio.
 ;; 11 Stations from Bayerischer Rundfunks.
-;; Refer to their api-url defconst for a taste of the nightmare
-;; that is GraphQL queries.
+;; Six stations from Radio Bremen
 ;;
-;; Deutschland Radio has not one, not two, not three, not four,
-;; but SIX different streams on offer.  SIX.  Two of them are
-;; Opus streams(!). And they talk about it on the web page:
+;; ARD might be even better organized than the BBC. A single, unified
+;; URL template to retrieve metadata for every ARD station, complete
+;; with multiple streams for each carrier defined in the master
+;; JSON list. Give it to German public radio for being even more
+;; punctilious than the BBC.
 ;;
-;; "Die Opus Audiokompression ist die Weiterentwicklung des
-;; Vorbis-Formats. Opus ermöglicht bei besonders niedrigen
-;; Datenraten Streams in akzeptabler bis guter Qualität. Das
-;; lizenzfreie und offen dokumentierte Datenformat kann nativ
-;; auf neueren Android Geräten (ab Android 5) und den meisten
-;; Browsern problemlos abgespielt werden. Safari und der Internet
-;; Explorer sind aktuell nicht in der Lage, Opus Dateien zu
-;; verstehen. Passende Abspielsoftware gibt es für alle verbreiteten
-;; Betriebssysteme wie Windows, macOS, und GNU/Linux."
+;; All's not love and roses, as Deutschlandradio refuses to play ball
+;; with the other carriers, so little to no proper artwork for their
+;; regular programming.  Radio F has to supply its own, instead.
 ;;
-;; "Opus audio compression is a further development of the Vorbis
-;; format. Opus enables streams of acceptable to good quality at
-;; particularly low data rates. The royalty-free and openly
-;; documented data format can be played natively on newer Android
-;; devices (from Android 5 onwards) and most browsers without any
-;; problems. Safari and Internet Explorer are currently unable to
-;; understand Opus files. Suitable playback software is available
-;; for all common operating systems such as Windows, macOS, and
-;; GNU/Linux."
-;;
-;; How about that! Give to Deutschland Radio for being even
-;; more punctilious than the BBC.
-;;
-;; Radio F only uses four out of the six streams available; any more
-;; than that four would probably induce option anxiety.
-
+;; Their old api-url defconst for BR is preserved to remind me of the
+;; nightmare that is GraphQL queries.
 
 
 ;;; Code:
 
-(defconst radio-f--dlf-api-url
-  "https://www.deutschlandfunk.de/api/partials/CurrentBroadcast?dlrsearch:_ajax=1"
-    "URL to AJAX data from Deutschlandfunk.")
 
-(defconst radio-f--dlf-kultur-api-url
-  "https://www.deutschlandfunkkultur.de/api/partials/CurrentBroadcast?dlrsearch:_ajax=1"
-  "URL to AJAX data from Deutschlandfunk Kultur.")
+;; == STATION PLIST =====
 
-(defconst radio-f--dlf-nova-api-url
-  "https://static.deutschlandfunknova.de/actions/dradio/playlist/onair"
-  "Template used to retrieve JSON data from Deutschlandfunk Nova.")
+(defconst radio-f--ard-stations
+  '((bremen-eins
+     :name "Bremen Eins" :plugin ard :metadata ard :stream bremen
+     :id "bremeneins" :api-tag "startseite-bremen-eins-"
+     :publisher "6f3a681040e99d95" :livestream "43b952d7b301bc4b"
+     :float "0.1"
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-eins-visual-url)
+    (bremen-zwei
+     :name "Bremen Zwei" :plugin ard :metadata bremen :stream bremen
+     :id "bremenzwei" :api-tag "startseite-bremen-zwei-"
+     :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+     :visual radio-f--bremen-visual-url)
+    (bremen-vier
+     :name "Bremen Vier" :plugin ard :metadata bremen :stream bremen
+     :id "bremenvier" :api-tag "bremenvier-startseite"
+     :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+     :visual radio-f--bremen-visual-url)
+    (bremen-next
+     :name "Bremen Next" :plugin ard :metadata bremen :stream bremen
+     :id "bremennext" :api-tag "bremennext-startseite"
+     :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-cosmo
+     :name "COSMO" :plugin ard :metadata wdr :stream wdr
+     :id "cosmo" :api-tag "bremen-cosmo"
+     :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-1live
+     :name "WDR 1LIVE" :plugin ard :metadata ard :stream wdr
+     :publisher 4560bc62a6bdc9ef :livestream 52ab46cdf0baac57
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-rheinland
+     :name "WDR 2 Rheinland" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream 8b939df5fa39be0b
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-aachen
+     :name "WDR 2 Aachen und Region" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream ee9a086f00147c5d
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-sudwestfalen
+     :name "WDR 2 Südwestfalen" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream d78a727b7282dc94
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-lippe
+     :name "WDR 2 Ostwestfalen Lippe" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream 9c0af28790c681fa
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-rhein-ruhr
+     :name "WDR 2 Rhein und Ruhr" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream 8966dec50d3692a4
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-ruhr-gebiet
+     :name "WDR 2 Ruhrgebiet" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream 84d92a896d3cbcca
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-bergisches-land
+     :name "WDR 2 Bergisches Land" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream eaca8e08741608dc
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url)
+    (wdr-2-munsterland
+     :name "WDR 2 Münsterland" :plugin ard :metadata ard :stream wdr
+     :publisher 82719e5e5c83925a :livestream 36be5febc15a6bcd
+     :api radio-f--ard-api-url :processor radio-f--ard-processor
+     :visual radio-f--bremen-visual-url))
+  "Input data used by the URL templates to retrieve metadata, stream types, and web
+links for the presentation views.")
 
-(defconst radio-f--dlf-url
+;; == API URLS ==========
+
+(defconst radio-f--ard-organizations
+  "https://api.ardaudiothek.de/organizations"
+  "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
+
+(defconst radio-f--ard-api-url
+  "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=<<float>>"
+  "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
+
+(defconst radio-f--bremen-api-url
+  "https://www.<<id>>.de/<<api-tag>>100~ajax_ajaxType-epg.json"
+  "Template used to retrieve JSON data from Radio Bremen.")
+
+(defconst radio-f--wdr-api-url
+  "https://www1.wdr.de/radio/player/streams/audiostream-live-100.assetjsonp"
+  "Template used to retrieve JSON data from Westdeutscher Rundfunk.")
+
+;; == WEB URLS ==========
+
+(defconst radio-f--bremen-www-url "https://<<id>>.de/")
+
+(defconst radio-f--dlf-www-url
   "https://www.deutschland[tag].de"
-  "Template used to return the Deutschland Funk station URL on the Deutschland Radio web site.")
+  "Template used to return the web URL for Deutschland Radio stations.")
 
-(defconst radio-f--dlf-kultur-url
-  "https://www.deutschland[tag].de"
-    "Template used to return the Deutschland Funk Kultur station URL on the Deutschland Radio web site.")
 
-(defconst radio-f--dlf-nova-url
-  "https://www.deutschland[tag].de"
-  "Template used to return the Deutschland Funk Nova station URL on the Deutschland Radio web site.")
+;; == ARTWORK URLS ==========
 
 (defconst radio-f--dlf-visual-url
-"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Deutschlandfunk_Logo_klein.png/500px-Deutschlandfunk_Logo_klein.png"
+;;  "assets/dlf/dlf.png"
+  "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Deutschlandfunk_Logo_klein.png/500px-Deutschlandfunk_Logo_klein.png"
   "Template used to retrieve the artwork image for the presentation views.")
 
 (defconst radio-f--dlf-kultur-visual-url
@@ -102,136 +167,49 @@
   "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Deutschlandfunk_Nova_Logo_klein.png/500px-Deutschlandfunk_Nova_Logo_klein.png"
   "Template used to retrieve the artwork image for the presentation views.")
 
-(defconst radio-f--br-api-url
-  "https://brradio.br.de/radio/v4?query=query+broadcastService($stationSlug:String!){audioBroadcastService(slug:$stationSlug){...on+AudioBroadcastService{id+dvbServiceId+name+slug+fallbackTeaserImage{url}trackingInfos{pageVars+mediaVars}...on+MangoBroadcastService{webcamUrls...jumpMarkers}epg(slots:[CURRENT]){broadcastEvent{trackingInfos{pageVars+mediaVars}...eventStartEnd+items{...audioElement...on+NewsElement{author}...on+MusicElement{performer+composer}}excludedTimeRanges{start+end}publicationOf{...eventMetadata+defaultTeaserImage{url}...on+MangoProgramme{canonicalUrl+title+kicker}}}}description+url}}}fragment+eventMetadata+on+MangoCreativeWorkInterface{id+kicker+title+description}fragment+jumpMarkers+on+MangoBroadcastService{lastNewsDate+lastTrafficDate+lastWeatherDate}fragment+audioElement+on+AudioElement{guid+title+class+start+duration}fragment+eventStartEnd+on+MangoBroadcastEvent{id+start+end}&variables[stationSlug]=<<id>>"
-  "Template used to retrieve JSON data from Bayerischen Rundfunks.")
+(defconst radio-f--bremen-eins-visual-url
+ "https://www.radiobremen-brandportal.de/sites/default/files/styles/half_width/public/2020-10/Gruppe%20746.png"
+  "Template used to retrieve the artwork image for the presentation views.")
 
-(defconst radio-f--br-url "https://br.de/radio/<<id>>")
+;; == STREAM URLS =======
 
-(defconst radio-f--br-level-one ;; AAC, 192kbps
-"https://br-radio.ard-mcdn.de/br/radio/<<br-level-1-stream-id>>/hls/master.m3u8"
-"Template used to return a level one audio stream for playback.")
+(defconst radio-f--bremen-level-one ;; AAC, 192kbps
+  "https://rb-radio.ard-mcdn.de/rb/radio/<<id>>/hls/master.m3u8"
+ "Template to return a level One radio stream for Radio Bremen.")
 
-(defconst radio-f--br-level-two ;; MP3, 128/256kbps
-"https://dispatcher.rndfnk.com/br/<<l2-stream-id>>/live/mp3/<<l2-bitrate>>/stream.mp3"
-  "Template used to return a level one audio stream for playback.")
+(defconst radio-f--bremen-level-two ;; MP3, 128kbps
+  "https://dispatcher.rndfnk.com/ard/rb/<<id>>/live/mp3/128/stream.mp3"
+"Template to return a level Two radio stream for Radio Bremen.")
 
-(defconst radio-f--dlf-level-one ;; AAC, 192kbps
-  "https://st<<id>>.sslstream.dlf.de/dlf/<<id>>/high/aac/stream.aac"
-  "Template used to return a level one audio stream for playback.")
-
-(defconst radio-f--dlf-level-two ;; AAC, 96kbps
-  "https://st<<id>>.sslstream.dlf.de/dlf/<<id>>/mid/aac/stream.aac"
-  "Template used to return a level two stream for playback.")
-
-(defconst radio-f--dlf-level-three ;; Opus, 64kbps
-  "https://st<<id>>.sslstream.dlf.de/dlf/<<id>>/high/opus/stream.opus"
-  "Template used to return a level three audio stream for playback.")
-
-(defconst radio-f--dlf-level-four ;; Opus, 24kbps
-  "https://st<<id>>.sslstream.dlf.de/dlf/<<id>>/low/opus/stream.opus"
+(defconst radio-f--wdr-level-one ;; AAC, 192kbps
+  "https://wdr-radio.ard-mcdn.de/wdr/radio/<<id>>/hls/master.m3u8"
   "Template used to return a level four audio stream for playback.")
 
-(defconst radio-f--br-streams
-  `((One     . ,radio-f--br-level-one)
-    (Two     . ,radio-f--br-level-two)
-    (default . ,radio-f--br-level-one))
-  "Audio stream templates provided by Bayerischer Rundfunks.")
+(defconst radio-f--wdr-level-two ;; Opus, 24kbps
+  "https://wdr-<<id>>-live.icecast.wdr.de/wdr/<<id>>/live/mp3/128/stream.mp3"
+  "Template used to return a level four audio stream for playback.")
 
-(defconst radio-f--dlf-streams
-  `((One     . ,radio-f--dlf-level-one)
-    (Two     . ,radio-f--dlf-level-two)
-    (Three   . ,radio-f--dlf-level-three)
-    (Four    . ,radio-f--dlf-level-four)
-    (default . ,radio-f--dlf-level-one))
-  "Audio stream templates provided by Deutschland Radio.")
+;; https://wdr-wdr3-live.icecastssl.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
+
+;; == STREAM LEVELS =====
+
+(defconst radio-f--bremen-streams
+  `((One     . ,radio-f--bremen-level-one)
+    (Two     . ,radio-f--bremen-level-two)
+    (default . ,radio-f--bremen-level-one))
+  "Audio stream templates provided by Radio Bremen.")
+
+(defconst radio-f--wdr-streams
+  `((One     . ,radio-f--wdr-level-one)
+    (Two     . ,radio-f--wdr-level-two)
+    (default . ,radio-f--wdr-level-one))
+  "Audio stream templates provided by Westdeutscher Rundfunk.")
 
 (defconst radio-f--ard-stream-providers
-  '((br  . radio-f--br-streams)
-    (dlf . radio-f--dlf-streams)))
+  '((bremen . radio-f--bremen-streams)
+    (wdr    . radio-f--wdr-streams)))
 
-(defconst radio-f--ard-stations
-  '((dlf
-     :name "Deutschlandfunk" :plugin ard :metadata dlf :id "01"
-     :stream dlf :tag "funk" :raw t
-     :api radio-f--dlf-api-url
-     :processor radio-f--dlf-processor
-     :www radio-f--dlf-url
-     :visual radio-f--dlf-visual-url)
-    (dlf-kultur
-     :name "Deutschlandfunk Kultur" :plugin ard :metadata dlf-kultur :id "02"
-     :stream dlf :tag "funkkultur" :raw t
-     :api radio-f--dlf-kultur-api-url
-     :processor radio-f--dlf-processor
-     :www radio-f--dlf-kultur-url
-     :visual radio-f--dlf-kultur-visual-url)
-    (dlf-nova
-     :name "Deutschlandfunk Nova" :plugin ard :metadata dlf-nova :id "03"
-     :stream dlf :tag "funknova" :api radio-f--dlf-nova-api-url
-     :processor radio-f--dlf-nova-processor
-     :www radio-f--dlf-nova-url
-     :visual radio-f--dlf-nova-visual-url)
-    (b1obb
-     :name "Bayern 1 Oberbayern"
-     :plugin ard :metadata br :stream br
-     :id "bayern1" :br-level-1-stream-id "b1obb"
-     :l2-stream-id "br1/obb" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (b1schw
-     :name "Bayern 1 Schwaben"
-     :plugin ard :metadata br :stream br
-     :id "bayern1" :br-level-1-stream-id "b1schw"
-     :l2-stream-id "br1/schwaben" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (b1franken
-     :name "Bayern 1 Franken"
-     :plugin ard :metadata br :stream br
-     :id "bayern1" :br-level-1-stream-id "b1franken"
-     :l2-stream-id "br1/franken" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (b1main
-     :name "Bayern 1 Mainfranken"
-     :plugin ard :metadata br :stream br
-     :id "bayern1" :br-level-1-stream-id "b1main"
-     :l2-stream-id "br1/mainfranken" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (b1nbopf
-     :name "Bayern 1 Niederbayern/Oberpfalz"
-     :plugin ard :metadata br :stream br
-     :id "bayern1" :br-level-1-stream-id "b1nbopf"
-     :l2-stream-id "br1/nbopf" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (bayern2
-     :name "Bayern 2"
-     :plugin ard :metadata br :stream br
-     :id "bayern2" :br-level-1-stream-id "b2"
-     :l2-stream-id "br2" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (bayern3
-     :name "Bayern 3"
-     :plugin ard :metadata br :stream br
-     :id "bayern3" :br-level-1-stream-id "b3"
-     :l2-stream-id "br3" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (br24
-     :name "BR 24" :plugin ard :metadata br :stream br
-     :id "br24" :br-level-1-stream-id "br24"
-     :l2-stream-id "br24" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (br-klassik
-     :name "Bayern Klassik" :plugin ard :metadata br :id "br-klassik" :stream br
-     :br-level-1-stream-id "brklassik" :l2-stream-id "brklassik" :l2-bitrate "256"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (br-schlager
-     :name "Bayern Schlager" :plugin ard :metadata br :id "br-schlager" :stream br
-     :br-level-1-stream-id "brschlager" :l2-stream-id "brschlager" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor)
-    (br-heimat
-     :name "Bayern Heimat" :plugin ard :metadata br :id "br-heimat" :stream br
-     :br-level-1-stream-id "brheimat" :l2-stream-id "brheimat" :l2-bitrate "128"
-     :api radio-f--br-api-url :processor radio-f--br-processor))
-  "Input data used by the URL templates to retrieve metadata, stream types, and web
-links for the presentation views.")
+;; == HELPER FUNCTIONS ==========================
 
 (defun radio-f--set-ard-api-url ()
   (let* ((station (radio-f--get-current-station-data))
@@ -256,26 +234,33 @@ links for the presentation views.")
      "&quot;" "\""
      (match-string 1 data))))
 
-(defun radio-f--dlf-processor (data station)
-  "Process Deutschlandfunk DATA for STATION."
-  (let* ((json-object-type 'alist)
-         (json-key-type 'string)
-         (json-string (radio-f--extract-dlf-json data))
-         (json (json-read-from-string json-string))
-         (key (cdr (assoc "key" json)))
-         (value (cdr (assoc "value" json)))
-         (payload (cdr (assoc "data" value)))
-         (now (cdr (assoc "currentBroadcast" payload)))
-         (visual-url ;; DLF and DLF Kultur do not provide artwork.
-          (symbol-value (plist-get station :visual)))
-         (artist (cdr (assoc "producer" now)))
-         (title (cdr (assoc "title" now)))
-         (start (cdr (assoc "startTime" now)))
-         (end (cdr (assoc "endTime" now)))
-         ;; Deutschland Radio has no UUID for track/program
-         ;; info, so we have to make our own.
-         ;;
-         ;; But don't worry, it's secure!
+
+;; == PROCESSORS ================================
+
+(defun radio-f--ard-processor (data station)
+  (let* ((events (cdr (assoc "events" data)))
+         (object (aref events 0))
+         (track-info (cdr (assoc "title" object)))
+         (image  (cdr (assoc "image" object)))
+         (artist (cdr (assoc "short" track-info)))
+         (title (cdr (assoc "subTitle" track-info)))
+         (start-string (cdr (assoc "startDate" object)))
+         (end-string (cdr (assoc "endDate" object)))
+         (start (time-convert
+                 (date-to-time start-string) 'integer))
+         (end (time-convert
+               (date-to-time end-string) 'integer))
+         (start
+          (time-convert
+           (date-to-time
+            (cdr (assoc "startDate" object)))
+           'integer))
+         (end
+          (time-convert
+           (date-to-time
+            (cdr (assoc "endDate" object)))
+           'integer))
+         (visual-url (cdr (assoc "contentUrl" image)))
          (item-id
           (secure-hash
            'sha3-224
@@ -287,77 +272,23 @@ links for the presentation views.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-(defun radio-f--dlf-nova-processor (data station)
-  "Process Deutschlandfunk Nova DATA for STATION."
-  (let* ((now (cdr (assoc "playlistItem" data)))
-         (artist (cdr (assoc "artist" now)))
-         (title (cdr (assoc "title" now)))
-         (start (cdr (assoc "startTime" now)))
-         (end (cdr (assoc "endTime" now)))
-         ;; DLF Nova only provides artwork for programs,
-         ;; and "cover" is empty otherwise. Do the DLF trick.
-         (visual-url
-          (if nil
-              (cdr (assoc "cover" now))
-            (symbol-value (plist-get station :visual))
-            (cdr (assoc "cover" now))))
-         ;; Like its sister stations, DLF Nova has no UUID
-         ;; for JSON objects. Use the same fix as the others.
-         (item-id
-          (secure-hash
-           'sha3-224
-           (format "%s|%s|%s|%s" artist title start end))))
-      ;; Fill in the returned values.  Postmaster takes it from there.
-      `((item-id    . ,item-id)
-        (artist     . ,artist)
-        (title      . ,title)
-        (start      . ,start)
-        (end        . ,end)
-        (visual-url . ,visual-url))))
-
-(defun radio-f--br-processor (data station)
+(defun radio-f--bremen-processor (data station)
   "Process Bayerischer Rundfunks DATA for STATION."
-  (let* ((current-time (float-time))
-         (data (cdr (assoc "data" data)))
-         (service (cdr (assoc "audioBroadcastService" data)))
-         (epg (cdr (assoc "epg" service)))
-         (good-stuff (aref epg 0))
-         (broadcast (cdr (assoc "broadcastEvent" good-stuff)))
-         (tracking (cdr (assoc "trackingInfos" broadcast)))
-         (now (cdr (assoc "pageVars" tracking)))
-         (item-id (cdr (assoc "generic_id" now)))
-         (artist (cdr (assoc "broadcast_service" now)))
-         (title (cdr (assoc "title" now)))
-         ;; (time
-         ;;  (seq-find
-         ;;   (lambda (broadcast)
-         ;;     (let ((start
-         ;;            (float-time
-         ;;             (date-to-time
-         ;;              (cdr (assoc "start" broadcast)))))
-         ;;           (end
-         ;;            (float-time
-         ;;             (date-to-time
-         ;;              (cdr (assoc "end" broadcast))))))
-         ;;       (and (<= start current-time)
-         ;;            (< current-time end))))
-         ;;   now))
-         (start (cdr (assoc "start" broadcast)))
-         (end (cdr (assoc "end" broadcast)))
+  (let* ((now (cdr (assoc "currentBroadcast" data)))
+         (item-id (cdr (assoc "id" now)))
+         (artist (cdr (assoc "title" now)))
+         (title (cdr (assoc "titleAddon" now)))
+         ;;         (start (cdr (assoc "start" broadcast)))
+         ;;         (end (cdr (assoc "end" broadcast)))
          ;; DLF Nova only provides artwork for programs,
          ;; and "cover" is empty otherwise. Do the DLF trick.
-         (publication (cdr (assoc "publicationOf" broadcast)))
-         (image (cdr (assoc "defaultTeaserImage" publication)))
-         (visual-url (cdr (assoc "url" image))))
-         ;; Like its sister stations, DLF Nova has no UUID
-         ;; for JSON objects. Use the same fix as the others.
-      ;; Fill in the returned values.  Postmaster takes it from there.
-      `((item-id    . ,item-id)
-        (artist     . ,artist)
-        (title      . ,title)
-        (start      . ,start)
-        (end        . ,end)
-        (visual-url . ,visual-url))))
+         (visual-url (symbol-value (plist-get station :visual))))
+    `((item-id    . ,item-id)
+      (artist     . ,artist)
+      (title      . ,title)
+      ;;        (start      . ,start)
+      ;;        (end        . ,end)
+      (visual-url . ,visual-url))))
 
 (provide 'radio-f-ard)
 
