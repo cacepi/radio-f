@@ -167,10 +167,6 @@ links for the presentation views.")
   "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Deutschlandfunk_Nova_Logo_klein.png/500px-Deutschlandfunk_Nova_Logo_klein.png"
   "Template used to retrieve the artwork image for the presentation views.")
 
-(defconst radio-f--bremen-eins-visual-url
- "https://www.radiobremen-brandportal.de/sites/default/files/styles/half_width/public/2020-10/Gruppe%20746.png"
-  "Template used to retrieve the artwork image for the presentation views.")
-
 ;; == STREAM URLS =======
 
 (defconst radio-f--bremen-level-one ;; AAC, 192kbps
@@ -189,7 +185,6 @@ links for the presentation views.")
   "https://wdr-<<id>>-live.icecast.wdr.de/wdr/<<id>>/live/mp3/128/stream.mp3"
   "Template used to return a level four audio stream for playback.")
 
-;; https://wdr-wdr3-live.icecastssl.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
 
 ;; == STREAM LEVELS =====
 
@@ -270,24 +265,6 @@ links for the presentation views.")
       (title      . ,title)
       (start      . ,start)
       (end        . ,end)
-      (visual-url . ,visual-url))))
-
-(defun radio-f--bremen-processor (data station)
-  "Process Bayerischer Rundfunks DATA for STATION."
-  (let* ((now (cdr (assoc "currentBroadcast" data)))
-         (item-id (cdr (assoc "id" now)))
-         (artist (cdr (assoc "title" now)))
-         (title (cdr (assoc "titleAddon" now)))
-         ;;         (start (cdr (assoc "start" broadcast)))
-         ;;         (end (cdr (assoc "end" broadcast)))
-         ;; DLF Nova only provides artwork for programs,
-         ;; and "cover" is empty otherwise. Do the DLF trick.
-         (visual-url (symbol-value (plist-get station :visual))))
-    `((item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
-      ;;        (start      . ,start)
-      ;;        (end        . ,end)
       (visual-url . ,visual-url))))
 
 (provide 'radio-f-ard)

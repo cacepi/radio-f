@@ -103,6 +103,7 @@
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
+
 ;; == API URLS ==========
 
 (defconst radio-f--ard-organizations
@@ -119,12 +120,6 @@ links for the presentation views.")
 (defconst radio-f--br-www-url "https://br.de/radio/<<id>>")
 
 
-;; == ARTWORK URLS ==========
-
-(defconst radio-f--bremen-eins-visual-url
- "https://www.radiobremen-brandportal.de/sites/default/files/styles/half_width/public/2020-10/Gruppe%20746.png"
-  "Template used to retrieve the artwork image for the presentation views.")
-
 ;; == STREAM URLS =======
 
 (defconst radio-f--br-level-one ;; AAC, 192kbps
@@ -135,6 +130,7 @@ links for the presentation views.")
   "https://dispatcher.rndfnk.com/br/<<l2-stream-id>>/live/mp3/<<l2-bitrate>>/stream.mp3"
 "Template used to return a level one audio stream for playback.")
 
+
 ;; == STREAM LEVELS =====
 
 (defconst radio-f--br-streams
@@ -142,6 +138,7 @@ links for the presentation views.")
     (Two     . ,radio-f--br-level-two)
     (default . ,radio-f--br-level-one))
   "Audio stream templates provided by Bayerischer Rundfunks.")
+
 
 ;; == PROCESSORS ================================
 

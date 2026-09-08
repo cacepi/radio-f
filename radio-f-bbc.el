@@ -354,34 +354,33 @@
 ;; All processing for the Postmaster goes here.
 
 (defun radio-f--bbc-processor (data station)
-  (let* ((broadcasts (cdr (assoc "data" data)))
-         (current-time (float-time))
-         (now
-          (seq-find
-           (lambda (broadcast)
-             (let ((start
-                    (float-time
-                     (date-to-time
-                      (cdr (assoc "start" broadcast)))))
-                   (end
-                    (float-time
-                     (date-to-time
-                      (cdr (assoc "end" broadcast))))))
-               (and (<= start current-time)
-                    (< current-time end))))
-           broadcasts))
+  (let* ((data (cdr (assoc "data" data)))
+         (now (aref data 0))
          (network (cdr (assoc "network" now)))
          (titles (cdr (assoc "titles" now)))
-         (image-url (cdr (assoc "image_url" now))))
-    `((item-id . ,(cdr (assoc "id" now)))
-      (artist . ,(cdr (assoc "short_title" network)))
-      (title . ,(cdr (assoc "primary" titles)))
-      (start . ,(float-time
-                  (date-to-time
-                   (cdr (assoc "start" now)))))
-      (end . ,(float-time
-                (date-to-time
-                 (cdr (assoc "end" now)))))
+         (image-url (cdr (assoc "image_url" now)))
+         (start-string (cdr (assoc "start" now)))
+         (end-string (cdr (assoc "end" now)))
+         (start (time-convert
+                 (date-to-time start-string) 'integer))
+         (end (time-convert
+               (date-to-time end-string) 'integer))
+         (start (time-convert
+                 (date-to-time
+                  (cdr (assoc "start" now)))
+                 'integer))
+         (end (time-convert
+               (date-to-time
+                (cdr (assoc "end" now)))
+               'integer))
+         (item-id (cdr (assoc "id" now)))
+         (artist (cdr (assoc "short_title" network)))
+         (title (cdr (assoc "primary" titles))))
+    `((item-id . ,item-id)
+      (artist . ,artist)
+      (title . ,title)
+      (start . ,start)
+      (end . ,end)
       (visual-url
        . ,(and image-url
                (replace-regexp-in-string

@@ -27,6 +27,11 @@
 ;;
 ;; Radio Bremen plugin for Radio F: six stations.
 ;;
+;; Radio F is using the Mediathek API for this carrier, which
+;; exposes more streams than currently advertised on the Radio
+;; Bremen web site.  Those streams are currently disabled until
+;; I can integrate them into a system Radio F can ingest.
+;;
 ;; Radio Bremen doesn't always supply artwork for it programming,
 ;; and none for individual tracks.  Radio F has to supply its own.
 
@@ -36,29 +41,72 @@
 
 ;; == STATION PLIST =====
 
-(defconst radio-f--rb-stations
+(defconst radio-f--bremen-stations
   '((bremen-eins
-     :name "Bremen Eins" :carrier breman :metadata bremen
+     :name "Bremen Eins" :carrier bremen :metadata bremen
      :id "bremeneins" :api-tag "startseite-bremen-eins-"
-     :publisher "6f3a681040e99d95" :livestream "43b952d7b301bc4b"
-     :float "0.1"
-     :api radio-f--ard-api-url :processor radio-f--ard-processor
-     :visual radio-f--bremen-eins-visual-url)
+     :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+     :visual-url nil :visual radio-f--bremen-eins-visual)
     (bremen-zwei
-     :name "Bremen Zwei" :carrier breman :metadata bremen
+     :name "Bremen Zwei" :carrier bremen :metadata bremen
      :id "bremenzwei" :api-tag "startseite-bremen-zwei-"
+     :publisher "2dca89fbe903ab06" :livestream "f26c840eca9f7990"
+     :float "0.1"
      :api radio-f--bremen-api-url :processor radio-f--bremen-processor
-     :visual radio-f--bremen-visual-url)
+     :visual-url nil :visual radio-f--bremen-zwei-visual)
+    ;; These channels have no metadata available, and just a single audio
+    ;; stream. Disabled for the moment.
+    ;; (bremen-zwei-herz
+    ;;  :name "Bremen Zwei Herzstücke" :carrier bremen :metadata bremen
+    ;;  :id "bremenzwei" :api-tag "startseite-bremen-zwei-"
+    ;;  :publisher "2dca89fbe903ab06" :livestream "5cd4b678f6c9b3ba"
+    ;;  :float "0.1"
+    ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+    ;;  :visual radio-f--bremen-visual-url)
+    ;; (bremen-zwei-sounds
+    ;;  :name "Bremen Zwei Sounds" :carrier bremen :metadata bremen
+    ;;  :id "bremenzwei" :api-tag "startseite-bremen-zwei-"
+    ;;  :publisher "2dca89fbe903ab06" :livestream "b4884322d2c878c0"
+    ;;  :float "0.1"
+    ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+    ;;  :visual radio-f--bremen-visual-url)
     (bremen-vier
-     :name "Bremen Vier" :carrier breman :metadata bremen
+     :name "Bremen Vier" :carrier bremen :metadata bremen
      :id "bremenvier" :api-tag "bremenvier-startseite"
+     :publisher "2dca89fbe903ab06" :livestream "a081291373972e5a"
+     :float "0.1"
      :api radio-f--bremen-api-url :processor radio-f--bremen-processor
-     :visual radio-f--bremen-visual-url)
+     :visual-url nil :visual radio-f--bremen-vier-visual)
+    ;; These channels have no metadata available, and just a single audio
+    ;; stream. Disabled for the moment.
+    ;; (bremen-vier-festival
+    ;;  :name "Bremen Vier Festival-Channel" :carrier bremen :metadata bremen
+    ;;  :id "bremenvier" :api-tag "bremenvier-startseite"
+    ;;  :publisher "2dca89fbe903ab06" :livestream "b77402449ddba998"
+    ;;  :float "0.1"
+    ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+    ;;  :visual radio-f--bremen-visual-url)
+    ;; (bremen-vier-dance
+    ;;  :name "Bremen Vier Tanzt!" :carrier bremen :metadata bremen
+    ;;  :id "bremenvier" :api-tag "bremenvier-startseite"
+    ;;  :publisher "2dca89fbe903ab06" :livestream "ef0edf0b4532afca"
+    ;;  :float "0.1"
+    ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+    ;;  :visual radio-f--bremen-visual-url)
+    ;; (bremen-zebra-vier
+    ;;  :name "Bremen Zebra Vier" :carrier bremen :metadata bremen
+    ;;  :id "bremenvier" :api-tag "bremenvier-startseite"
+    ;;  :publisher "2dca89fbe903ab06" :livestream "917956f8917024f9"
+    ;;  :float "0.1"
+    ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
+    ;;  :visual radio-f--bremen-visual-url)
     (bremen-next
-     :name "Bremen Next" :carrier breman :metadata bremen
+     :name "Bremen Next" :carrier bremen :metadata bremen
      :id "bremennext" :api-tag "bremennext-startseite"
+     :publisher "2dca89fbe903ab06" :livestream "31a01c8edf6870b0"
+     :float "0.1"
      :api radio-f--bremen-api-url :processor radio-f--bremen-processor
-     :visual radio-f--bremen-visual-url))
+     :visual-url nil :visual radio-f--bremen-next-visual))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -68,7 +116,7 @@ links for the presentation views.")
   "https://api.ardaudiothek.de/organizations"
   "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
 
-(defconst radio-f--ard-api-url
+(defconst radio-f--bmen-api-url
   "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=<<float>>"
   "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
 
@@ -76,16 +124,32 @@ links for the presentation views.")
   "https://www.<<id>>.de/<<api-tag>>100~ajax_ajaxType-epg.json"
   "Template used to retrieve JSON data from Radio Bremen.")
 
+(defconst radio-f--bremen-eins-visual-url
+  "https://www.radiobremen-brandportal.de/sites/default/files/styles/half_width/public/2020-10/Gru.png"
+  "Template used to retrieve the artwork image for the presentation views.")
+
 ;; == WEB URLS ==========
 
 (defconst radio-f--bremen-www-url "https://<<id>>.de/")
 
 
-;; == ARTWORK URLS ==========
+;; == FALLBACK ARTWORK ==========
 
-(defconst radio-f--bremen-eins-visual-url
- "https://www.radiobremen-brandportal.de/sites/default/files/styles/half_width/public/2020-10/Gruppe%20746.png"
-  "Template used to retrieve the artwork image for the presentation views.")
+(defconst radio-f--bremen-eins-visual
+  "assets/bremen/bremen-eins.png"
+  "Fallback artwork image for Bremen Eins.")
+
+(defconst radio-f--bremen-zwei-visual
+  "assets/bremen/bremen-zwei.png"
+  "Fallback artwork image for Bremen Zwei.")
+
+(defconst radio-f--bremen-vier-visual
+  "assets/bremen/bremen-vier.png"
+  "Fallback artwork image for Bremen Vier.")
+
+(defconst radio-f--bremen-next-visual
+  "assets/bremen/bremen-next.png"
+  "Fallback artwork image for Bremen Vier.")
 
 ;; == STREAM URLS =======
 
@@ -107,7 +171,7 @@ links for the presentation views.")
 
 ;; == PROCESSORS ================================
 
-(defun radio-f--ard-processor (data station)
+(defun radio-f--bmen-processor (data station)
   (let* ((events (cdr (assoc "events" data)))
          (object (aref events 0))
          (track-info (cdr (assoc "title" object)))
@@ -143,7 +207,7 @@ links for the presentation views.")
       (visual-url . ,visual-url))))
 
 (defun radio-f--bremen-processor (data station)
-  "Process Bayerischer Rundfunks DATA for STATION."
+  "Process Radio Bremen DATA for STATION."
   (let* ((now (cdr (assoc "currentBroadcast" data)))
          (item-id (cdr (assoc "id" now)))
          (artist (cdr (assoc "title" now)))
@@ -152,7 +216,7 @@ links for the presentation views.")
          ;;         (end (cdr (assoc "end" broadcast)))
          ;; DLF Nova only provides artwork for programs,
          ;; and "cover" is empty otherwise. Do the DLF trick.
-         (visual-url (symbol-value (plist-get station :visual))))
+         (visual-url (symbol-value (plist-get station :visual-url))))
     `((item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)

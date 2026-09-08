@@ -140,7 +140,7 @@ track info; nil disables track info."
           (const :tag "Don't Show Track Info" nil))
   :group 'radio-f-appearance)
 
-(defcustom radio-f-show-artwork nil
+(defcustom radio-f-show-artwork t
   "Display artwork in the presentation views.  A non-nil value displays
 the artwork; nil disables artwork."
   :type '(choice
@@ -274,7 +274,7 @@ in both frame and window view."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f--all-carriers
-  '(bbc radio-france rte sbfm ard)
+  '(bbc radio-france rte sbfm br bremen dlr ard)
   "All Carriers supported by Radio F.")
 
 (defvar radio-f--current-station nil
@@ -316,6 +316,8 @@ in both frame and window view."
               ('rte radio-f--rte-stations)
               ('sbfm radio-f--sbfm-stations)
               ('br radio-f--br-stations)
+              ('bremen radio-f--bremen-stations)
+              ('dlr radio-f--dlr-stations)
               ('ard radio-f--ard-stations)
               (_ nil)))
           radio-f-carriers)))
@@ -359,12 +361,12 @@ in both frame and window view."
        (require 'radio-f-bremen))
       ('dlr
        (require 'radio-f-dlr))
-            ('ard
+      ('ard
        (require 'radio-f-ard)))))
 
 (defun radio-f--load-all-carriers ()
   "Load all carrier modules supported by Radio F."
-  (dolist (carrier radio-f-carriers)
+  (dolist (carrier radio-f--all-carriers)
     (pcase carrier
       ('bbc
        (require 'radio-f-bbc))
@@ -412,9 +414,9 @@ in both frame and window view."
     ('br
      radio-f--br-url)
     ('bremen
-     radio-f--br-url)
+     radio-f--bremen-url)
     ('dlr
-     radio-f--br-url)
+     radio-f--dlr-url)
     ('ard
      (radio-f--set-ard-url))
     (_
@@ -480,7 +482,10 @@ does not have, the stream returned is the highest level stream."
      radio-f--br-api-url)
     ('bremen
      radio-f--bremen-api-url)
-    ('ard  radio-f--ard-api-url)
+    ('dlr
+     (radio-f--set-dlr-api-url))
+    ('ard
+     (radio-f--set-ard-api-url))
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -537,7 +542,6 @@ does not have, the stream returned is the highest level stream."
         (if (plist-get station :raw)
             raw-json-string
           (json-read-from-string raw-json-string)))
-         (metadata (plist-get station :metadata))
          (processor (plist-get station :processor))
          (track-info (funcall processor data station))
          (item-id (alist-get 'item-id track-info))
@@ -553,16 +557,16 @@ does not have, the stream returned is the highest level stream."
             radio-f--current-track-info
             (cons `(fetch-time . ,(floor (float-time)))
                   track-info))
-    (radio-f--record-track-log)
-    (pcase radio-f-view-style
-      ('window
-       (radio-f--create-window-view))
-      ('frame
-       (radio-f--create-frame-view))
-      (_
-       (message
-        "Radio F: unknown view style: %S. Check your view style settings."
-        radio-f-view-style))))))
+      (radio-f--record-track-log)
+      ;; Direct callback to the Gatekeeper.
+      (let* ((station (radio-f--get-current-station-data))
+             (visual (plist-get station :visual)))
+        (if (and visual-url
+                 (not (string-empty-p visual-url)))
+            (radio-f--fetch-artwork
+             visual-url
+             #'radio-f--view-gatekeeper)
+          (radio-f--view-gatekeeper nil nil))))))
 
 (defun radio-f--fetch-artwork (visual-url callback)
   "Retrieve the image returned by VISUAL-URL.
@@ -576,7 +580,9 @@ CALLBACK is called with two arguments: the image data and its MIME type."
      (let ((retrieval-buffer (current-buffer)))
        (unwind-protect
            (if-let* ((error-data (plist-get status :error)))
-               (message "Artwork retrieval error: %S" error-data)
+               (progn
+                 (message "Artwork retrieval error: %S" error-data)
+                 (funcall callback nil nil))
              (goto-char (point-min))
              (let ((image-type
                     (when (re-search-forward
@@ -596,6 +602,50 @@ CALLBACK is called with two arguments: the image data and its MIME type."
          (when (buffer-live-p retrieval-buffer)
            (kill-buffer retrieval-buffer)))))
    nil t t))
+
+(defun radio-f--load-local-artwork (visual)
+  (let* ((file (expand-file-name visual radio-f--directory))
+         (coding-system-for-read 'no-conversion))
+    (with-temp-buffer
+      (set-buffer-multibyte nil)
+      (insert-file-contents-literally file)
+      (let* ((image-data (buffer-string))
+             (image-type
+              (pcase (image-type-from-file-name file)
+                ('png  "image/png")
+                ('jpeg "image/jpeg")
+                ('webp "image/webp"))))
+        (cons image-data image-type)))))
+
+;;   "Inspect the object returned from `radio-f--fetch-artwork' for
+;; legitimate image data. If present, send the object to
+;; `radio-f--stylize-artwork.' If the object contains no legitimate
+;; image data, use locally provided artwork.
+
+;; IMAGE-DATA and IMAGE-TYPE are generated by either the callback from
+;; `radio-f--fetch-artwork', or the locally provided artwork itself."
+
+(defun radio-f--view-gatekeeper (image-data image-type)
+  (let* ((station (radio-f--get-current-station-data))
+         (visual (plist-get station :visual))
+         (artwork
+          (if (and image-data
+                   image-type
+                   (string-prefix-p "image/" image-type))
+              (cons image-data image-type)
+            (when visual
+              (radio-f--load-local-artwork
+               (symbol-value visual)))))
+         (image
+          (when artwork
+            (radio-f--stylize-artwork
+             (car artwork)
+             (cdr artwork)))))
+    (pcase radio-f-view-style
+      ('frame
+       (radio-f--create-frame-view image))
+      ('window
+       (radio-f--create-window-view image)))))
 
 (defun radio-f--stylize-artwork (image-data image-type)
   "Return a presentation image made from IMAGE-DATA.
@@ -695,7 +745,6 @@ The same name is used for all views."
   (format "*Radio F: Now Playing on %s*"
           (or radio-f--current-station
               "Radio F")))
-
 
 (defun radio-f--configure-child-window (frame buffer)
   "Configure the child FRAME's root window to display its BUFFER."
@@ -969,22 +1018,21 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
               #'radio-f--reposition-on-resize)
     frame))
 
-(defun radio-f--create-frame-view ()
-  "Initialize frame view's child framer."
+(defun radio-f--create-frame-view (image)
+  "Initialize frame view's child frame."
   (let ((buffer
-         (radio-f--refresh-frame-view-buffer)))
-    (if (frame-live-p radio-f--child-frame)
-        (progn
-          (radio-f--fit-child-frame
-           radio-f--child-frame buffer)
-          (radio-f--position-child-frame
-           radio-f--child-frame))
-      (radio-f--create-child-frame buffer))))
+         (get-buffer-create
+          (radio-f--generate-buffer-name))))
+    (unless (frame-live-p radio-f--child-frame)
+      (radio-f--create-child-frame buffer))
+    (radio-f--refresh-frame-view-buffer buffer image)
+    (radio-f--fit-child-frame
+     radio-f--child-frame buffer)
+    (radio-f--position-child-frame
+     radio-f--child-frame)))
 
-(defun radio-f--refresh-frame-view-buffer ()
+(defun radio-f--refresh-frame-view-buffer (buffer image)
   "Show the frame view buffer."
-  (let ((buffer
-         (get-buffer-create (radio-f--generate-buffer-name))))
     (let-alist radio-f--current-track-info
       (with-current-buffer buffer
         (let ((inhibit-read-only t))
@@ -997,36 +1045,33 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
                       desktop-save-buffer nil
                       mouse-autoselect-window nil
                       show-trailing-whitespace nil)
-          (insert "\n")
-          (when .visual-url
-            (let ((artwork-marker (copy-marker (point) nil)))
-              (radio-f--fetch-artwork
-               .visual-url
-               (lambda (image-data image-type)
-                 (when (and (buffer-live-p buffer)
-                            (marker-position artwork-marker))
-                   (let ((image
-                          (radio-f--stylize-artwork image-data image-type)))
-                     (when image
-                       (radio-f--insert-frame-artwork
-                        buffer artwork-marker image))))))))
+          (unless (eq radio-f-show-artwork nil)
+            (insert "\n")
+            (when image
+              (let* ((artwork-marker
+                      (copy-marker (point) nil))
+                     (after-artwork
+                      (radio-f--insert-frame-artwork
+                       buffer artwork-marker image)))
+                (when after-artwork
+                  (goto-char after-artwork))))
+            (insert "\n"))
           (when radio-f-show-track-info
-            (insert "\n\n")
+            (insert "\n")
             (radio-f--insert-track-info))
           (when radio-f-show-track-timeline
             (insert "\n\n")
             (radio-f--insert-track-timeline))
           (setq buffer-read-only t)
           (goto-char (point-min)))))
-    buffer))
-
+    buffer)
 
 ;; == Window view =======
 
-(defun radio-f--create-window-view ()
+(defun radio-f--create-window-view (image)
   "Create Radio F's window view."
   (let ((buffer
-         (radio-f--refresh-window-view-buffer)))
+         (radio-f--refresh-window-view-buffer image)))
     (display-buffer-in-side-window
      buffer
      `((side . bottom)
@@ -1037,7 +1082,7 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
     (unless (display-graphic-p)
       (radio-f-resize-window-view))))
 
-(defun radio-f--refresh-window-view-buffer ()
+(defun radio-f--refresh-window-view-buffer (image)
   "Show the window view buffer."
   (let ((buffer (get-buffer-create
                  (radio-f--generate-buffer-name))))
@@ -1048,18 +1093,14 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
           (radio-f-mode)
           (unless (eq radio-f-show-artwork nil)
             (insert "\n")
-            (when .visual-url
-              (let ((artwork-marker (copy-marker (point) nil)))
-                (radio-f--fetch-artwork
-                 .visual-url
-                 (lambda (image-data image-type)
-                   (when (and (buffer-live-p buffer)
-                              (marker-position artwork-marker))
-                     (let ((image
-                            (radio-f--stylize-artwork image-data image-type)))
-                       (when image
-                         (radio-f--insert-window-artwork
-                          buffer artwork-marker image))))))))
+            (when image
+              (let* ((artwork-marker
+                      (copy-marker (point) nil))
+                     (after-artwork
+                      (radio-f--insert-frame-artwork
+                       buffer artwork-marker image)))
+                (when after-artwork
+                  (goto-char after-artwork))))
             (insert "\n"))
           (when (display-graphic-p)
             (insert "\n"))
@@ -1090,47 +1131,50 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
 
 (defun radio-f--insert-window-artwork (buffer marker image)
   "Insert IMAGE into BUFFER at MARKER."
+  (let (after-artwork)
   (when (and (buffer-live-p buffer)
              (marker-position marker))
     (with-current-buffer buffer
       (let ((inhibit-read-only t))
-        (save-excursion
           (goto-char marker)
-          (insert-image image))))
-    (set-marker marker nil)))
+          (insert-image image)))
+    (set-marker marker nil))
+    after-artwork))
 
 (defun radio-f--insert-frame-artwork (buffer marker image)
   "Insert IMAGE into BUFFER at MARKER and refit the child frame."
-  (unwind-protect
-      (when (and (buffer-live-p buffer)
-                 (markerp marker)
-                 (marker-buffer marker)
-                 (marker-position marker)
-                 (frame-live-p radio-f--child-frame))
-        (let* ((frame radio-f--child-frame)
-               (window (frame-root-window frame))
-               scaled-image
-               available-width)
-          (set-window-margins window 1 1)
-          (redisplay t)
-          (setq available-width
-                (window-body-width window t))
-          (setq scaled-image (copy-tree image))
-          (setcdr scaled-image
-                  (plist-put (cdr scaled-image)
-                             :max-width
-                             available-width))
-          (with-current-buffer buffer
-            (let ((buffer-read-only nil)
-                  (inhibit-read-only t))
-              (save-excursion
+  (let (after-artwork)
+    (unwind-protect
+        (when (and (buffer-live-p buffer)
+                   (markerp marker)
+                   (marker-buffer marker)
+                   (marker-position marker)
+                   (frame-live-p radio-f--child-frame))
+          (let* ((frame radio-f--child-frame)
+                 (window (frame-root-window frame))
+                 scaled-image
+                 available-width)
+            (set-window-margins window 1 1)
+            (redisplay t)
+            (setq available-width
+                  (window-body-width window t))
+            (setq scaled-image (copy-tree image))
+            (setcdr scaled-image
+                    (plist-put (cdr scaled-image)
+                               :max-width
+                               available-width))
+            (with-current-buffer buffer
+              (let ((buffer-read-only nil)
+                    (inhibit-read-only t))
                 (goto-char marker)
-                (insert-image scaled-image))))
-          (redisplay t)
-          (radio-f--fit-child-frame frame buffer)
-          (radio-f--position-child-frame frame)))
-    (when (markerp marker)
-      (set-marker marker nil))))
+                (insert-image scaled-image)
+                (setq after-artwork (point))))
+            (redisplay t)
+            (radio-f--fit-child-frame frame buffer)
+            (radio-f--position-child-frame frame)))
+      (when (markerp marker)
+        (set-marker marker nil)))
+    after-artwork))
 
 (defun radio-f--insert-track-timeline ()
   "Insert the timeline for the current track or program."
