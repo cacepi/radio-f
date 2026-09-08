@@ -56,7 +56,7 @@ the Radio France banner."
   :group 'multimedia)
 
 (defcustom radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr ard)
+  '(radio-france bbc rte sbfm br bremen dlr)
   "List of carriers that provide stations to Radio F. When a carrier is
 enabled, all stations defined by that carrier are available for playback.
 
@@ -68,8 +68,7 @@ The default is all available carriers."
           (const :tag "Shonan Beach FM" sbfm)
           (const :tag "Bayerischer Rundfunks" br)
           (const :tag "Radio Bremen" bremen)
-          (const :tag "Deutschlandradio" dlr)
-          (const :tag "ARD" ard))
+          (const :tag "Deutschlandradio" dlr))
   :group 'radio-f)
 
 (defcustom radio-f-preferred-station "FIP"
@@ -274,7 +273,7 @@ in both frame and window view."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f--all-carriers
-  '(bbc radio-france rte sbfm br bremen dlr ard)
+  '(bbc radio-france rte sbfm br bremen dlr)
   "All Carriers supported by Radio F.")
 
 (defvar radio-f--current-station nil
@@ -318,7 +317,6 @@ in both frame and window view."
               ('br radio-f--br-stations)
               ('bremen radio-f--bremen-stations)
               ('dlr radio-f--dlr-stations)
-              ('ard radio-f--ard-stations)
               (_ nil)))
           radio-f-carriers)))
 
@@ -332,8 +330,7 @@ in both frame and window view."
           radio-f--sbfm-stations
           radio-f--br-stations
           radio-f--bremen-stations
-          radio-f--dlr-stations
-          radio-f--ard-stations))
+          radio-f--dlr-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station from the first carrier defined in `radio-f-carriers'."
@@ -360,9 +357,7 @@ in both frame and window view."
       ('bremen
        (require 'radio-f-bremen))
       ('dlr
-       (require 'radio-f-dlr))
-      ('ard
-       (require 'radio-f-ard)))))
+       (require 'radio-f-dlr)))))
 
 (defun radio-f--load-all-carriers ()
   "Load all carrier modules supported by Radio F."
@@ -381,9 +376,7 @@ in both frame and window view."
       ('bremen
        (require 'radio-f-bremen))
       ('dlr
-       (require 'radio-f-dlr))
-      ('ard
-       (require 'radio-f-ard)))))
+       (require 'radio-f-dlr)))))
 
 (defun radio-f--favorite-stations ()
   "Return the effective list of favorite stations."
@@ -417,8 +410,6 @@ in both frame and window view."
      radio-f--bremen-url)
     ('dlr
      radio-f--dlr-url)
-    ('ard
-     (radio-f--set-ard-url))
     (_
      nil)))
 
@@ -432,8 +423,7 @@ in both frame and window view."
             ('sbfm radio-f--sbfm-streams)
             ('br radio-f--br-streams)
             ('bremen radio-f--bremen-streams)
-            ('dlr radio-f--dlr-streams)
-            ('ard (radio-f--set-ard-streams))))
+            ('dlr radio-f--dlr-streams)))
          (level
           (or radio-f--session-stream-level
               radio-f-stream-level)))
@@ -484,8 +474,6 @@ does not have, the stream returned is the highest level stream."
      radio-f--bremen-api-url)
     ('dlr
      (radio-f--set-dlr-api-url))
-    ('ard
-     (radio-f--set-ard-api-url))
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -1492,8 +1480,7 @@ user has requested it.")
             ('sbfm radio-f--sbfm-streams)
             ('br radio-f--br-streams)
             ('bremen radio-f--bremen-streams)
-            ('dlr radio-f--dlr-streams)
-            ('ard (radio-f--set-ard-streams))))
+            ('dlr radio-f--dlr-streams)))
          (levels
           (seq-filter
            (lambda (level)

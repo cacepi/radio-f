@@ -47,23 +47,23 @@
   '((dlf
      :name "Deutschlandfunk" :carrier dlr :metadata dlf :id "01"
      :tag "funk" :raw t
-     :api radio-f--dlr-api-url
-     :processor radio-f--dlr-processor
-     :www radio-f--dlr-url
-     :visual radio-f--dlr-visual-url)
+     :api radio-f--dlf-api-url
+     :processor radio-f--dlf-processor
+     :www radio-f--dlf-url
+     :visual-url nil :visual radio-f--dlf-visual)
     (dlf-kultur
      :name "Deutschlandfunk Kultur" :carrier dlr :metadata dlf-kultur :id "02"
      :tag "funkkultur" :raw t
-     :api radio-f--dlr-kultur-api-url
-     :processor radio-f--dlr-processor
-     :www radio-f--dlr-url
-     :visual radio-f--dlr-kultur-visual-url)
+     :api radio-f--dlf-kultur-api-url
+     :processor radio-f--dlf-processor
+     :www radio-f--dlf-url
+     :visual-url nil :visual radio-f--dlf-kultur-visual)
     (dlf-nova
      :name "Deutschlandfunk Nova" :carrier dlr :metadata dlf-nova :id "03"
-     :tag "funknova" :api radio-f--dlr-nova-api-url
-     :processor radio-f--dlr-nova-processor
-     :www radio-f--dlr-url
-     :visual radio-f--dlr-nova-visual-url))
+     :tag "funknova" :api radio-f--dlf-nova-api-url
+     :processor radio-f--dlf-nova-processor
+     :www radio-f--dlf-url
+     :visual-url nil :visual radio-f--dlf-nova-visual))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -78,40 +78,39 @@ links for the presentation views.")
   "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=<<float>>"
   "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
 
-(defconst radio-f--dlr-api-url
+(defconst radio-f--dlf-api-url
   "https://www.deutschlandfunk.de/api/partials/CurrentBroadcast?dlrsearch:_ajax=1"
     "URL to AJAX data from Deutschlandfunk.")
 
-(defconst radio-f--dlr-kultur-api-url
+(defconst radio-f--dlf-kultur-api-url
   "https://www.deutschlandfunkkultur.de/api/partials/CurrentBroadcast?dlrsearch:_ajax=1"
   "URL to AJAX data from Deutschlandfunk Kultur.")
 
-(defconst radio-f--dlr-nova-api-url
+(defconst radio-f--dlf-nova-api-url
   "https://static.deutschlandfunknova.de/actions/dradio/playlist/onair"
   "Template used to retrieve JSON data from Deutschlandfunk Nova.")
 
 
 ;; == WEB URLS ==========
 
-(defconst radio-f--dlr-www-url
+(defconst radio-f--dlf-www-url
   "https://www.deutschland[tag].de"
   "Template used to return the web URL for Deutschland Radio stations.")
 
 
 ;; == ARTWORK URLS ==========
 
-(defconst radio-f--dlr-visual-url
-;;  "assets/dlr/dlr.png"
-  "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Deutschlandfunk_Logo_klein.png/500px-Deutschlandfunk_Logo_klein.png"
-  "Template used to retrieve the artwork image for the presentation views.")
+(defconst radio-f--dlf-visual
+  "assets/dlr/dlf.png"
+  "Artwork image for Deutschlandfunk.")
 
-(defconst radio-f--dlr-kultur-visual-url
-  "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Deutschlandfunk_Kultur_Logo_klein.png/500px-Deutschlandfunk_Kultur_Logo_klein.png"
-  "Template used to retrieve the artwork image for the presentation views.")
+(defconst radio-f--dlf-kultur-visual
+  "assets/dlr/dlf-kultur.png"
+  "Artwork image for Deutschlandfunk Kultur.")
 
-(defconst radio-f--dlr-nova-visual-url
-  "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Deutschlandfunk_Nova_Logo_klein.png/500px-Deutschlandfunk_Nova_Logo_klein.png"
-  "Template used to retrieve the artwork image for the presentation views.")
+(defconst radio-f--dlf-nova-visual
+  "assets/dlr/dlf-nova.png"
+  "Artwork image for Deutschlandfunk Kultur.")
 
 
 ;; == STREAM URLS =======
@@ -199,7 +198,7 @@ links for the presentation views.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-(defun radio-f--dlr-processor (data station)
+(defun radio-f--dlf-processor (data station)
   "Process Deutschlandfunk DATA for STATION."
   (let* ((json-object-type 'alist)
          (json-key-type 'string)
@@ -227,8 +226,7 @@ links for the presentation views.")
          ;;   (date-to-time
          ;;    (cdr (assoc "endTime" object)))
          ;;   'integer))
-         (visual-url ;; DLR and DLR Kultur do not provide artwork.
-          (symbol-value (plist-get station :visual)))
+         (visual-url (symbol-value (plist-get station :visual-url)))
          (start (cdr (assoc "startTime" now)))
          (end (cdr (assoc "endTime" now)))
          ;; Deutschland Radio has no UUID for track/program
@@ -246,30 +244,37 @@ links for the presentation views.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-(defun radio-f--dlr-nova-processor (data station)
+(defun radio-f--dlf-nova-processor (data station)
   "Process Deutschlandfunk Nova DATA for STATION."
   (let* ((now (cdr (assoc "playlistItem" data)))
          (presenter (cdr (assoc "presenter" data)))
          (artist (cdr (assoc "artist" now)))
          (title (cdr (assoc "title" now)))
-         (start (cdr (assoc "startTime" now)))
-         (end (cdr (assoc "endTime" now)))
+         (start (cdr (assoc "starttime" now)))
+         (end (cdr (assoc "stoptime" now)))
          (cover (cdr (assoc "cover" now)))
          (dab320 (cdr (assoc "dab320" presenter)))
          (avatar  (cdr (assoc "avatar" presenter)))
          ;; DLR Nova loves to make it difficult to find
          ;; artwork.
-         (visual-url
-          (cond
-           ((and cover
-                 (not (string-empty-p cover)))
-            cover)
-           ((and dab320
-                 (not (string-empty-p dab320)))
-            dab320)
-           ((and avatar
-                 (not (string-empty-p avatar)))
-            avatar)))
+         (visual-url (symbol-value (plist-get station :visual-url)))
+         ;; (visual-url
+         ;;  (cond
+         ;;   ((and cover
+         ;;         (not (string-empty-p cover)))
+         ;;    cover)
+         ;;   ((and dab320
+         ;;         (not (string-empty-p dab320)))
+         ;;    dab320)
+         ;;   ((and avatar
+         ;;         (not (string-empty-p avatar)))
+         ;;    avatar)
+         ;;   ;; The Postmaster still needs a visual-url, even if we know
+         ;;   ;; that there isn't one. The Gatekeeper will know if there
+         ;;   ;; is no image data, and call the local artwork accordingly.
+         ;;   (_
+         ;;    (symbol-value
+         ;;     (plist-get station :visual-url)))))
          ;; Like its sister stations, DLR Nova has no UUID
          ;; for JSON objects. Use the same fix as the others.
          (item-id

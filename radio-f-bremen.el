@@ -124,10 +124,6 @@ links for the presentation views.")
   "https://www.<<id>>.de/<<api-tag>>100~ajax_ajaxType-epg.json"
   "Template used to retrieve JSON data from Radio Bremen.")
 
-(defconst radio-f--bremen-eins-visual-url
-  "https://www.radiobremen-brandportal.de/sites/default/files/styles/half_width/public/2020-10/Gru.png"
-  "Template used to retrieve the artwork image for the presentation views.")
-
 ;; == WEB URLS ==========
 
 (defconst radio-f--bremen-www-url "https://<<id>>.de/")
