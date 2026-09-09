@@ -29,8 +29,7 @@
 ;; text-to-speech news reader.  As a small station, it has a
 ;; "seat of the pants" feel to it that I just love.  I imagine
 ;; pirate radio from a ship in the North Sea during the '60s
-;; sounded like this.  Single mp3 stream.
-
+;; sounding like this.  Single mp3 stream.
 
 
 ;;; Code:
@@ -52,25 +51,24 @@
 
 (defconst radio-f--sbfm-stations
   '((sbfm
-     :name "Shonan Beach FM" :carrier sbfm :metadata sbfm
+     :name "Shonan Beach FM 78.9" :carrier sbfm :metadata sbfm
      :processor radio-f--sbfm-processor))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
-
-
 (defun radio-f--sbfm-processor (data station)
   (let* ((now data))
-    `((item-id    . ,(cdr (assoc "datetime" now)))
-      (artist     . ,(cdr (assoc "aartist" now)))
+    `((artist     . ,(cdr (assoc "aartist" now)))
       (title      . ,(cdr (assoc "title" now)))
-      (start      . ,(float-time
-                      (date-to-time (cdr (assoc "datetime" now)))))
-      (end        . ,(float-time
-                      (date-to-time (cdr (assoc "datetime" now)))))
+      (start      . ,(floor (float-time
+                      (date-to-time (cdr (assoc "datetime" now))))))
+      (end        . ,(floor (float-time
+                             (date-to-time (cdr (assoc "datetime" now))))))
+      (item-id
+       (secure-hash
+        'sha3-224
+        (format "%s|%s|%s|%s" artist title start end)))
       (visual-url . ,(cdr (assoc "imagepath" now))))))
-
-
 
 (provide 'radio-f-sbfm)
 
