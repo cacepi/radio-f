@@ -14,24 +14,25 @@
 
 ;;; Code:
 
-(defconst radio-f--rte-level-one "https://www.rte.ie/manifests/[id].m3u8"
-     "Template used to return a level one stream for playback.")
+(defconst radio-f--rte-level-one
+  "https://www.rte.ie/manifests/<<id>>.m3u8"
+  "Template used to return a level one stream for playback.")
 
-(defconst radio-f--rte-level-two "https://icecast1.rte.ie/[id]"
-    "Template used to return a level two stream for playback.")
+(defconst radio-f--rte-level-two
+  "https://icecast1.rte.ie/<<id>>"
+  "Template used to return a level two stream for playback.")
 
 (defconst radio-f--rte-api-url
-  "https://www.rte.ie/feeds/livelistings/playlist/?source=rte.ie&platform=iphone&channelid=[channel]"
+  "https://www.rte.ie/feeds/livelistings/playlist/?source=rte.ie&platform=iphone&channelid=<<channel>>"
   "Template used to retrieve live listings JSON from RTÉ.")
 
-(defconst radio-f--rte-url "https://www.rte.ie/radio/[www]/"
+(defconst radio-f--rte-url
+  "https://www.rte.ie/radio/<<www>>/"
   "Template used to return a station's URL on the RTÉ web site.")
 
-;; (defconst radio-f-rte-api-url "https://onair.radioapi.io/rte/[tag]/onair.json"
-;;   "Template used to retrieve JSON data from RTÉ.")
-
-;; (defconst ratio-f--rte-schedule-url "https://www.rte.ie/radio/[id]/schedule/[yyyymmdd]/"
-;;   "Template used to retrieve daily schedule JSON data from RTÉ.")
+(defconst ratio-f--rte-schedule-url
+  "https://www.rte.ie/radio/<<id>>/schedule/<<yyyymmdd>>/"
+  "Template used to retrieve daily schedule JSON data from RTÉ.")
 
 (defconst radio-f--rte-streams
   `((One     . ,radio-f--rte-level-one)
@@ -68,19 +69,18 @@
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
-
-
 (defun radio-f--rte-processor (data station)
   (let* ((now (aref data 0)))
-    `((item-id    . ,(cdr (assoc "listingId" now)))
-      (artist     . ,(cdr (assoc "channel" now)))
+    `((artist     . ,(cdr (assoc "channel" now)))
       (title      . ,(cdr (assoc "progName" now)))
-      (start      . ,(float-time
-                      (date-to-time (cdr (assoc "progDate" now)))))
+      (start      . ,(floor (float-time
+                      (date-to-time (cdr (assoc "progDate" now))))))
       (end        . ,(cdr (assoc "endDate_ts" now)))
+      (item-id
+       (secure-hash
+        'sha3-224
+        (format "%s|%s|%s|%s" artist title start end)))
       (visual-url . ,(cdr (assoc "thumbnail" now))))))
-
-
 
 (provide 'radio-f-rte)
 
