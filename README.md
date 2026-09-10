@@ -48,21 +48,35 @@ If the Emacs instance also supports native compilation, native object code will 
 <a id="radio-f"></a> **`radio-f`**:
 Starts playback of the station you've set in `radio-f-default-station`. A "Now Playing" buffer showing the currently playing song or program will open in a new window or child frame, depending on the value of [`radio-f-view-style`](#view-styles).
 
-This function can be run non-interactively with optional argument for a specific station. For example, `(radio-f "FIP Reggae")` will start Radio F tuned to FIP's Reggae station instead of your default.
+This function can be run non-interactively with an optional argument for a specific station. For example, `(radio-f "FIP Reggae")` will start Radio F tuned to FIP's Reggae station instead of your default.
 
 Consult the [station list](#stations) for available stations.
 
+This function is bound to `C-c f r` by default.
+
 <a id="change-station"></a> **`radio-f-change-station`**: Select a different station in your favorites list to play.  Refer to [the favorites setting](#radio-f-favorite-stations) to see how to make your own favorites list.
+
+This function is bound to `C-c f c` by default.
 
 <a id="change-to-any-station"></a> **`radio-f-change-to-any-station`**: A variant of the above, except it bypasses your favorites and shows all stations supported by Radio F  Like `radio-f`, this function also accepts a station argument.
 
+This function is bound to `C-c f a` by default.
+
 <a id="play-preferred-station"></a> **`radio-f-play-preferred-station`**: Return to the [preferred station](#radio-f-preferred-station).
+
+This function is bound to `C-c f a` and `F7` by default.
 
 **`radio-f-surprise-me`**: Play a random station chosen from all carriers.
 
+This function is bound to `C-c f ?` by default.
+
 <a id="dark-mode"></a>**`radio-f-dark-mode`**: Start Radio F with no view.  See the [View Styles](#view-styles) section for more details.
 
+This function is bound to `C-c f m` by default.
+
 **`radio-f-down`**: Exit Radio F.
+
+This function is bound to `C-c f o` by default.
 
 ## Helper Functions
 <a id="resize-window-view"></a>**`radio-f-resize-window-view`**: Sometimes window view can get fail to properly size itself after changing the station.  This function resizes the view to the smallest it needs to be to display all the information that's inside the buffer.
@@ -96,21 +110,22 @@ A word of caution: the view toggle works by running `make-frame-visible` and `ma
 
 ## Custom Variables
 
-<a id="radio-f-plugins"></a>**`radio-f-plugins`**: A list of the station carriers Radio F supports. At the moment, Radio F has support for the following carriers:
+<a id="radio-f-carriers"></a>**`radio-f-carriers`**: A list of the station carriers Radio F supports. At the moment, Radio F has support for the following carriers:
 
-`radio-france`: Radio France (French National Radio)
+`radio-france`: Radio France (French national radio)
 `rte`: RTÈ (Irish National Radio)
-`bbc`:  The British Broadcasting Corporation (UK National Radio)\*
+`bbc`:  The British Broadcasting Corporation (UK national radio)\*
 `sbfm`: Shonan Beach FM
-`ard`: German National Radio
+`dlr`: Deutschlandradio (German public radio carrier)
+`bremen`: Radio Bremen (German regional public radio carrier)
 
-The default is all plugins.
+The default is all carriers.
 
 <a id="radio-f-preferred-station"></a> **`radio-f-preferred-station`**: The preferred station to play when Radio F starts.  Refer to the [station list](#stations) for all the stations supported under Radio F.
 
 The default is `"FIP"`.
 
-\* The following stations are available in the UK only:
+\* _The following stations are available in the UK only:_
 
 <pre>
 "BBC Radio Five Live Sports Extra"
@@ -162,27 +177,30 @@ The following stations are copies of BBC World Service, and so are not provided.
 * `vlc` - [VLC Media Player](https://www.videolan.org/vlc/)
 * `mpv` - [mpv](https://mpv.io)\*
 
-`vlc` and `mpv` must be in a directory contained in the Emacs `exec-path`.  If you've installed them with a package manager like Homebrew or your distro's package installer, you should have no problems.  If you're installed them into a non-standard directory location, you'll need to add it to the Emacs `exec-path`:
+`vlc` and `mpv` must be in a directory contained in the Emacs `exec-path`.  If you've installed them through your operating system's package manager, you should have no problems.  If you've installed them into a non-standard directory location, you'll need to add it to the Emacs `exec-path`:
 
 ```elisp
   (add-to-list 'exec-path
                (expand-file-name "/directory/to/mpv/or/vlc") t nil)
 ```
 
-\* Graphical shells for mpv that utilize `libmpv` for playback (IINA, mpvnet, Baka Mplayer, Celluloid, etc.) are not supported.
+\* _Graphical shells for mpv that utilize `libmpv` for playback (IINA, mpvnet, Baka Mplayer, Celluloid, etc.) are not supported._
 
 The default is `vlc`.
 
 
-<a id="radio-f-stream-type"></a>**`radio-f-stream-type`**: Choice of audio stream.
+<a id="radio-f-stream-level"></a>**`radio-f-stream-level`**: Choice of audio stream of varying quality/bitrate.
 
-* `'hls` plays a variable bitrate HLS stream.
-* `'mid` plays a "mid-fi" stream.
-*  `'low` plays a "lofi" stream at varying bit rates, depending on the playing station.
+* `'One` Plays the highest quality/bitrate available.
+* `'Two` Plays a lower quality/bitrate than level one.
+*  `'Three` Even lower quality/bitrate.
+* `'Four` Lowest quality/bitrate available.
 
-The default is `'hls`.
+Note: this does not mean that there are four stream levels available for each station in Radio F, only that the most offered for playback can be up to four.
 
-<a id="radio-f-view-style"></a>**`radio-f-view-style`**: Set the preferred view Style. Can be either `'frame` or `'window`. Refer to the [View Styles section](#view-styles) for more details.
+The default is `'One`.
+
+<a id="radio-f-view-style"></a>**`radio-f-view-style`**: Set the preferred view style. Can be either `'frame` or `'window`. Refer to the [View Styles section](#view-styles) for more details.
 
 The default is `'frame`.
 
@@ -204,9 +222,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3")
 ```
 
-will only show those 21 stations when you run [`radio-f-change-station`](#change-station) instead of all 171.
-
-Remember, you can always see every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 21 stations when you run [`radio-f-change-station`](#change-station) instead of all 171.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -230,13 +246,13 @@ The default is `2`.
 
 <a id="radio-f-artwork-radius"></a>**`radio-f-artwork-radius`**: Radius in pixels of the artwork's rounded corners in both frame and window view.  Set this to `0` if you don't want to round off the corners.
 
-The default is `16`.
+The default is `12`.
 
 <a id="radio-f-default-volume"></a>**`radio-f-default-volume`**: Set the initial volume level for station playback.  The same level is used for both mpv and VLC.
 
 This setting is not available in EMMS.
 
-The default is `70`.
+The default is `80`.
 
 ## Faces:
 
@@ -308,7 +324,7 @@ Most stations include a tracklist on their website, which you can visit with `ra
 
 ## Not Future Plans:
 
-- Support for NHK stations.  Unfortunately, NHK blocks station access to anyone outside of Japan.
+- Support for NHK stations.  Unfortunately, NHK blocks all station access to anyone outside of Japan.
 
 - More audio backends.  Playback has three player choices, one of which itself supports several, several, _several_ various playback engines.  Those three should cover 99%+ of people who would be interested in this project.
 

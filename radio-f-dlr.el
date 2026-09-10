@@ -63,7 +63,8 @@
      :tag "funknova" :api radio-f--dlf-nova-api-url
      :processor radio-f--dlf-nova-processor
      :www radio-f--dlf-url
-     :visual-url nil :visual radio-f--dlf-nova-visual))
+     :visual-url nil
+     :visual radio-f--dlf-nova-visual))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -255,26 +256,34 @@ links for the presentation views.")
          (cover (cdr (assoc "cover" now)))
          (dab320 (cdr (assoc "dab320" presenter)))
          (avatar  (cdr (assoc "avatar" presenter)))
-         ;; DLR Nova loves to make it difficult to find
-         ;; artwork.
-         (visual-url (symbol-value (plist-get station :visual-url)))
-         ;; (visual-url
-         ;;  (cond
-         ;;   ((and cover
-         ;;         (not (string-empty-p cover)))
-         ;;    cover)
-         ;;   ((and dab320
-         ;;         (not (string-empty-p dab320)))
-         ;;    dab320)
-         ;;   ((and avatar
-         ;;         (not (string-empty-p avatar)))
-         ;;    avatar)
-         ;;   ;; The Postmaster still needs a visual-url, even if we know
-         ;;   ;; that there isn't one. The Gatekeeper will know if there
-         ;;   ;; is no image data, and call the local artwork accordingly.
-         ;;   (_
-         ;;    (symbol-value
-         ;;     (plist-get station :visual-url)))))
+         ;;(visual-url (symbol-value (plist-get station :visual-url)))
+         ;; DLR Nova loves to make it difficult to find artwork, so search
+         ;; every key where artwork has been found before.
+         (visual-url
+          (cond
+           ((and cover
+                 (not (string-empty-p cover)))
+            cover)
+           ((and dab320
+                 (not (string-empty-p dab320)))
+            dab320)
+           ((and avatar
+                 (not (string-empty-p avatar)))
+            avatar)
+           ;; We give up.  No artwork anywhere.
+           ;;
+           ;; Reparieren Sie Ihr kaputtes Kunstwerk,
+           ;; Deutschlandfunk Nova!
+           ;;
+           ;; The Postmaster still needs a visual-url, even if we know
+           ;; that there's no artwork at the other end.  Let it 404, and
+           ;; and the Gatekeeper will call the local artwork accordingly.
+           ;;
+           ;; Until the next time Deutschlandfunk Nova finds a fun, new
+           ;; way to break artwork.
+         (_
+          (symbol-value
+           (plist-get station :visual-url)))))
          ;; Like its sister stations, DLR Nova has no UUID
          ;; for JSON objects. Use the same fix as the others.
          (item-id
