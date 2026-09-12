@@ -38,6 +38,7 @@
 
 ;;; Code:
 
+;; https://www.bremeneins.de/startseite-bremen-eins-100~ajax_ajaxType-epg.json
 
 ;; == STATION PLIST =====
 
@@ -45,6 +46,7 @@
   '((bremen-eins
      :name "Bremen Eins" :carrier bremen :metadata bremen
      :id "bremeneins" :api-tag "startseite-bremen-eins-"
+     :publisher "6f3a681040e99d95" :livestream "f26c840eca9f7990"
      :api radio-f--bremen-api-url :processor radio-f--bremen-processor
      :visual-url nil :visual radio-f--bremen-eins-visual)
     (bremen-zwei
@@ -73,8 +75,7 @@
     (bremen-vier
      :name "Bremen Vier" :carrier bremen :metadata bremen
      :id "bremenvier" :api-tag "bremenvier-startseite"
-     :publisher "2dca89fbe903ab06" :livestream "a081291373972e5a"
-     :float "0.1"
+     :publisher "52598ef10fe29b22" :livestream "a081291373972e5a"
      :api radio-f--bremen-api-url :processor radio-f--bremen-processor
      :visual-url nil :visual radio-f--bremen-vier-visual)
     ;; These channels have no metadata available, and just a single audio
@@ -82,29 +83,27 @@
     ;; (bremen-vier-festival
     ;;  :name "Bremen Vier Festival-Channel" :carrier bremen :metadata bremen
     ;;  :id "bremenvier" :api-tag "bremenvier-startseite"
-    ;;  :publisher "2dca89fbe903ab06" :livestream "b77402449ddba998"
+    ;;  :publisher "52598ef10fe29b22" :livestream "b77402449ddba998"
     ;;  :float "0.1"
     ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
     ;;  :visual radio-f--bremen-visual-url)
     ;; (bremen-vier-dance
     ;;  :name "Bremen Vier Tanzt!" :carrier bremen :metadata bremen
     ;;  :id "bremenvier" :api-tag "bremenvier-startseite"
-    ;;  :publisher "2dca89fbe903ab06" :livestream "ef0edf0b4532afca"
-    ;;  :float "0.1"
+    ;;  :publisher "52598ef10fe29b22" :livestream "ef0edf0b4532afca"
     ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
     ;;  :visual radio-f--bremen-visual-url)
     ;; (bremen-zebra-vier
     ;;  :name "Bremen Zebra Vier" :carrier bremen :metadata bremen
     ;;  :id "bremenvier" :api-tag "bremenvier-startseite"
-    ;;  :publisher "2dca89fbe903ab06" :livestream "917956f8917024f9"
+    ;;  :publisher "52598ef10fe29b22" :livestream "917956f8917024f9"
     ;;  :float "0.1"
     ;;  :api radio-f--bremen-api-url :processor radio-f--bremen-processor
     ;;  :visual radio-f--bremen-visual-url)
     (bremen-next
      :name "Bremen Next" :carrier bremen :metadata bremen
      :id "bremennext" :api-tag "bremennext-startseite"
-     :publisher "2dca89fbe903ab06" :livestream "31a01c8edf6870b0"
-     :float "0.1"
+     :publisher "fa5a5a1d13706f96" :livestream "31a01c8edf6870b0"
      :api radio-f--bremen-api-url :processor radio-f--bremen-processor
      :visual-url nil :visual radio-f--bremen-next-visual))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
@@ -116,8 +115,12 @@ links for the presentation views.")
   "https://api.ardaudiothek.de/organizations"
   "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
 
-(defconst radio-f--bmen-api-url
-  "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=<<float>>"
+(defconst radio-f--ard-livestream-api-url
+  "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=0.2"
+  "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
+
+(defconst radio-f--ard-api-publisher-url
+  "https://programm-api.ard.de/radio/api/publisher?publisher=urn:ard:publisher:<<publisher>>"
   "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
 
 (defconst radio-f--bremen-api-url
@@ -128,6 +131,7 @@ links for the presentation views.")
 
 (defconst radio-f--bremen-www-url "https://<<id>>.de/")
 
+;; https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:43b952d7b301bc4b
 
 ;; == FALLBACK ARTWORK ==========
 
@@ -167,47 +171,12 @@ links for the presentation views.")
 
 ;; == PROCESSORS ================================
 
-(defun radio-f--bmen-processor (data station)
-  (let* ((events (cdr (assoc "events" data)))
-         (object (aref events 0))
-         (track-info (cdr (assoc "title" object)))
-         (image  (cdr (assoc "image" object)))
-         (artist (cdr (assoc "short" track-info)))
-         (title (cdr (assoc "subTitle" track-info)))
-         (start-string (cdr (assoc "startDate" object)))
-         (end-string (cdr (assoc "endDate" object)))
-         (start (time-convert
-                 (date-to-time start-string) 'integer))
-         (end (time-convert
-               (date-to-time end-string) 'integer))
-         (start
-          (time-convert
-           (date-to-time
-            (cdr (assoc "startDate" object)))
-           'integer))
-         (end
-          (time-convert
-           (date-to-time
-            (cdr (assoc "endDate" object)))
-           'integer))
-         (visual-url (cdr (assoc "contentUrl" image)))
-         (item-id
-          (secure-hash
-           'sha3-224
-           (format "%s|%s|%s|%s" artist title start end))))
-    `((item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
-      (start      . ,start)
-      (end        . ,end)
-      (visual-url . ,visual-url))))
-
 (defun radio-f--bremen-processor (data station)
   "Process Radio Bremen DATA for STATION."
-  (let* ((now (cdr (assoc "currentBroadcast" data)))
+  (let* ((now (cdr (assoc "currentTitle" data)))
          (item-id (cdr (assoc "id" now)))
-         (artist (cdr (assoc "title" now)))
-         (title (cdr (assoc "titleAddon" now)))
+         (artist (cdr (assoc "artist" now)))
+         (title (cdr (assoc "song" now)))
          ;;         (start (cdr (assoc "start" broadcast)))
          ;;         (end (cdr (assoc "end" broadcast)))
          ;; DLF Nova only provides artwork for programs,

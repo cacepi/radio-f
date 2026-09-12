@@ -75,10 +75,6 @@ links for the presentation views.")
   "https://api.ardaudiothek.de/organizations"
   "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
 
-(defconst radio-f--ard-api-url
-  "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=<<float>>"
-  "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
-
 (defconst radio-f--dlf-api-url
   "https://www.deutschlandfunk.de/api/partials/CurrentBroadcast?dlrsearch:_ajax=1"
     "URL to AJAX data from Deutschlandfunk.")
@@ -163,41 +159,6 @@ links for the presentation views.")
 
 
 ;; == PROCESSORS ================================
-
-(defun radio-f--ard-processor (data station)
-  (let* ((events (cdr (assoc "events" data)))
-         (object (aref events 0))
-         (track-info (cdr (assoc "title" object)))
-         (image  (cdr (assoc "image" object)))
-         (artist (cdr (assoc "short" track-info)))
-         (title (cdr (assoc "subTitle" track-info)))
-         (start-string (cdr (assoc "startDate" object)))
-         (end-string (cdr (assoc "endDate" object)))
-         (start (time-convert
-                 (date-to-time start-string) 'integer))
-         (end (time-convert
-               (date-to-time end-string) 'integer))
-         (start
-          (time-convert
-           (date-to-time
-            (cdr (assoc "startDate" object)))
-           'integer))
-         (end
-          (time-convert
-           (date-to-time
-            (cdr (assoc "endDate" object)))
-           'integer))
-         (visual-url (cdr (assoc "contentUrl" image)))
-         (item-id
-          (secure-hash
-           'sha3-224
-           (format "%s|%s|%s|%s" artist title start end))))
-    `((item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
-      (start      . ,start)
-      (end        . ,end)
-      (visual-url . ,visual-url))))
 
 (defun radio-f--dlf-processor (data station)
   "Process Deutschlandfunk DATA for STATION."

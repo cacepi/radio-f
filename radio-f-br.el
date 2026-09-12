@@ -111,6 +111,7 @@ links for the presentation views.")
   "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
 
 (defconst radio-f--br-api-url
+;;  "https://brradio.br.de/radio/v4?query=query+broadcastService($stationSlug:String!){audioBroadcastService(slug:$stationSlug){...+on+AudioBroadcastService{id+name+slug+fallbackTeaserImage{url}trackingInfos{pageVars+mediaVars}epg(slots:[CURRENT]){broadcastEvent{trackingInfos{pageVars+mediaVars}...eventStartEnd+items{...audioElement+...+on+NewsElement{author}...+on+MusicElement{performer+composer}}excludedTimeRanges{start+end}publicationOf{...eventMetadata+defaultTeaserImage{url}...+on+MangoProgramme{canonicalUrl+title+kicker}}}}description+url}}}fragment+eventMetadata+on+MangoCreativeWorkInterface{id+kicker+title+description}fragment+audioElement+on+AudioElement{title+start+duration}fragment+eventStartEnd+on+MangoBroadcastEvent{id+start+end}&variables[stationSlug]=<<id>"
   "https://brradio.br.de/radio/v4?query=query+broadcastService($stationSlug:String!){audioBroadcastService(slug:$stationSlug){...on+AudioBroadcastService{id+dvbServiceId+name+slug+fallbackTeaserImage{url}trackingInfos{pageVars+mediaVars}...on+MangoBroadcastService{webcamUrls...jumpMarkers}epg(slots:[CURRENT]){broadcastEvent{trackingInfos{pageVars+mediaVars}...eventStartEnd+items{...audioElement...on+NewsElement{author}...on+MusicElement{performer+composer}}excludedTimeRanges{start+end}publicationOf{...eventMetadata+defaultTeaserImage{url}...on+MangoProgramme{canonicalUrl+title+kicker}}}}description+url}}}fragment+eventMetadata+on+MangoCreativeWorkInterface{id+kicker+title+description}fragment+jumpMarkers+on+MangoBroadcastService{lastNewsDate+lastTrafficDate+lastWeatherDate}fragment+audioElement+on+AudioElement{guid+title+class+start+duration}fragment+eventStartEnd+on+MangoBroadcastEvent{id+start+end}&variables[stationSlug]=<<id>>"
   "Template used to retrieve JSON data from Bayerischen Rundfunks.")
 
@@ -142,41 +143,6 @@ links for the presentation views.")
 
 ;; == PROCESSORS ================================
 
-(defun radio-f--ard-processor (data station)
-  (let* ((events (cdr (assoc "events" data)))
-         (object (aref events 0))
-         (track-info (cdr (assoc "title" object)))
-         (image  (cdr (assoc "image" object)))
-         (artist (cdr (assoc "short" track-info)))
-         (title (cdr (assoc "subTitle" track-info)))
-         (start-string (cdr (assoc "startDate" object)))
-         (end-string (cdr (assoc "endDate" object)))
-         (start (time-convert
-                 (date-to-time start-string) 'integer))
-         (end (time-convert
-               (date-to-time end-string) 'integer))
-         (start
-          (time-convert
-           (date-to-time
-            (cdr (assoc "startDate" object)))
-           'integer))
-         (end
-          (time-convert
-           (date-to-time
-            (cdr (assoc "endDate" object)))
-           'integer))
-         (visual-url (cdr (assoc "contentUrl" image)))
-         (item-id
-          (secure-hash
-           'sha3-224
-           (format "%s|%s|%s|%s" artist title start end))))
-    `((item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
-      (start      . ,start)
-      (end        . ,end)
-      (visual-url . ,visual-url))))
-
 (defun radio-f--br-processor (data station)
   "Process Bayerischer Rundfunks DATA for STATION."
   ;; Hold on, we got a long way to go...
@@ -184,11 +150,10 @@ links for the presentation views.")
          (data (cdr (assoc "data" data)))
          (service (cdr (assoc "audioBroadcastService" data)))
          (epg (cdr (assoc "epg" service)))
-         (good-stuff (aref epg 0))
-         (broadcast (cdr (assoc "broadcastEvent" good-stuff)))
+         (array (aref epg 0))
+         (broadcast (cdr (assoc "broadcastEvent" array)))
          (tracking (cdr (assoc "trackingInfos" broadcast)))
          (now (cdr (assoc "pageVars" tracking)))
-         (item-id (cdr (assoc "generic_id" now)))
          (artist (cdr (assoc "broadcast_service" now)))
          (title (cdr (assoc "title" now)))
          (start-string (cdr (assoc "start" broadcast)))
@@ -225,7 +190,6 @@ links for the presentation views.")
       (start      . ,start)
       (end        . ,end)
       (visual-url . ,visual-url))))
-
 
 (provide 'radio-f-br)
 
