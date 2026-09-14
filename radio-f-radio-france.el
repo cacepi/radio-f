@@ -623,6 +623,15 @@
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
+;; == Helper Functions ==========================
+
+(defun radio-f--view-radio-france-artwork-in-browser ()
+  "Show full-sized Radio France artwork in the user's web browser."
+  (interactive)
+  (let* ((image (alist-get 'visual-url radio-f--current-track-info))
+         (url (replace-regexp-in-string "400x400\\'" "raw" image)))
+    (browse-url url)))
+
 
 ;; == Processing ================================
 
