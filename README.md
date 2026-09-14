@@ -110,66 +110,9 @@ A word of caution: the view toggle works by running `make-frame-visible` and `ma
 
 ## Custom Variables
 
-<a id="radio-f-carriers"></a>**`radio-f-carriers`**: A list of the station carriers Radio F supports. At the moment, Radio F has support for the following carriers:
-
-`radio-france`: Radio France (French national radio)
-`rte`: RTÈ (Irish National Radio)
-`bbc`:  The British Broadcasting Corporation (UK national radio)\*
-`sbfm`: Shonan Beach FM
-`dlr`: Deutschlandradio (German public radio carrier)
-`bremen`: Radio Bremen (German regional public radio carrier)
-
-The default is all carriers.
-
 <a id="radio-f-preferred-station"></a> **`radio-f-preferred-station`**: The preferred station to play when Radio F starts.  Refer to the [station list](#stations) for all the stations supported under Radio F.
 
 The default is `"FIP"`.
-
-\* _The following stations are available in the UK only:_
-
-<pre>
-"BBC Radio Five Live Sports Extra"
-"BBC Radio Five Sports Extra 2"
-"BBC Radio Five Sports Extra 3"
-"CBeebies Radio"
-"BBC Radio Six Indie Forever"
-"BBC Sounds News"
-</pre>
-
-<!-- As most BBC foreign language stations only have a few hours of airtime a day, the following BBC stations are likewise unsupported:
-
-<pre>
-"BBC Afrique Radio"
-"BBC Amharic Radio"
-"BBC Arabic Radio"
-"BBC Burmese Radio"
-"BBC Dari Radio"
-"BBC Gahuza Radio"
-"BBC Hausa Radio"
-"BBC Korean Radio"
-"BBC Nepali Radio"
-"BBC Oromo Radio"
-"BBC Pashto Radio"
-"BBC Somali Radio"
-"BBC Swahili Radio"
-"BBC Tigrinya Radio"
-"BBC Uzbek Radio"
-</pre>
-
-The following stations are copies of BBC World Service, and so are not provided.
-
-<pre>
-"BBC World Service Americas"
-"BBC World Service Australasia"
-"BBC World Service East Africa"
-"BBC World Service East Asia"
-"BBC World Service Europe"
-"BBC World Service News Internet"
-"BBC World Service South Asia"
-"BBC World Service UK"
-"BBC World Service West Africa"
-</pre>
--->
 
 <a id="radio-f-player-program"></a>**`radio-f-player-program`**: Preferred player program. Accepted values are:
 
@@ -189,14 +132,16 @@ The following stations are copies of BBC World Service, and so are not provided.
 The default is `vlc`.
 
 
-<a id="radio-f-stream-level"></a>**`radio-f-stream-level`**: Choice of audio stream of varying quality/bitrate.
+<a id="radio-f-stream-level"></a>**`radio-f-stream-level`**: Choice of audio stream of varying quality/bitrate.  Higher stream levels offer successively lower audio quality or bitrate:
 
-* `'One` Plays the highest quality/bitrate available.
-* `'Two` Plays a lower quality/bitrate than level one.
-*  `'Three` Even lower quality/bitrate.
+* `'One` Plays the highest quality/bitrate.
+* `'Two` Plays a lower quality/bitrate than level One.
+* `'Three` Even lower quality/bitrate.
 * `'Four` Lowest quality/bitrate available.
 
-Note: this does not mean that there are four stream levels available for each station in Radio F, only that the most offered for playback can be up to four.
+Note that this does not mean that all carriers have four stream levels for each station, only that the most available for playback can be up to four.
+
+_Station names that end with `Web` provide only a single audio stream. For these stations, `radio-f-change-stream-level` returns the same stream regardless of selected level._
 
 The default is `'One`.
 
@@ -449,12 +394,12 @@ The list:
 "BBC Foyle"
 "BBC Ulster"
 "BBC Radio nan Gàidheal"
-"BBC Radio Five Live Sports Extra"
-"BBC Radio Five Sports Extra 2"
-"BBC Radio Five Sports Extra 3"
-"CBeebies Radio"
-"BBC Radio Six Indie Forever"
-"BBC Sounds News"
+"BBC Radio Five Live Sports Extra" †
+"BBC Radio Five Sports Extra 2" †
+"BBC Radio Five Sports Extra 3" †
+"CBeebies Radio" †
+"BBC Radio Six Indie Forever" †
+"BBC Sounds News" †
 "BBC Radio Wales Extra"
 "BBC Radio Wales"
 "BBC Cymru"
@@ -522,6 +467,44 @@ The list:
 </pre>
 
 
+<a id="uk-only"></a>†= These stations are available in the UK only.
+
+<!-- As most BBC foreign language stations only have a few hours of airtime a day, the following BBC stations are likewise unsupported:
+
+<pre>
+"BBC Afrique Radio"
+"BBC Amharic Radio"
+"BBC Arabic Radio"
+"BBC Burmese Radio"
+"BBC Dari Radio"
+"BBC Gahuza Radio"
+"BBC Hausa Radio"
+"BBC Korean Radio"
+"BBC Nepali Radio"
+"BBC Oromo Radio"
+"BBC Pashto Radio"
+"BBC Somali Radio"
+"BBC Swahili Radio"
+"BBC Tigrinya Radio"
+"BBC Uzbek Radio"
+</pre>
+
+The following stations are copies of BBC World Service, and so are not provided.
+
+<pre>
+"BBC World Service Americas"
+"BBC World Service Australasia"
+"BBC World Service East Africa"
+"BBC World Service East Asia"
+"BBC World Service Europe"
+"BBC World Service News Internet"
+"BBC World Service South Asia"
+"BBC World Service UK"
+"BBC World Service West Africa"
+</pre>
+-->
+
+
 ## Items to Note:
 
 ### SVG support encouraged, but not required.
@@ -529,6 +512,26 @@ The list:
 Radio F uses the Emacs `svg` library to generate the rounded corners for the view artwork. The program will work without it; you just won't see those oh-so-sexy RoundRects in the artwork image:
 
 <img src="https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/img/square-vs-rounded.png" width="600" height="470" alt="Display differences between an Emacs with SVG support and one without.">
+
+### <a id="emms-is-big"></a>EMMS control is limited, because EMMS is *big*.
+
+TL;DR - EMMS support is limited.  Because EMMS is **big**.
+
+EMMS doesn't offer the same level of direct control that VLC and mpv provide through their remote interfaces.  EMMS can raise/lower volume, pause, and unpause, etc.  Other functions like mute, unmute, and setting the volume to arbitrary levels aren't supported.
+
+Adding Radio F support for the functions that EMMS currently lack would require juggling control of six different audio mixers and 8-11 different players.  EMMS still has support mpg123/321 and Xine!  And, as EMMS includes a module for support of the [MPRIS](https://specifications.freedesktop.org/mpris/latest/) API, which brings a staggering **30+ players** to the mix, adding something simple as a mute function to EMMS that works will all players is miles above Radio F's pay grade. I just wanna chill to some cool grooves in Emacs.
+
+As a result, if you choose EMMS as your default player, Radio F assumes that you have it configured to your preferences. Maybe more robust support could come one day, but not today.  Sorry, EMMS.
+
+### The track timeline is inherently "wrong."
+
+Radio F uses metadata from a carrier to provide track information and the artwork for the currently playing song.  While this works well, there is one small problem entirely beyond Radio F's control; most of the metadata feeds from carriers do not, and cannot, indicate _when_ one track ends and another begins.
+
+Most carrier feeds have fields which show an approximate time when a track starts and ends, but that's all those times are: approximate.  In the end it's still live radio, and any number of factors can throw those times off.  The feed can be pre-empted with a station ID, the DJ cuts a song early or belatedly inserts a song into the playlist, the stream is interrupted with "breaking news", and so forth.  And while computers are great at automating things, they have yet to master predicting the future.  Give it a few weeks.
+
+If it's any consolation, Radio France's web player is affected the same way Radio F is, except their timeline is consistently "early" by showing a song is anywhere from 30 seconds to a whole minute into the track when that song begins.  BBC Radio One is consistently _late_ by at least 90 seconds (!) with their track timings. Then there are the carriers who have no track timing information at all, which makes a track timeline completely useless. _Wunderbar._
+
+As a result, the timer in Radio F can vary with hitting track transitions accurately.  It's only when the timer misses that it becomes a very visible issue.  That's why the default timeline setting is `nil`, as its unavoidable inaccuracy can be visually confusing.
 
 ### Radio F est en direct.
 
@@ -539,3 +542,4 @@ Radio F plays back live radio, and JSON feeds can go sideways from time to time,
 This means a user can start Radio F when a JSON feed is in a "Le direct" state, and no track info will appear on startup.  This is intentional: if there's nothing to show... well, you know the rest.
 
 _C'est la vie, mon ami._
+

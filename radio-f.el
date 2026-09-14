@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.0.1
+;; Version: 0.3.1
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -54,22 +54,6 @@
   "Radio F: a streaming library to access and play stations under
 the Radio France banner."
   :group 'multimedia)
-
-(defcustom radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr)
-  "List of carriers that provide stations to Radio F. When a carrier is
-enabled, all stations defined by that carrier are available for playback.
-
-The default is all available carriers."
-  :type '(set
-          (const :tag "BBC" bbc)
-          (const :tag "Radio France" radio-france)
-          (const :tag "RTÉ" rte)
-          (const :tag "Shonan Beach FM" sbfm)
-          (const :tag "Bayerischer Rundfunks" br)
-          (const :tag "Radio Bremen" bremen)
-          (const :tag "Deutschlandradio" dlr))
-  :group 'radio-f)
 
 (defcustom radio-f-preferred-station "FIP"
   "The station to preferably play when launching Radio F.
@@ -184,10 +168,8 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   :type '(choice
           (const :tag "Level One: highest quality or bitrate stream available." One)
           (const :tag "Level Two: lower quality/bitrate than a level one stream." Two)
-          (const :tag "Level Three: lower quality/bitrate than a level two stream." Three)
-          (const :tag "Level Four: lower quality/bitrate than a level three stream." Four)
-          (const :tag "Level Five: lower quality/bitrate than a level four stream." Five)
-          (const :tag "Level Six: Lowest quality/bitrate available." Six))
+          (const :tag "Level Three: even lower quality/bitrate." Three)
+          (const :tag "Level Four: lowest quality/bitrate." Four))
   :group 'radio-f-audio)
 
 
@@ -272,9 +254,9 @@ in both frame and window view."
 
 ;; == Variables for station/stream control ======
 
-(defconst radio-f--all-carriers
-  '(bbc radio-france rte sbfm br bremen dlr)
-  "All Carriers supported by Radio F.")
+(defconst radio-f-carriers
+  '(radio-france bbc rte sbfm br bremen dlr)
+  "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
   "Saves the identity of the currently playing station.")
@@ -321,9 +303,9 @@ in both frame and window view."
           radio-f-carriers)))
 
 ;; It's a surprise!
-(defun radio-f--all-stations ()
+(defun radio-f--load-all-stations ()
   "Return all stations supported by Radio F."
-  (radio-f--load-all-carriers)
+  (radio-f--load-carriers)
   (append radio-f--bbc-stations
           radio-f--radio-france-stations
           radio-f--rte-stations
@@ -343,25 +325,6 @@ in both frame and window view."
 (defun radio-f--load-carriers ()
   "Load carrier modules, as defined in `radio-f-carriers'."
   (dolist (carrier radio-f-carriers)
-    (pcase carrier
-      ('bbc
-       (require 'radio-f-bbc))
-      ('radio-france
-       (require 'radio-f-radio-france))
-      ('rte
-       (require 'radio-f-rte))
-      ('sbfm
-       (require 'radio-f-sbfm))
-      ('br
-       (require 'radio-f-br))
-      ('bremen
-       (require 'radio-f-bremen))
-      ('dlr
-       (require 'radio-f-dlr)))))
-
-(defun radio-f--load-all-carriers ()
-  "Load all carrier modules supported by Radio F."
-  (dolist (carrier radio-f--all-carriers)
     (pcase carrier
       ('bbc
        (require 'radio-f-bbc))
@@ -426,9 +389,17 @@ in both frame and window view."
             ('dlr radio-f--dlr-streams)))
          (level
           (or radio-f--session-stream-level
-              radio-f-stream-level)))
-    (or (cdr (assq level streams))
-        (cdr (assq 'default streams)))))
+              radio-f-stream-level))
+         (template (cdr (assq level streams)))
+         (template
+          (if (functionp template)
+              (funcall template)
+            template))
+         (default (cdr (assq 'default streams))))
+    (or template
+        (if (functionp default)
+            (funcall default)
+          default))))
 
 (defun radio-f--expand-url (template station)
   "Expand URL TEMPLATE using values from STATION."
@@ -471,7 +442,7 @@ does not have, the stream returned is the highest level stream."
     ('br
      radio-f--br-api-url)
     ('bremen
-     radio-f--bremen-api-url)
+     (radio-f--set-bremen-api-url))
     ('dlr
      (radio-f--set-dlr-api-url))
     (_
@@ -1479,7 +1450,7 @@ user has requested it.")
             ('rte radio-f--rte-streams)
             ('sbfm radio-f--sbfm-streams)
             ('br radio-f--br-streams)
-            ('bremen radio-f--bremen-streams)
+            ('bremen radio-f-bremen-streams)
             ('dlr radio-f--dlr-streams)))
          (levels
           (seq-filter
@@ -1965,7 +1936,7 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
   "Tune to a random station."
   (interactive)
   (let* ((stations
-          (radio-f--all-stations))
+          (radio-f--load-all-stations))
          (station
           (nth (random (length stations))
                stations))
