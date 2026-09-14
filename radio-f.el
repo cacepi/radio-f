@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.1.2
+;; Version: 0.3.1.3
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -696,6 +696,9 @@ without the effect."
   "Visibility of the default view.  Non-nil when the view should
 be visible.")
 
+(defvar radio-f--track-pixel-scroll-mode nil
+  "Track the status of `pixel-scroll-precision-mode'.  Non-nil when it
+is enabled.")
 
 (defun radio-f--generate-buffer-name ()
   "Generate a buffer name for the current station.
@@ -912,6 +915,12 @@ alist data from `radio-f--current-track-info', pass it to
                (get-buffer-window buffer nil))))
     (when (frame-live-p frame)
       (delete-frame frame))
+    ;; Turn `pixel-precision-scroll-mode' back on
+    ;; if we had to disable it.
+    (when radio-f--track-pixel-scroll-mode
+      (setq radio-f--track-pixel-scroll-mode nil)
+      (pixel-scroll-precision-mode 1)
+      (message "Pixel Scroll Precision Mode enabled."))
     (setq radio-f--child-frame nil)
     (when (and (window-live-p win)
                (not (window-minibuffer-p win))
@@ -968,6 +977,13 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
     (radio-f--configure-child-window frame buffer)
     (radio-f--fit-child-frame frame buffer)
     (radio-f--position-child-frame frame)
+    ;; `pixel-scroll-precision-mode' intercepts mouse
+    ;; scroll events, which we do not want to happen.
+    ;; Check if enabled and disable it for frame view.
+    (when pixel-scroll-precision-mode
+      (setq radio-f--track-pixel-scroll-mode t)
+      (pixel-scroll-precision-mode -1)
+      (message "Pixel Scroll Precision Mode disabled!"))
     (when radio-f--view-visible-p
       (make-frame-visible frame))
     ;; Make background alpha zero on systems that support it.
