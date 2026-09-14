@@ -61,7 +61,7 @@ links for the presentation views.")
     `((artist     . ,(cdr (assoc "aartist" now)))
       (title      . ,(cdr (assoc "title" now)))
       (start      . ,(floor (float-time
-                      (date-to-time (cdr (assoc "datetime" now))))))
+                             (date-to-time (cdr (assoc "datetime" now))))))
       (end        . ,(floor (float-time
                              (date-to-time (cdr (assoc "datetime" now))))))
       (item-id
