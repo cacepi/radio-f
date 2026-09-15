@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.2
+;; Version: 0.3.2.1
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -250,6 +250,17 @@ in both frame and window view."
   :lighter " RadioF-Control"
   :keymap radio-f-control-mode-map
   :group 'radio-f)
+
+(defvar-keymap radio-f--pspm-override-map
+  :doc "Empty map used to selectively disable Pixel-Scroll Precision Mode.")
+
+(defun radio-f--disable-pspm ()
+  "Disable the keymap for Pixel-Scroll Precision Mode in the current buffer
+so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
+  (add-to-list
+   'minor-mode-overriding-map-alist
+   '(pixel-scroll-precision-mode
+     . radio-f--pspm-override-map)))
 
 
 ;; == Variables for station/stream control ======
@@ -690,15 +701,12 @@ without the effect."
        :width width
        :height height))))
 
+
 ;; == View control ======
 
 (defvar radio-f--view-visible-p t
   "Visibility of the default view.  Non-nil when the view should
 be visible.")
-
-(defvar radio-f--track-pixel-scroll-mode nil
-  "Track the status of `pixel-scroll-precision-mode'.  Non-nil when it
-is enabled.")
 
 (defun radio-f--generate-buffer-name ()
   "Generate a buffer name for the current station.
@@ -904,6 +912,9 @@ alist data from `radio-f--current-track-info', pass it to
   "Delete all views."
   (remove-hook 'window-size-change-functions
                #'radio-f--reposition-on-resize)
+  (remove-hook
+   'radio-f-mode-hook
+   #'radio-f--disable-pspm)
   (let* ((frame radio-f--child-frame)
          (buffer
           (if (frame-live-p frame)
@@ -915,12 +926,6 @@ alist data from `radio-f--current-track-info', pass it to
                (get-buffer-window buffer nil))))
     (when (frame-live-p frame)
       (delete-frame frame))
-    ;; Turn `pixel-precision-scroll-mode' back on
-    ;; if we had to disable it.
-    (when radio-f--track-pixel-scroll-mode
-      (setq radio-f--track-pixel-scroll-mode nil)
-      (pixel-scroll-precision-mode 1)
-      (message "Pixel Scroll Precision Mode enabled."))
     (setq radio-f--child-frame nil)
     (when (and (window-live-p win)
                (not (window-minibuffer-p win))
@@ -977,18 +982,13 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
     (radio-f--configure-child-window frame buffer)
     (radio-f--fit-child-frame frame buffer)
     (radio-f--position-child-frame frame)
-    ;; `pixel-scroll-precision-mode' intercepts mouse
-    ;; scroll events, which we do not want to happen.
-    ;; Check if enabled and disable it for frame view.
-    (when pixel-scroll-precision-mode
-      (setq radio-f--track-pixel-scroll-mode t)
-      (pixel-scroll-precision-mode -1)
-      (message "Pixel Scroll Precision Mode disabled!"))
     (when radio-f--view-visible-p
       (make-frame-visible frame))
     ;; Make background alpha zero on systems that support it.
     (when (memq window-system '(ns pgtk))
       (set-frame-parameter radio-f--child-frame 'alpha-background 0))
+    (add-hook 'radio-f-mode-hook
+              #'radio-f--disable-pspm)
     (add-hook 'window-size-change-functions
               #'radio-f--reposition-on-resize)
     frame))
@@ -1040,6 +1040,7 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
           (setq buffer-read-only t)
           (goto-char (point-min)))))
     buffer)
+
 
 ;; == Window view =======
 
