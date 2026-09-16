@@ -50,21 +50,20 @@
      :api radio-f--dlf-api-url
      :processor radio-f--dlf-processor
      :www radio-f--dlf-url
-     :visual-url nil :visual radio-f--dlf-visual)
+     :visual "assets/dlr/dlf.png")
     (dlf-kultur
      :name "Deutschlandfunk Kultur" :carrier dlr :metadata dlf-kultur :id "02"
      :tag "funkkultur" :raw t
      :api radio-f--dlf-kultur-api-url
      :processor radio-f--dlf-processor
      :www radio-f--dlf-url
-     :visual-url nil :visual radio-f--dlf-kultur-visual)
+     :visual "assets/dlr/dlf.png")
     (dlf-nova
      :name "Deutschlandfunk Nova" :carrier dlr :metadata dlf-nova :id "03"
      :tag "funknova" :api radio-f--dlf-nova-api-url
      :processor radio-f--dlf-nova-processor
      :www radio-f--dlf-url
-     :visual-url nil
-     :visual radio-f--dlf-nova-visual))
+     :visual "assets/dlr/dlf.png"))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -93,21 +92,6 @@ links for the presentation views.")
 (defconst radio-f--dlf-www-url
   "https://www.deutschland[tag].de"
   "Template used to return the web URL for Deutschland Radio stations.")
-
-
-;; == ARTWORK URLS ==========
-
-(defconst radio-f--dlf-visual
-  "assets/dlr/dlf.png"
-  "Artwork image for Deutschlandfunk.")
-
-(defconst radio-f--dlf-kultur-visual
-  "assets/dlr/dlf-kultur.png"
-  "Artwork image for Deutschlandfunk Kultur.")
-
-(defconst radio-f--dlf-nova-visual
-  "assets/dlr/dlf-nova.png"
-  "Artwork image for Deutschlandfunk Kultur.")
 
 
 ;; == STREAM URLS =======

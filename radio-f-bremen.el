@@ -51,7 +51,7 @@
      :l1-stream radio-f--bremen-radio-level-one
      :l2-stream radio-f--bremen-radio-level-two
      :api radio-f--ajax-bremen-api-url :processor radio-f--bremen-processor
-     :visual-url nil :visual radio-f--bremen-eins-visual)
+     :visual "assets/bremen/bremen-eins.png")
     (bremen-zwei
      :name "Bremen Zwei" :carrier bremen
      :id "bremenzwei" :api-tag "startseite-bremen-zwei-"
@@ -60,16 +60,16 @@
      :l1-stream radio-f--bremen-radio-level-one
      :l2-stream radio-f--bremen-radio-level-two
      :api radio-f--ajax-bremen-api-url :processor radio-f--bremen-processor
-     :visual-url nil :visual radio-f--bremen-zwei-visual)
+     :visual "assets/bremen/bremen-zwei.png")
     (bremen-vier
      :name "Bremen Vier" :carrier bremen
      :id "bremenvier" :api-tag "bremenvier-startseite"
      :publisher "52598ef10fe29b22" :livestream "a081291373972e5a"
-     :www "https://www.bremevier.de"
+     :www "https://www.bremenvier.de"
      :l1-stream radio-f--bremen-radio-level-one
      :l2-stream radio-f--bremen-radio-level-two
      :api radio-f--ajax-bremen-api-url :processor radio-f--bremen-processor
-     :visual-url nil :visual radio-f--bremen-vier-visual)
+     :visual "assets/bremen/bremen-vier.png")
     (bremen-next
      :name "Bremen Next" :carrier bremen
      :id "bremennext" :api-tag "bremennext-startseite"
@@ -78,7 +78,7 @@
      :l1-stream radio-f--bremen-radio-level-one
      :l2-stream radio-f--bremen-radio-level-two
      :api radio-f--ajax-bremen-api-url :processor radio-f--bremen-processor
-     :visual-url nil :visual radio-f--bremen-next-visual)
+     :visual "assets/bremen/bremen-next.png")
     ;; These are web-only streams, so they use a different API template
     ;; and processor.
     (bremen-zwei-herz
@@ -88,7 +88,7 @@
      :l2-stream radio-f--bremen-web-level-two
      :api radio-f--ard-bremen-api-url
      :processor radio-f--ard-bremen-processor
-     :visual radio-f--bremen-zwei-visual)
+     :visual "assets/bremen/bremen-zwei.png")
     (bremen-zwei-sounds
      :name "Bremen Zwei Sounds Web" :carrier bremen
      :id "webchannel7" :livestream "b4884322d2c878c0"
@@ -96,7 +96,7 @@
      :l2-stream radio-f--bremen-web-level-two
      :api radio-f--ard-bremen-api-url
      :processor radio-f--ard-bremen-processor
-     :visual radio-f--bremen-zwei-visual)
+     :visual "assets/bremen/bremen-zwei.png")
     (bremen-vier-festival
      :name "Bremen Vier Festival-Channel Web" :carrier bremen
      :id "webchannel2" :livestream "b77402449ddba998"
@@ -104,7 +104,7 @@
      :l2-stream radio-f--bremen-web-level-two
      :api radio-f--ard-bremen-api-url
      :processor radio-f--ard-bremen-processor
-     :visual radio-f--bremen-vier-visual)
+     :visual "assets/bremen/bremen-vier.png")
     (bremen-vier-dance
      :name "Bremen Vier Tanzt! Web" :carrier bremen
      :id "webchannel3" :livestream "ef0edf0b4532afca"
@@ -112,7 +112,7 @@
      :l2-stream radio-f--bremen-web-level-two
      :api radio-f--ard-bremen-api-url
      :processor radio-f--ard-bremen-processor
-     :visual radio-f--bremen-vier-visual)
+     :visual "assets/bremen/bremen-vier.png")
     (bremen-vier-zebra
      :name "Bremen Vier Zebra Web" :carrier bremen
      :id "webchannel8" :livestream "917956f8917024f9"
@@ -120,7 +120,7 @@
      :l2-stream radio-f--bremen-web-level-two
      :api radio-f--ard-bremen-api-url
      :processor radio-f--ard-bremen-processor
-     :visual radio-f--bremen-vier-visual))
+     :visual "assets/bremen/bremen-vier.png"))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -145,23 +145,6 @@ links for the presentation views.")
 
 (defconst radio-f--bremen-www-url "https://<<id>>.de/")
 
-;; == FALLBACK ARTWORK ==========
-
-(defconst radio-f--bremen-eins-visual
-  "assets/bremen/bremen-eins.png"
-  "Fallback artwork image for Bremen Eins.")
-
-(defconst radio-f--bremen-zwei-visual
-  "assets/bremen/bremen-zwei.png"
-  "Fallback artwork image for Bremen Zwei.")
-
-(defconst radio-f--bremen-vier-visual
-  "assets/bremen/bremen-vier.png"
-  "Fallback artwork image for Bremen Vier.")
-
-(defconst radio-f--bremen-next-visual
-  "assets/bremen/bremen-next.png"
-  "Fallback artwork image for Bremen Vier.")
 
 ;; == STREAM URLS =======
 
