@@ -405,7 +405,7 @@
      :mp3-prefix "direct" :mp3-domain "francebleu"
      :carrier radio-france :metadata ici
      :processor radio-f--radio-france-processor
-     :visual "assets/radio-france/ici-oreleans.png")
+     :visual "assets/radio-france/ici-orleans.png")
     (regionauvergne
      :name "ici Pays d'Auvergne" :id "40"
      :endpoint "new_apprf_bleu" :tag "fbpaysdauvergne"
@@ -437,7 +437,7 @@
      :mp3-prefix "direct" :mp3-domain "francebleu"
      :carrier radio-france :metadata ici
      :processor radio-f--radio-france-processor
-     :visual "assets/radio-france/ici-perigold.png")
+     :visual "assets/radio-france/ici-perigord.png")
     (picardie
      :name "ici Picardie" :id "44"
      :endpoint "new_apprf_bleu" :tag "fbpicardie"
@@ -533,10 +533,10 @@
      :mp3-prefix "direct" :mp3-domain "francebleu"
      :carrier radio-france :metadata ici
      :processor radio-f--radio-france-processor
-     :visual "assets/radio-france/ici-toulouse.png")
+     :visual "assets/radio-france/ici-occitanie.png")
     (saintetienne
      :name "ici Saint-Étienne Loire" :id "93"
-     :endpoint "new_apprf_bleu" :tag "fbsaintetienneloire"
+     :endpoint "new_apprf_bleu" :tag "fbstetienne"
      :www "francebleu" :www-suffix nil
      :mp3-prefix "direct" :mp3-domain "francebleu"
      :carrier radio-france :metadata ici
@@ -728,7 +728,7 @@ OBJECT refers to a JSON object or vector of objects."
   (seq-some
    (lambda (entry)
      (member (cdr entry)
-             '("Le direct")))
+             '("La radio la plus éclectique du monde")))
    object))
 
 (defun radio-f--radio-france-processor (data station)
