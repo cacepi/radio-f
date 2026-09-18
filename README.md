@@ -62,7 +62,7 @@ This function is bound to `C-c f c` by default.
 
 This function is bound to `C-c f a` by default.
 
-<a id="play-preferred-station"></a> **`radio-f-play-preferred-station`**: Return to the [preferred station](#radio-f-preferred-station).
+<a id="play-default-station"></a> **`radio-f-play-default-station`**: Return to the [default station](#radio-f-default-station).
 
 This function is bound to `C-c f a` and `F7` by default.
 
@@ -110,7 +110,7 @@ A word of caution: the view toggle works by running `make-frame-visible` and `ma
 
 ## Custom Variables
 
-<a id="radio-f-preferred-station"></a> **`radio-f-preferred-station`**: The preferred station to play when Radio F starts.  Refer to the [station list](#stations) for all the stations supported under Radio F.
+<a id="radio-f-default-station"></a> **`radio-f-default-station`**: The station which plays Radio F first starts.  Refer to the [station list](#stations) for all the stations supported under Radio F.
 
 The default is `"FIP"`.
 
@@ -151,7 +151,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 171 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 179 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -164,10 +164,10 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "FIP Nouveautés" "FIP Reggae" "FIP Electro" "FIP Metal" "FIP Pop"
     "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes" "RTÉ Radio 1"
     "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM"
-    "Deutschlandfunk Nova" "Bayern 3")
+    "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 21 stations when you run [`radio-f-change-station`](#change-station) instead of all 171.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 179.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -221,7 +221,7 @@ The default is `:inherit (default) :height 0.9 :weight bold`.
   "C-c f r"   #'radio-f
   "C-c f a"   #'radio-f-change-to-any-station
   "C-c f c"   #'radio-f-change-station
-  "C-c f d"   #'radio-f-play-preferred-station
+  "C-c f d"   #'radio-f-play-default-station
   "C-c f m"   #'radio-f-dark-mode
   "C-c f o"   #'radio-f-down
   "C-c f v"   #'radio-f-toggle-view
@@ -286,10 +286,10 @@ How to make a favorites list again:  copy the stations you want from the station
     "FIP Nouveautés" "FIP Reggae" "FIP Electro" "FIP Metal" "FIP Pop"
     "FIP Hip-Hop" "FIP Sacré Français!" "FIP Cultes" "RTÉ Radio 1"
     "BBC World Service" "BBC Shetland" "BBC Radio One" "Shonan Beach FM"
-    "Deutschlandfunk Nova" "Bayern 3")
+    "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 21 stations when you run `radio-f-change-station` instead of all 171.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 179.
 
 The list:
 
@@ -464,6 +464,15 @@ The list:
 "BR Klassik"
 "BR Schlager"
 "BR Heimat"
+"Bremen Eins"
+"Bremen Zwei"
+"Bremen Vier"
+"Bremen Next"
+"Bremen Zwei Herzstücke Web"
+"Bremen Zwei Sounds Web"
+"Bremen Vier Festival-Channel Web"
+"Bremen Vier Tanzt! Web"
+"Bremen Vier Zebra Web"
 </pre>
 
 
@@ -523,15 +532,15 @@ Adding Radio F support for the functions that EMMS currently lack would require 
 
 As a result, if you choose EMMS as your default player, Radio F assumes that you have it configured to your preferences. Maybe more robust support could come one day, but not today.  Sorry, EMMS.
 
-### The track timeline is inherently "wrong."
+### The track timeline is inherently wrong.
 
 Radio F uses metadata from a carrier to provide track information and the artwork for the currently playing song.  While this works well, there is one small problem entirely beyond Radio F's control; most of the metadata feeds from carriers do not, and cannot, indicate _when_ one track ends and another begins.
 
 Most carrier feeds have fields which show an approximate time when a track starts and ends, but that's all those times are: approximate.  In the end it's still live radio, and any number of factors can throw those times off.  The feed can be pre-empted with a station ID, the DJ cuts a song early or belatedly inserts a song into the playlist, the stream is interrupted with "breaking news", and so forth.  And while computers are great at automating things, they have yet to master predicting the future.  Give it a few weeks.
 
-If it's any consolation, Radio France's web player is affected the same way Radio F is, except their timeline is consistently "early" by showing a song is anywhere from 30 seconds to a whole minute into the track when that song begins.  BBC Radio One is consistently _late_ by at least 90 seconds (!) with their track timings. Then there are the carriers who have no track timing information at all, which makes a track timeline completely useless. _Wunderbar._
+If it's any consolation, Radio France's web player is affected the same way Radio F is, except their timeline is consistently "early" by showing a song is anywhere from 30 seconds to a whole minute into the track when that song begins.  BBC Radio One is consistently _late_ by at least 90 seconds with their track timings.  Then there are the carriers who have no track timing information at all, which makes a track timeline completely useless. _Wunderbar._
 
-As a result, the timer in Radio F can vary with hitting track transitions accurately.  It's only when the timer misses that it becomes a very visible issue.  That's why the default timeline setting is `nil`, as its unavoidable inaccuracy can be visually confusing.
+As a result, Radio F can wildy when trying to spot transitions.  It's only when the timer misses that it becomes a very visible issue.  And can't trust the carrier to be accurate, either, as ofttimes they themselves don't know when the track transitions occur.  That's why the default timeline setting is `nil`; its inherent inaccuracy is visually confusing.
 
 ### Radio F est en direct.
 

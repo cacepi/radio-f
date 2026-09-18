@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.3.1
+;; Version: 0.3.3.2
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -55,7 +55,7 @@
 the Radio France banner."
   :group 'multimedia)
 
-(defcustom radio-f-preferred-station "FIP"
+(defcustom radio-f-default-station "FIP"
   "The station to preferably play when launching Radio F.
 
 Radio F determines available stations by examining the providers included
@@ -231,13 +231,13 @@ in both frame and window view."
   "C-c f r"   #'radio-f
   "C-c f a"   #'radio-f-change-to-any-station
   "C-c f c"   #'radio-f-change-station
-  "C-c f h"   #'radio-f-play-preferred-station
+  "C-c f h"   #'radio-f-play-default-station
   "C-c f m"   #'radio-f-dark-mode
   "C-c f o"   #'radio-f-down
   "C-c f v"   #'radio-f-toggle-view
   "C-c f w"   #'radio-f-browse-station-page
   "C-c f ?"   #'radio-f-surprise-me
-  "<f7>"      #'radio-f-play-preferred-station
+  "<f7>"      #'radio-f-play-default-station
   "<f8>"      #'radio-f-pause-audio    ;; hit again to unpause
   "<f9>"      #'radio-f-change-station
   "<f10>"     #'radio-f-mute-audio     ;; hit again to unmute
@@ -289,9 +289,6 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
 (defvar radio-f--timer nil
   "Timer for the polling interval.")
 
-(defvar radio-f--cover-uuid nil
-  "UUID for the artwork of the most recently dispatched track.")
-
 (defvar radio-f--current-track-info nil
   "Accepted metadata for the currently playing track.")
 
@@ -330,8 +327,8 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
   "Return the preferred station, or the first available station from the first carrier defined in `radio-f-carriers'."
   (let ((stations
          (radio-f--all-station-names)))
-    (if (member radio-f-preferred-station stations)
-        radio-f-preferred-station
+    (if (member radio-f-default-station stations)
+        radio-f-default-station
       (car stations))))
 
 (defun radio-f--load-carriers ()
@@ -1680,7 +1677,7 @@ user has requested it.")
            (lambda (station)
              (plist-get (cdr station) :name))
            (radio-f--stations)))
-         (default radio-f-preferred-station))
+         (default radio-f-default-station))
     (if (member default stations)
         (cons default
               (delete default
@@ -1701,7 +1698,7 @@ user has requested it.")
                  (member name radio-f-favorite-stations))
                stations)
             stations))
-         (default radio-f-preferred-station))
+         (default radio-f-default-station))
     (if (member default stations)
         (cons default
               (delete default (copy-sequence stations)))
@@ -1818,6 +1815,12 @@ in `radio-f--alist-buffer-name'."
         (prin1 stations (current-buffer))
         (insert "\n")))))
 
+(defmacro radio-f--set-vars (value &rest vars)
+  "Set every variable from VARS to value VALUE."
+  `(progn ,@(mapcar
+             (lambda (x)
+               (list 'setq x value))
+             vars)))
 
 ;; == Public functions ==
 
@@ -1841,11 +1844,11 @@ the station played is governed by the custom variable
   (radio-f-down)
   (radio-f--clear-mpv-socket)
   (setq station (or station
-                    radio-f-preferred-station))
+                    radio-f-default-station))
   (radio-f--prune-error-log)
   (let ((chosen-station (if (or (null station)
                                 (string-empty-p station))
-                            radio-f-preferred-station
+                            radio-f-default-station
                           station)))
     (setq radio-f--current-station chosen-station)
     (setq radio-f--current-volume radio-f-default-volume)
@@ -1867,17 +1870,17 @@ the station played is governed by the custom variable
   (radio-f--delete-views)
   (radio-f--kill-timeline)
   (radio-f--kill-timer)
-  (setq radio-f--current-station nil
-        radio-f--player-process nil
-        radio-f--cover-uuid nil
-        radio-f--current-track-info nil
-        radio-f--timer nil
-        radio-f--current-item-id nil
-        radio-f--child-frame nil
-        radio-f--timeline-timer nil
-        radio-f--current-volume nil
-        radio-f--previous-volume nil
-        radio-f--view-visible-p t)
+  (radio-f--set-vars nil
+   radio-f--current-station
+   radio-f--player-process
+   radio-f--current-volume
+   radio-f--previous-volume
+   radio-f--timer
+   radio-f--current-item-id
+   radio-f--current-track-info
+   radio-f--child-frame
+   radio-f--timeline-timer)
+  (setq radio-f--view-visible-p t)
   (radio-f-control-mode -1)
   (radio-f--clear-mpv-socket)
   (let ((message-log-max nil))
@@ -1942,11 +1945,11 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
   (let ((radio-f--view-visible-p nil))
     (radio-f)))
 
-(defun radio-f-play-preferred-station ()
+(defun radio-f-play-default-station ()
   "Switch back to the preferred station."
   (interactive)
   (radio-f-change-to-any-station
-   radio-f-preferred-station))
+   radio-f-default-station))
 
 ;; SURPRISE!!
 (defun radio-f-surprise-me ()
