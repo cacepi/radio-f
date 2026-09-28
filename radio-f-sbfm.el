@@ -57,8 +57,10 @@
 links for the presentation views.")
 
 (defun radio-f--sbfm-processor (data station)
-  (let* ((now data))
-    `((artist     . ,(cdr (assoc "aartist" now)))
+  (let* ((name (plist-get station :name))
+         (now data))
+    `((name       . ,name)
+      (artist     . ,(cdr (assoc "aartist" now)))
       (title      . ,(cdr (assoc "title" now)))
       (start      . ,(floor (float-time
                              (date-to-time (cdr (assoc "datetime" now))))))

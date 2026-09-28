@@ -307,11 +307,13 @@ links for the presentation views.")
 
 (defconst radio-f--ard-organizations
   "https://api.ardaudiothek.de/organizations"
-  "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
+  "URL providing JSON metadata for all ARD stations.  Used for
+development purposes.")
 
 (defconst radio-f--wdr-radio-api-url
   "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=0.1"
-  "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
+  "Template to retrieve metadata from all supported carriers through
+the ARD Audiothek API.")
 
 (defconst radio-f--wdr-web-api-url
   "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
@@ -381,7 +383,9 @@ links for the presentation views.")
 
 (defun radio-f--wdr-web-processor (data station)
   "Process WDR Web DATA for STATION."
-  (let* ((root (cdr (assoc "data" data)))
+  (let* ((station (radio-f--get-current-station-data))
+         (name (plist-get station :name))
+         (root (cdr (assoc "data" data)))
          (stream (cdr (assoc "permanentLivestream" root)))
          (media (cdr (assoc "mediaCollection" stream)))
          (meta (cdr (assoc "meta" media)))
@@ -395,7 +399,8 @@ links for the presentation views.")
          (item-id (secure-hash
                    'sha3-224
                    (format "%s|%s" artist title))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)
@@ -403,7 +408,9 @@ links for the presentation views.")
       (visual-url . ,visual-url))))
 
 (defun radio-f--wdr-radio-processor (data station)
-  (let* ((events (cdr (assoc "events" data)))
+  (let* ((station (radio-f--get-current-station-data))
+         (name (plist-get station :name))
+         (events (cdr (assoc "events" data)))
          (events (aref events 0))
          (clips (cdr (assoc "clips" events)))
          (now (aref clips 0))
@@ -425,7 +432,8 @@ links for the presentation views.")
           (secure-hash
            'sha3-224
            (format "%s|%s|%s|%s" artist title start end))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)
@@ -433,7 +441,9 @@ links for the presentation views.")
       (visual-url . ,visual-url))))
 
 (defun radio-f--wdr2-processor (data station)
-    (let* ((root (cdr (assoc "data" data)))
+  (let* ((station (radio-f--get-current-station-data))
+         (name (plist-get station :name))
+         (root (cdr (assoc "data" data)))
          (stream (cdr (assoc "permanentLivestream" root)))
          (media (cdr (assoc "mediaCollection" stream)))
          (meta (cdr (assoc "meta" media)))
@@ -447,16 +457,18 @@ links for the presentation views.")
          (item-id (secure-hash
                    'sha3-224
                    (format "%s|%s" artist title))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-
 (defun radio-f--ard-processor (data station)
-  (let* ((root (cdr (assoc "0" data)))
+  (let* ((station (radio-f--get-current-station-data))
+         (name (plist-get station :name))
+         (root (cdr (assoc "0" data)))
          (now (cdr (assoc "clip" root)))
          (artist (cdr (assoc "artist" now)))
          (title (cdr (assoc "title" now)))
@@ -478,7 +490,8 @@ links for the presentation views.")
           (secure-hash
            'sha3-224
            (format "%s|%s|%s|%s" artist title start end))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)

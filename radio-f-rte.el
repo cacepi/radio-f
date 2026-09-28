@@ -70,8 +70,10 @@
 links for the presentation views.")
 
 (defun radio-f--rte-processor (data station)
-  (let* ((now (aref data 0)))
-    `((artist     . ,(cdr (assoc "channel" now)))
+  (let* ((name (plist-get station :name))
+         (now (aref data 0)))
+    `((name       . ,name)
+      (artist     . ,(cdr (assoc "channel" now)))
       (title      . ,(cdr (assoc "progName" now)))
       (start      . ,(floor (float-time
                       (date-to-time (cdr (assoc "progDate" now))))))

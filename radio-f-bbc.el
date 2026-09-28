@@ -313,7 +313,8 @@
 ;; == PROCESSORS ================================
 
 (defun radio-f--bbc-processor (data station)
-  (let* ((data (cdr (assoc "data" data)))
+  (let* ((name (plist-get station :name))
+         (data (cdr (assoc "data" data)))
          (now (aref data 0))
          (network (cdr (assoc "network" now)))
          (titles (cdr (assoc "titles" now)))
@@ -329,7 +330,8 @@
                (date-to-time
                 (cdr (assoc "end" now)))
                'integer)))
-    `((item-id . ,item-id)
+    `((name   . ,name)
+      (item-id . ,item-id)
       (artist . ,artist)
       (title . ,title)
       (start . ,start)
@@ -338,6 +340,5 @@
        . ,(and image-url
                (replace-regexp-in-string
                 "{recipe}" "400x400" image-url t t))))))
-
 
 (provide 'radio-f-bbc)

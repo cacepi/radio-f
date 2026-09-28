@@ -183,7 +183,8 @@ links for the presentation views.")
 
 (defun radio-f--rtbf-radio-processor (data station)
   "Process RTBF Radio DATA for STATION."
-  (let* ((data (cdr (assoc "data" data)))
+  (let* ((name (plist-get station :name))
+         (data (cdr (assoc "data" data)))
          (now (aref data 0))
          (artist (cdr (assoc "artist" now)))
          (title (cdr (assoc "title" now)))
@@ -198,7 +199,8 @@ links for the presentation views.")
          (item-id (secure-hash
                    'sha3-224
                    (format "%s|%s" artist title))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)
@@ -207,7 +209,8 @@ links for the presentation views.")
 
 (defun radio-f--rtbf-web-processor (data station)
   "Process RTBF Web DATA for STATION."
-  (let* ((data (cdr (assoc "data" data)))
+  (let* ((name (plist-get station :name))
+         (data (cdr (assoc "data" data)))
          (now (aref data 0))
          (artist (cdr (assoc "artist" now)))
          (title (cdr (assoc "title" now)))
@@ -222,7 +225,8 @@ links for the presentation views.")
          (item-id (secure-hash
                    'sha3-224
                    (format "%s|%s" artist title))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)

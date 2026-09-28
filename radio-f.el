@@ -164,7 +164,8 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
   :group 'radio-f-audio)
 
 (defcustom radio-f-stream-level 'One
-  "Choice of audio stream level.  Higher numbers represent increasingly lower quality or bitrate."
+  "Choice of audio stream level.  Higher numbers represent increasingly
+lower quality or bitrate."
   :type '(choice
           (const :tag "Level One: highest quality or bitrate stream available." One)
           (const :tag "Level Two: lower quality/bitrate than a level one stream." Two)
@@ -192,7 +193,7 @@ in both frame and window view."
   :group 'radio-f-faces)
 
 (defface radio-f-timeline
-  '((t :iherit (default) :weight medium :height 0.9))
+  '((t :inherit (default) :weight medium :height 0.9))
   "Face used for the track timeline."
   :group 'radio-f-faces)
 
@@ -257,7 +258,7 @@ in both frame and window view."
 
 (defun radio-f--disable-pspm ()
   "Disable the keymap for Pixel-Scroll Precision Mode in the current buffer
-so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
+so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
   (add-to-list
    'minor-mode-overriding-map-alist
    '(pixel-scroll-precision-mode
@@ -328,7 +329,8 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
           radio-f--rtbf-stations))
 
 (defun radio-f--set-initial-station ()
-  "Return the preferred station, or the first available station from the first carrier defined in `radio-f-carriers'."
+  "Return the preferred station, or the first available station
+from the first carrier defined in `radio-f-carriers'."
   (let ((stations
          (radio-f--all-station-names)))
     (if (member radio-f-default-station stations)
@@ -516,18 +518,12 @@ does not have, the stream returned is the highest level stream."
          ;; (_ (message "Radio F: station=%S content-type=%S"
          ;;    (car station)
          ;;    (plist-get station :raw)))
-       (data
-        (if (plist-get station :raw)
-            raw-json-string
-          (json-read-from-string raw-json-string)))
+         (data
+          (if (plist-get station :raw)
+              raw-json-string
+            (json-read-from-string raw-json-string)))
          (processor (plist-get station :processor))
-         (track-info (funcall processor data station))
-         (item-id (alist-get 'item-id track-info))
-         (artist (alist-get 'artist track-info))
-         (title (alist-get 'title track-info))
-         (start (alist-get 'start track-info))
-         (end (alist-get 'end track-info))
-         (visual-url (alist-get 'visual-url track-info)))
+         (track-info (funcall processor data station)))
     ;; Don't call the views if "item-id" hasn't changed.
     ;; Instead, Wait for a fetch to return fresh JSON.
     (unless (equal item-id radio-f--current-item-id)
@@ -1716,7 +1712,9 @@ user has requested it.")
       stations)))
 
 (defun radio-f--record-track-log ()
-  "Log the current time and track data to the buffer defined in `radio-f--track-log-buffer-name'.  Time is listed in the user's local timezone, not CET/CDT."
+  "Log the current time and track data to the buffer defined in
+`radio-f--track-log-buffer-name'.  Time returned is in the user's
+local timezone, not the current station's timezone."
        (interactive)
        (let-alist radio-f--current-track-info
          (with-current-buffer
@@ -1732,7 +1730,8 @@ user has requested it.")
              (insert (or .visual-url "No Artwork URL") "\n")))))
 
 (defun radio-f--dump-current-track-data ()
-  "Dump the current track's info alist into the buffer defined in `radio-f--alist-buffer-name'."
+  "Dump the current track's info alist into the buffer defined
+in `radio-f--alist-buffer-name'."
   (interactive)
   (when radio-f--current-track-info
     (with-current-buffer

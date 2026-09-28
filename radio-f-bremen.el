@@ -128,12 +128,14 @@ links for the presentation views.")
 
 (defconst radio-f--ard-organizations
   "https://api.ardaudiothek.de/organizations"
-  "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
+  "URL providing JSON metadata for all ARD stations.  Used for
+development purposes.")
 
 (defconst radio-f--ard-bremen-api-url
   "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
 ;; "https://api.ardaudiothek.de/graphql?query=query%20MediaCollectionPermanentLivestreamsQuery(%24id%3AString!)%7BpermanentLivestream(id%3A%24id)%7BmediaCollection(v%3AV6A)%7D%7D&variables=%7B%22id%22%3A%22urn%3Aard%3Apermanent-livestream%3A<<livestream>>%22%7D"
-  "Template to retrieve metadata from all supported carriers through the ARD Audiothek API.")
+  "Template to retrieve metadata from all supported carriers
+through the ARD Audiothek API.")
 
 (defconst radio-f--ajax-bremen-api-url
   "https://www.<<id>>.de/<<api-tag>>100~ajax_ajaxType-epg.json"
@@ -193,7 +195,8 @@ links for the presentation views.")
 
 (defun radio-f--bremen-processor (data station)
   "Process Radio Bremen DATA for STATION."
-  (let* ((now (cdr (assoc "currentTitle" data)))
+  (let* ((name (plist-get station :name))
+         (now (cdr (assoc "currentTitle" data)))
          (tracking (cdr (assoc "trackingData" data)))
          (broadcast (cdr (assoc "currentBroadcast" data)))
          (image (cdr (assoc "image" broadcast)))
@@ -209,7 +212,8 @@ links for the presentation views.")
          (item-id (secure-hash
                    'sha3-224
                    (format "%s|%s|%s|%s" artist title start end))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)
@@ -218,7 +222,8 @@ links for the presentation views.")
 
 (defun radio-f--ard-bremen-processor (data station)
   "Process Radio Bremen DATA for STATION."
-  (let* ((root (cdr (assoc "data" data)))
+  (let* ((name (plist-get station :name))
+         (root (cdr (assoc "data" data)))
          (stream (cdr (assoc "permanentLivestream" root)))
          (media (cdr (assoc "mediaCollection" stream)))
          (meta (cdr (assoc "meta" media)))
@@ -231,8 +236,9 @@ links for the presentation views.")
          (visual-url (cdr (assoc "url" now)))
          (item-id (secure-hash
                    'sha3-224
-                   (format "%s|%s" artist title))))
-    `((item-id    . ,item-id)
+                   (format "%s|%s|%s|%s" artist title start end))))
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)

@@ -143,7 +143,8 @@ links for the presentation views.")
 
 (defun radio-f--dlf-processor (data station)
   "Process Deutschlandfunk DATA for STATION."
-  (let* ((json-string (radio-f--extract-dlr-json data))
+  (let* ((name (plist-get station :name))
+         (json-string (radio-f--extract-dlr-json data))
          (json (json-read-from-string json-string))
          (key (cdr (assoc "key" json)))
          (value (cdr (assoc "value" json)))
@@ -178,7 +179,8 @@ links for the presentation views.")
           (secure-hash
            'sha3-224
            (format "%s|%s|%s|%s" artist title start end))))
-    `((item-id    . ,item-id)
+    `((name       . ,name)
+      (item-id    . ,item-id)
       (artist     . ,artist)
       (title      . ,title)
       (start      . ,start)
@@ -187,7 +189,8 @@ links for the presentation views.")
 
 (defun radio-f--dlf-nova-processor (data station)
   "Process Deutschlandfunk Nova DATA for STATION."
-  (let* ((now (cdr (assoc "playlistItem" data)))
+  (let* ((name (plist-get station :name))
+         (now (cdr (assoc "playlistItem" data)))
          (presenter (cdr (assoc "presenter" data)))
          (artist (cdr (assoc "artist" now)))
          (title (cdr (assoc "title" now)))
@@ -221,22 +224,23 @@ links for the presentation views.")
            ;;
            ;; Until the next time Deutschlandfunk Nova finds a fun, new
            ;; way to break artwork.
-         (_
-          (symbol-value
-           (plist-get station :visual-url)))))
+           (_
+            (symbol-value
+             (plist-get station :visual-url)))))
          ;; Like its sister stations, DLR Nova has no UUID
          ;; for JSON objects. Use the same fix as the others.
          (item-id
           (secure-hash
            'sha3-224
            (format "%s|%s|%s|%s" artist title start end))))
-      ;; Fill in the returned values.  Postmaster takes it from there.
-      `((item-id    . ,item-id)
-        (artist     . ,artist)
-        (title      . ,title)
-        (start      . ,start)
-        (end        . ,end)
-        (visual-url . ,visual-url))))
+    ;; Fill in the returned values.  Postmaster takes it from there.
+    `((name       . ,name)
+      (item-id    . ,item-id)
+      (artist     . ,artist)
+      (title      . ,title)
+      (start      . ,start)
+      (end        . ,end)
+      (visual-url . ,visual-url))))
 
 (provide 'radio-f-dlr)
 
