@@ -728,7 +728,7 @@ OBJECT refers to a JSON object or vector of objects."
   (seq-some
    (lambda (entry)
      (member (cdr entry)
-             '("La radio la plus éclectique du monde")))
+             '("Le direct")))
    object))
 
 (defun radio-f--radio-france-processor (data station)

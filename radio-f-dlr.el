@@ -1,9 +1,9 @@
-;;; radio-f-ard.el --- DLR plugin for Radio F -*- lexical-binding: t; -*-
+;;; radio-f-dlr.el --- DLR plugin for Radio F -*- lexical-binding: t; -*-
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
 ;; Created: Mon 31 Aug 26
-;; Keywords: hypermedia, network, streaming, radio, Radio France
+;; Keywords: hypermedia, network, streaming, radio, Germany
 
 ;; This file is NOT part of Emacs.
 
@@ -22,7 +22,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;;; Commentary:
 ;;
 ;; Deutschlandradio plugin for Radio F: 3 stations.
@@ -37,9 +36,7 @@
 ;; with the other carriers, so little to no proper artwork for their
 ;; regular programming.  Radio F has to supply its own, instead.
 
-
 ;;; Code:
-
 
 ;; == STATION PLIST =====
 
@@ -57,13 +54,13 @@
      :api radio-f--dlf-kultur-api-url
      :processor radio-f--dlf-processor
      :www radio-f--dlf-url
-     :visual "assets/dlr/dlf.png")
+     :visual "assets/dlr/dlf-kultur.png")
     (dlf-nova
      :name "Deutschlandfunk Nova" :carrier dlr :metadata dlf-nova :id "03"
      :tag "funknova" :api radio-f--dlf-nova-api-url
      :processor radio-f--dlf-nova-processor
      :www radio-f--dlf-url
-     :visual "assets/dlr/dlf.png"))
+     :visual "assets/dlr/dlf-nova.png"))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -146,9 +143,7 @@ links for the presentation views.")
 
 (defun radio-f--dlf-processor (data station)
   "Process Deutschlandfunk DATA for STATION."
-  (let* ((json-object-type 'alist)
-         (json-key-type 'string)
-         (json-string (radio-f--extract-dlr-json data))
+  (let* ((json-string (radio-f--extract-dlr-json data))
          (json (json-read-from-string json-string))
          (key (cdr (assoc "key" json)))
          (value (cdr (assoc "value" json)))

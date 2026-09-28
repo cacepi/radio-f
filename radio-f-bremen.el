@@ -3,7 +3,7 @@
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
 ;; Created: Sun 06 Sep 26
-;; Keywords: hypermedia, network, streaming, radio, Radio France
+;; Keywords: hypermedia, network, streaming, radio, Germany
 
 ;; This file is NOT part of Emacs.
 
