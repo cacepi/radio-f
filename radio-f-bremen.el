@@ -124,7 +124,6 @@
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
-
 ;; == API URLS ==========
 
 (defconst radio-f--ard-organizations
@@ -140,11 +139,9 @@ links for the presentation views.")
   "https://www.<<id>>.de/<<api-tag>>100~ajax_ajaxType-epg.json"
   "Template used to retrieve JSON data from Radio Bremen.")
 
-
 ;; == WEB URLS ==========
 
 (defconst radio-f--bremen-www-url "https://<<id>>.de/")
-
 
 ;; == STREAM URLS =======
 
@@ -240,22 +237,6 @@ links for the presentation views.")
       (title      . ,title)
       (start      . ,start)
       (end        . ,end)
-      (visual-url . ,visual-url))))
-
-(defun radio-f--bremen-web-processor (data station)
-  "Process Radio Bremen DATA for STATION."
-  (let* ((station (radio-f--get-current-station-data))
-         (artist (plist-get station :artist))
-         (title (plist-get station :name))
-         ;; Web streams have no JSON, so they have no need for "start" or
-         ;; "end" values. The JSON timer is turned off for these streams.
-         (visual-url (symbol-value (plist-get station :visual-url)))
-         (item-id (secure-hash
-                   'sha3-224
-                   (format "%s|%s|%s|%s" artist title))))
-    `((item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
       (visual-url . ,visual-url))))
 
 (provide 'radio-f-bremen)

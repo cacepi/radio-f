@@ -267,7 +267,7 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -308,6 +308,8 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
               ('br radio-f--br-stations)
               ('bremen radio-f--bremen-stations)
               ('dlr radio-f--dlr-stations)
+              ('wdr radio-f--wdr-stations)
+              ('rtbf radio-f--rtbf-stations)
               (_ nil)))
           radio-f-carriers)))
 
@@ -321,7 +323,9 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
           radio-f--sbfm-stations
           radio-f--br-stations
           radio-f--bremen-stations
-          radio-f--dlr-stations))
+          radio-f--dlr-stations
+          radio-f--wdr-stations
+          radio-f--rtbf-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station from the first carrier defined in `radio-f-carriers'."
@@ -348,7 +352,11 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
       ('bremen
        (require 'radio-f-bremen))
       ('dlr
-       (require 'radio-f-dlr)))))
+       (require 'radio-f-dlr))
+      ('wdr
+       (require 'radio-f-wdr))
+      ('rtbf
+       (require 'radio-f-rtbf)))))
 
 (defun radio-f--favorite-stations ()
   "Return the effective list of favorite stations."
@@ -382,6 +390,10 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
      radio-f--bremen-url)
     ('dlr
      radio-f--dlr-url)
+    ('wdr
+     radio-f--wdr-url)
+    ('rtbf
+     radio-f--rtbf-url)
     (_
      nil)))
 
@@ -395,7 +407,9 @@ so its scrolling function, 'pixel-scroll-precision', is never called.  Ever."
             ('sbfm radio-f--sbfm-streams)
             ('br radio-f--br-streams)
             ('bremen radio-f--bremen-streams)
-            ('dlr radio-f--dlr-streams)))
+            ('dlr radio-f--dlr-streams)
+            ('wdr radio-f--wdr-streams)
+            ('rtbf radio-f--rtbf-streams)))
          (level
           (or radio-f--session-stream-level
               radio-f-stream-level))
@@ -440,20 +454,15 @@ does not have, the stream returned is the highest level stream."
 (defun radio-f--get-api-template (carrier)
   "Return the metadata URL template for CARRIER."
   (pcase carrier
-    ('bbc
-     radio-f--bbc-api-url)
-    ('radio-france
-     radio-f--radio-france-api-url)
-    ('rte
-     radio-f--rte-api-url)
-    ('sbfm
-     radio-f--sbfm-api-url)
-    ('br
-     radio-f--br-api-url)
-    ('bremen
-     (radio-f--set-bremen-api-url))
-    ('dlr
-     (radio-f--set-dlr-api-url))
+    ('bbc radio-f--bbc-api-url)
+    ('radio-france radio-f--radio-france-api-url)
+    ('rte radio-f--rte-api-url)
+    ('sbfm radio-f--sbfm-api-url)
+    ('br radio-f--br-api-url)
+    ('bremen (radio-f--set-bremen-api-url))
+    ('dlr (radio-f--set-dlr-api-url))
+    ('wdr (radio-f--set-wdr-api-url))
+    ('rtbf (radio-f--set-rtbf-api-url))
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -1465,7 +1474,9 @@ user has requested it.")
             ('sbfm radio-f--sbfm-streams)
             ('br radio-f--br-streams)
             ('bremen radio-f-bremen-streams)
-            ('dlr radio-f--dlr-streams)))
+            ('dlr radio-f--dlr-streams)
+            ('wdr radio-f--wdr-streams)
+            ('rtbf radio-f--rtbf-streams)))
          (levels
           (seq-filter
            (lambda (level)

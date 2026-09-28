@@ -151,7 +151,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 179 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 219 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -167,7 +167,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 179.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 219.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -289,7 +289,7 @@ How to make a favorites list again:  copy the stations you want from the station
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run `radio-f-change-station` instead of all 179.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 219.
 
 The list:
 
@@ -473,6 +473,46 @@ The list:
 "Bremen Vier Festival-Channel Web"
 "Bremen Vier Tanzt! Web"
 "Bremen Vier Zebra Web"
+"COSMO"
+"COSMO Soulfood Web"
+"COSMO Chill Web"
+"COSMO fem:power Web"
+"Neu in COSMO Web"
+"COSMO Summer Vibes Web"
+"COSMO Dance Web"
+"COSMO Konzerte Web"
+"WDR 1LIVE"
+"WDR 1LIVE Diggi Web"
+"WDR 1LIVE Dance Hits Web"
+"WDR 1LIVE Originale Web"
+"WDR 1LIVE Top Hits Web"
+"WDR 1LIVE R&B & Hip Hop Web"
+"WDR 1LIVE Chillout Web"
+"WDR 1LIVE Rock Hits Web"
+"WDR 2 Rheinland"
+"WDR 2 Aachen und Region"
+"WDR 2 Südwestfalen"
+"WDR 2 Ostwestfalen Lippe"
+"WDR 2 Rhein und Ruhr"
+"WDR 2 Ruhrgebiet"
+"WDR 2 Bergisches Land"
+"WDR 2 Münsterland"
+"WDR 4 Musik zum Träumen Web"
+"RTBF La Premiere"
+"RTBF Classic 21"
+"RTBF Classic 21 60s Web"
+"RTBF Classic 21 70s Web"
+"RTBF Classic 21 80s Web"
+"RTBF Classic 21 New Wave Web"
+"RTBF Classic 21 90s Web"
+"RTBF Classic 21 Blues Web"
+"RTBF Classic 21 Live Web"
+"RTBF Classic 21 Metal Web"
+"RTBF Classic 21 80s Web"
+"RTBF Classic 21 Route 66 Web"
+"RTBF Classic 21 Soul Web"
+"RTBF Classic 21 Soul Web"
+"RTBF 2"
 </pre>
 
 
@@ -534,13 +574,13 @@ As a result, if you choose EMMS as your default player, Radio F assumes that you
 
 ### The track timeline is inherently wrong.
 
-Radio F uses metadata from a carrier to provide track information and the artwork for the currently playing song.  While this works well, there is one small problem entirely beyond Radio F's control; most of the metadata feeds from carriers do not, and cannot, indicate _when_ one track ends and another begins.
+Radio F uses metadata from a carrier to provide track information and the artwork for the currently playing song.  While this does work, most carriers, if not all, have a major problem entirely beyond Radio F's control; most metadata feeds do not, and cannot, indicate _when_ one track ends and another begins.
 
-Most carrier feeds have fields which show an approximate time when a track starts and ends, but that's all those times are: approximate.  In the end it's still live radio, and any number of factors can throw those times off.  The feed can be pre-empted with a station ID, the DJ cuts a song early or belatedly inserts a song into the playlist, the stream is interrupted with "breaking news", and so forth.  And while computers are great at automating things, they have yet to master predicting the future.  Give it a few weeks.
+Most carrier feeds have fields which will show when a track _should_ start and end, but in the end it's still live radio, and any number of factors can throw those times off.  The feed can be pre-empted with a station ID, the DJ cuts a song early or belatedly inserts a song into the playlist, the stream is interrupted with "breaking news", and so forth.  And while computers are great at automating things, they have yet to master predicting the future.  Give it a few weeks.
 
-If it's any consolation, Radio France's web player is affected the same way Radio F is, except their timeline is consistently "early" by showing a song is anywhere from 30 seconds to a whole minute into the track when that song begins.  BBC Radio One is consistently _late_ by at least 90 seconds with their track timings.  Then there are the carriers who have no track timing information at all, which makes a track timeline completely useless. _Wunderbar._
+If it's any consolation, Radio France's web player is affected the same way Radio F is, except their timeline is consistently "early" by showing a song is anywhere from 30 seconds to a whole minute into the track when that song begins.  BBC Radio One is consistently _late_ by at least 90 seconds with their track timings, and RTBF simply does not update track listings for several hours at times.  Then there are the carriers that have absolutely no track timing information whatsoever, which makes a track timeline completely useless. _Wunderbar._
 
-As a result, Radio F can wildy when trying to spot transitions.  It's only when the timer misses that it becomes a very visible issue.  And can't trust the carrier to be accurate, either, as ofttimes they themselves don't know when the track transitions occur.  That's why the default timeline setting is `nil`; its inherent inaccuracy is visually confusing.
+As a result, Radio F can vary wildy with track transition timings.  It's only when the timer misses that it becomes a very visible issue.  And we can't trust the carrier to be accurate, either, as ofttimes they themselves don't know when the track transitions occur.  That's why the default timeline setting is `nil`; its inherent inaccuracy is visually confusing.
 
 ### Radio F est en direct.
 
