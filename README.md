@@ -17,7 +17,7 @@ Radio F is licensed under the GNU General Public License, Version 3. See [LICENS
 
 ## Installation
 
-Installation is via a simple `use-package` definition placed in the user's `init.el` file:
+Installation is via a simple `use-package` definition placed in your `init.el` file:
 
 <a id="use-package"></a>
 ```elisp
@@ -28,16 +28,15 @@ Installation is via a simple `use-package` definition placed in the user's `init
   (("C-c f r" . radio-f)))
  ```
 
-and evaluting the definition with `C-M-x`.  This will compile the Radio F sources and install them just like Emacs does with any package installed via `package-install` This will also install natively compiled files if your Emacs instance supports native compilation.
+and evaluting the definition with `C-M-x`.  This will download the Radio F source code, compile it, and install Radio F just like Emacs does with any package installed via `package-install` This will also install natively compiled files if your Emacs instance supports native compilation.
 
-<!-- This will compile the Radio F sources and place them in the packages subdirectory of `emacs-user-directory`.  Adjust this accordingly if your local packages lie elsewhere.
+After Radio F is installed, you can upgrade at any time by running `package-vc-upgrade` and selecting Radio F in the completion buffer.
 
-If the Emacs instance also supports native compilation, native object code will install in the user's `native-comp-eln-load-path` within `emacs-user-directory`.
-
-* Or, if you use [straight.el](https://github.com/radian-software/straight.el) for package management:
-<a id="straight.el"></a>
+<!--
 
 <a id="straight"></a>
+If you use [straight.el](https://github.com/radian-software/straight.el) for package management, you can try:
+
 ```
 (use-package radio-f
   :straight (radio-f :type git :host github :repo "cacepi/radio-f"))

@@ -733,13 +733,22 @@ OBJECT refers to a JSON object or vector of objects."
 
 (defun radio-f--radio-france-processor (data station)
   "Process Radio France DATA for STATION."
-  (let* ((now (cdr (assoc "now" data)))
+  (let* ((station (radio-f--get-current-station-data))
+         (now (cdr (assoc "now" data)))
          ;; First, make an empty alist that looks like this:
-         (metadata (plist-get station :metadata)))
+         (metadata (plist-get station :metadata))
+         name
+         item-id
+         artist
+         title
+         start
+         end
+         visual-url)
     ;; Throw out the entire object should it contain the no-no words.
     (unless (radio-f--ordures-p now)
       ;; Fill in all the values that are the same from schema to schema.
-      (setq-local artist  (cdr (assoc "firstLine" now))
+      (setq-local name    (plist-get station :name)
+                  artist  (cdr (assoc "firstLine" now))
                   title   (cdr (assoc "secondLine" now))
                   start   (cdr (assoc "startTime" now))
                   end     (cdr (assoc "endTime" now))
@@ -757,7 +766,8 @@ OBJECT refers to a JSON object or vector of objects."
                      "https://www.radiofrance.fr/pikapi/images/%s/400x400"
                      (cdr (assoc "cover_square" now))))))
       ;; Fill in the returned values.  Postmaster takes it from there.
-      `((item-id    . ,item-id)
+      `((name       . ,name)
+        (item-id    . ,item-id)
         (artist     . ,artist)
         (title      . ,title)
         (start      . ,start)

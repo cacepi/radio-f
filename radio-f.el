@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.4.1
+;; Version: 0.3.4.2
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -157,7 +157,7 @@ nil disables it."
   "Audio settings for Radio F."
   :group 'radio-f)
 
-(defcustom radio-f-default-volume 70
+(defcustom radio-f-default-volume 80
   "Set the default volume level for station playback.  The same volume
 level is used for mpv and VLC.  This setting is not available in EMMS."
   :type 'integer
@@ -461,10 +461,14 @@ does not have, the stream returned is the highest level stream."
     ('rte radio-f--rte-api-url)
     ('sbfm radio-f--sbfm-api-url)
     ('br radio-f--br-api-url)
-    ('bremen (radio-f--set-bremen-api-url))
-    ('dlr (radio-f--set-dlr-api-url))
-    ('wdr (radio-f--set-wdr-api-url))
-    ('rtbf (radio-f--set-rtbf-api-url))
+    ('bremen
+     (radio-f--set-bremen-api-url))
+    ('dlr
+     (radio-f--set-dlr-api-url))
+    ('wdr
+     (radio-f--set-wdr-api-url))
+    ('rtbf
+     (radio-f--set-rtbf-api-url))
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -523,7 +527,14 @@ does not have, the stream returned is the highest level stream."
               raw-json-string
             (json-read-from-string raw-json-string)))
          (processor (plist-get station :processor))
-         (track-info (funcall processor data station)))
+         (track-info (funcall processor data station))
+         (name (alist-get 'name track-info))
+         (item-id (alist-get 'item-id track-info))
+         (artist (alist-get 'artist track-info))
+         (title (alist-get 'title track-info))
+         (start (alist-get 'start track-info))
+         (end (alist-get 'end track-info))
+         (visual-url (alist-get 'visual-url track-info)))
     ;; Don't call the views if "item-id" hasn't changed.
     ;; Instead, Wait for a fetch to return fresh JSON.
     (unless (equal item-id radio-f--current-item-id)

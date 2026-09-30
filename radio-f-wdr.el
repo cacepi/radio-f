@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 ;;
-;; WDR plugin for Radio F: 17 Stations.
+;; WDR plugin for Radio F: 41 Stations.
 ;;
 ;; Uses the ARD Audiothek API for JSON.
 
@@ -37,269 +37,348 @@
 
 ;; https://dispatcher.rndfnk.com/wdr/<<station>>/<<id>>/mp3/128/stream.mp3
 
-;; (defconst radio-f--wdr-radio-level-one ;; AAC, 192kbps
-;;   "https://wdr-radio.ard-mcdn.de/wdr/radio/<<id>>/hls/master.m3u8"
-;;   "Template used to return a Level One audio stream for playback.")
-
 (defconst radio-f--wdr-stations
   '((wdrcosmo
-     :name "COSMO" :carrier wdr :id "cosmo"
+     :name "COSMO" :carrier wdr :id "cosmo" :bitrate "128"
      :publisher "4560bc62a6bdc9ef" :livestream "d96db4783260aa14"
      :api radio-f--wdr-radio-api-url
      :processor radio-f--wdr-radio-processor
      :l1-stream radio-f--wdr-radio-level-one
      :l2-stream radio-f--wdr-radio-level-two)
     (cosmosoul
-     :name "COSMO Soulfood Web" :carrier wdr :livestream "53ab366cbfca9e9a"
+     :name "COSMO Soulfood Web" :carrier wdr :bitrate "128"
      :station "cosmo" :id "italia"
+     :livestream "53ab366cbfca9e9a"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (cosmoafro
-     :name "COSMO Afrobeats Web" :carrier wdr :livestream "49a74388e5905a36"
+     :name "COSMO Afrobeats Web" :carrier wdr :bitrate "128"
      :station "cosmo" :id "afrobeat"
+     :livestream "49a74388e5905a36"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (cosmochill
-     :name "COSMO Chill Web" :carrier wdr :livestream "b4b07e7a617182de"
+     :name "COSMO Chill Web" :carrier wdr :bitrate "128"
+     :livestream "b4b07e7a617182de"
      :station "cosmo" :id "chillout"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (cosmotrap
-     :name "COSMO fem:power Web" :carrier wdr :livestream "9a3060a98c820d21"
+     :name "COSMO fem:power Web" :carrier wdr :bitrate "128"
+     :livestream "9a3060a98c820d21"
      :station "cosmo" :id "trap"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (cosmoneu
-     :name "Neu in COSMO Web" :carrier wdr :livestream "7c7648c14805a116"
+     :name "Neu in COSMO Web" :carrier wdr :bitrate "128"
+     :livestream "7c7648c14805a116"
      :station "cosmo" :id "neuincosmo"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (cosmosummer
-     :name "COSMO Summer Vibes Web" :carrier wdr :livestream "52e166c9367de0a4"
+     :name "COSMO Summer Vibes Web" :carrier wdr :bitrate "128"
+     :livestream "52e166c9367de0a4"
      :station "cosmo" :id "special"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (cosmodance
-     :name "COSMO Dance Web" :carrier wdr :livestream "0da28eb95856846f"
+     :name "COSMO Dance Web" :carrier wdr :bitrate "128"
+     :livestream "0da28eb95856846f"
      :station "cosmo" :id "dance"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (cosmokonzerte
-     :name "COSMO Konzerte Web" :carrier wdr :livestream "852552af4beaa862"
+     :name "COSMO Konzerte Web" :carrier wdr :bitrate "128"
+     :livestream "852552af4beaa862"
      :station "cosmo" :id "coslive"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
-    (wdr1live ;; https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:52ab46cdf0baac57?pastHours=0.2
-     :name "WDR 1LIVE" :carrier wdr :id "1live" :l2-id "1live"
+    (wdr1live
+     :name "WDR 1LIVE" :carrier wdr :id "1live" :l2-id "1live" :bitrate "128"
      :publisher "4560bc62a6bdc9ef" :livestream "52ab46cdf0baac57"
      :api radio-f--wdr-radio-api-url
      :processor radio-f--wdr-radio-processor
      :l1-stream radio-f--wdr-radio-level-one
      :l2-stream radio-f--wdr-radio-level-two)
     (wdr1livediggi
-     :name "WDR 1LIVE Diggi Web" :carrier wdr :id "1livediggi"
-     :publisher "4560bc62a6bdc9ef" :livestream "4c43fede80d6b508"
+     :name "WDR 1LIVE Diggi Web" :carrier wdr :id "1livediggi" :bitrate "128"
+     :livestream "4c43fede80d6b508"
      :station "1live" :l2-id "diggi"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-radio-level-one
      :l2-stream radio-f--wdr-radio-level-one)
     (wdrdancehits
-     :name "WDR 1LIVE Dance Hits Web" :carrier wdr :livestream "1ee2cfe6e2f61063"
+     :name "WDR 1LIVE Dance Hits Web" :carrier wdr :bitrate "128"
+     :livestream "1ee2cfe6e2f61063"
      :station "1live" :id "dancehits"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
-    (wdroriginale ;; For some reason, this station has a unique web stream URL.
-     :name "WDR 1LIVE Originale Web" :carrier wdr :livestream "7bc3ff29640bebe7"
+    (wdroriginale
+     :name "WDR 1LIVE Originale Web" :carrier wdr :bitrate "128"
+     :livestream "7bc3ff29640bebe7"
      :web-l2-domain "icecast" :station "1live" :id "originale"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (wdrtophits
-     :name "WDR 1LIVE Top Hits Web" :carrier wdr :livestream "f78f4dfde4b1b205"
+     :name "WDR 1LIVE Top Hits Web" :carrier wdr :bitrate "128"
+     :livestream "f78f4dfde4b1b205"
      :station "1live" :id "tophits"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (wdrhiphoprnb
-     :name "WDR 1LIVE R&B & Hip Hop Web" :carrier wdr :livestream "ad2854227a24cd97"
+     :name "WDR 1LIVE R&B & Hip Hop Web" :carrier wdr :bitrate "128"
+     :livestream "ad2854227a24cd97"
      :station "1live" :id "hiphoprnb"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (wdrchillout
-     :name "WDR 1LIVE Chillout Web" :carrier wdr :livestream "6ed1aebe18d6b705"
+     :name "WDR 1LIVE Chillout Web" :carrier wdr :bitrate "128"
+     :livestream "6ed1aebe18d6b705"
      :station "1live" :id "chillout"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
     (wdr1liverockhits
-     :name "WDR 1LIVE Rock Hits Web" :carrier wdr :livestream "d5193e79f7d2c519"
+     :name "WDR 1LIVE Rock Hits Web" :carrier wdr :bitrate "128"
+     :livestream "d5193e79f7d2c519"
      :station "1live" :id "rockhits"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
-
     (wdr2-rheinland
      :name "WDR 2 Rheinland" :carrier wdr :station "wdr2" :id "wdr2rhld"
-     :locale "rheinland"
+     :locale "rheinland" :bitrate "128"
      :publisher "82719e5e5c83925a" :livestream "8b939df5fa39be0b"
      :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
+     :l2-stream radio-f--wdr-radio-level-two)
     (wdr2-aachen
      :name "WDR 2 Aachen und Region" :carrier wdr :station "wdr2" :id "wdr2ac"
-     :locale "aachenundregion"
+     :locale "aachenundregion" :bitrate "128"
      :publisher "82719e5e5c83925a" :livestream "ee9a086f00147c5d"
      :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
+     :l2-stream radio-f--wdr-radio-level-two)
     (wdr2-sudwestfalen
      :name "WDR 2 Südwestfalen" :carrier wdr :station "wdr2" :id "wdr2swf"
-     :locale "suedwestfalen"
+     :locale "suedwestfalen" :bitrate "128"
      :publisher "82719e5e5c83925a" :livestream "d78a727b7282dc94"
      :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
+     :l2-stream radio-f--wdr-radio-level-two)
     (wdr2-lippe
      :name "WDR 2 Ostwestfalen Lippe" :carrier wdr :station "wdr2" :id "wdr2owl"
-     :locale "ostwestfalenlippe"
+     :locale "ostwestfalenlippe" :bitrate "128"
      :publisher "82719e5e5c83925a" :livestream "9c0af28790c681fa"
      :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
+     :l2-stream radio-f--wdr-radio-level-two)
     (wdr2-rheinruhr
-     :name "WDR 2 Rhein und Ruhr" :carrier wdr :station "wdr2" :id "wdr2rr"
-     :locale "rheinruhr"
+     :name "WDR 2 Rhein und Ruhr" :carrier wdr
+     :station "wdr2" :id "wdr2rr"
+     :locale "rheinruhr" :bitrate "128"
      :publisher "82719e5e5c83925a" :livestream "8966dec50d3692a4"
      :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
+     :l2-stream radio-f--wdr-radio-level-two)
     (wdr2-ruhrgebiet
-     :name "WDR 2 Ruhrgebiet" :carrier wdr  :station "wdr2" :id "wdr2ruhrgb"
+     :name "WDR 2 Ruhrgebiet" :carrier wdr
+     :station "wdr2" :id "wdr2ruhrgb"
      :locale "ruhrgebiet"
      :publisher "82719e5e5c83925a" :livestream "84d92a896d3cbcca"
-     :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :api radio-f--wdr-web-api-url :bitrate "128"
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
+     :l2-stream radio-f--wdr-radio-level-two)
     (wdr2-bergisches-land
-     :name "WDR 2 Bergisches Land" :carrier wdr :station "wdr2" :id "wdr2bld"
-     :locale "bergischesland"
+     :name "WDR 2 Bergisches Land" :carrier wdr
+     :station "wdr2" :id "wdr2bld"
+     :locale "bergischesland" :bitrate "128"
      :publisher "82719e5e5c83925a" :livestream "eaca8e08741608dc"
      :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
+     :l2-stream radio-f--wdr-radio-level-two)
     (wdr2-munsterland
-     :name "WDR 2 Münsterland" :carrier wdr :station "wdr2" :id "wdr2mld"
-     :locale "muensterland"
+     :name "WDR 2 Münsterland" :carrier wdr
+     :station "wdr2" :id "wdr2mld"
+     :locale "muensterland" :bitrate "128"
      :publisher "82719e5e5c83925a" :livestream "36be5febc15a6bcd"
      :api radio-f--wdr-web-api-url
-     :processor radio-f--wdr-web-processor
+     :processor radio-f--wdr-regional-processor
      :l1-stream radio-f--wdr-radio-level-one
-     :l2-stream radio-f--wdr2-radio-level-two)
-
-    (wdr4-dream
-     :name "WDR 4 Musik zum Träumen Web" :carrier wdr :id "wdr4"
-     :livestream "36be5febc15a6bcd"
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr3
+     :name "WDR 3" :carrier wdr :id "wdr3"
+     :station "live" :bitrate "256"
+     :publisher "c0817fb5f569a4c9" :livestream "4e78bd44bd9d8b36"
+     :api radio-f--wdr-radio-api-url
+     :processor radio-f--wdr-radio-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr3-radio-level-two)
+    (wdr3-world
+     :name "WDR 3 World Web" :carrier wdr :id "world"
+     :station "wdr3" :bitrate "128"
+     :livestream "cff3461f36492336"
      :api radio-f--wdr-web-api-url
      :processor radio-f--wdr-web-processor
      :l1-stream radio-f--wdr-web-level-two
      :l2-stream radio-f--wdr-web-level-two)
-    ;; (wdr4-rheinland
-    ;;  :name "WDR 4 Rheinland" :carrier wdr
-    ;;  :id "wdr4rhld" :station "wdr4" :locale "rheinland"
-    ;;  :publisher "82719e5e5c83925a" :livestream "8b939df5fa39be0b"
-    ;;  :api radio-f--wdr-radio-api-url
-    ;;  :processor radio-f--wdr-processor
-    ;;  :visual radio-f--ard-visual-url
-    ;;  :l1-stream radio-f--wdr4-level-one
-    ;;  :l2-stream radio-f--wdr4-level-two)
-    ;; (wdr4-sudwestfalen
-    ;;  :name "WDR 2 Südwestfalen" :carrier wdr
-    ;;  :id "wdr4swf" :station "wdr4" :locale "suedwestfalen"
-    ;;  :publisher "82719e5e5c83925a"
-    ;;  :livestream "84433d0678701750"
-    ;;  :api radio-f--wdr-radio-api-url
-    ;;  :processor radio-f--wdr-processor
-    ;;  :visual radio-f--ard-visual-url
-    ;;  :l1-stream radio-f--wdr4-level-one
-    ;;  :l2-stream radio-f--wdr4-level-two)
-    ;; (wdr4-lippe
-    ;;  :name "WDR 4 Ostwestfalen Lippe" :carrier wdr
-    ;;  :id "wdr4owl" :station "wdr4" :locale "ostwestfalenlippe"
-    ;;  :publisher "82719e5e5c83925a" :livestream "24d83f91c79a3c93"
-    ;;  :api radio-f--wdr-radio-api-url
-    ;;  :processor radio-f--wdr-processor
-    ;;  :visual radio-f--ard-visual-url
-    ;;  :l1-stream radio-f--wdr4-level-one
-    ;;  :l2-stream radio-f--wdr4-level-two)
-    ;; (wdr4-rheinruhr
-    ;;  :name "WDR 4 Rhein und Ruhr" :carrier wdr
-    ;;  :id "wdr4rr" :station "wdr4" :locale "rheinruhr"
-    ;;  :publisher "82719e5e5c83925a" :livestream "8966dec50d3692a4"
-    ;;  :api radio-f--wdr-radio-api-url
-    ;;  :processor radio-f--wdr-processor
-    ;;  :visual radio-f--ard-visual-url
-    ;;  :l1-stream radio-f--wdr4-level-one
-    ;;  :l2-stream radio-f--wdr4-level-two)
-    ;; (wdr4-ruhrgebiet
-    ;;  :name "WDR 4 Ruhrgebiet" :carrier wdr
-    ;;  :id "wdr4ruhrgb" :station "wdr4" :locale "ruhrgebiet"
-    ;;  :publisher "82719e5e5c83925a" :livestream "65999aca80fc92de"
-    ;;  :api radio-f--wdr-radio-api-url
-    ;;  :processor radio-f--wdr-processor
-    ;;  :visual radio-f--ard-visual-url
-    ;;  :l1-stream radio-f--wdr4-level-one
-    ;;  :l2-stream radio-f--wdr4-level-two)
-    ;; (wdr4-bergisches-land
-    ;;  :name "WDR 4 Bergisches Land" :carrier wdr
-    ;;  :id "wdr4bld" :station "wdr4" :locale "bergischesland"
-    ;;  :publisher "82719e5e5c83925a" :livestream "eaca8e08741608dc"
-    ;;  :api radio-f--wdr-radio-api-url
-    ;;  :processor radio-f--wdr-processor
-    ;;  :visual radio-f--ard-visual-url
-    ;;  :l1-stream radio-f--wdr4-level-one
-    ;;  :l2-stream radio-f--wdr4-level-two)
-    ;; (wdr4-munsterland
-    ;;  :name "WDR 4 Münsterland" :carrier wdr
-    ;;  :id "wdr4mld" :station "wdr4" :locale "muensterland"
-    ;;  :publisher "82719e5e5c83925a" :livestream "26ca0ca86f487797"
-    ;;  :api radio-f--wdr-radio-api-url
-    ;;  :processor radio-f--wdr-processor
-    ;;  :visual radio-f--ard-visual-url
-    ;;  :l1-stream radio-f--wdr4-level-one
-    ;;  :l2-stream radio-f--wdr4-level-two)
-    )
+    (wdr3-jazz
+     :name "WDR 3 Jazz Web" :carrier wdr :bitrate "128"
+     :station "wdr3" :id "jazz"
+     :livestream "5486e3a7f3a31f44"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-web-processor
+     :l1-stream radio-f--wdr-web-level-two
+     :l2-stream radio-f--wdr-web-level-two)
+    (wdr3-klassik
+     :name "WDR 3 Klassik Web" :carrier wdr :id "klassik"
+     :station "wdr3" :bitrate "128"
+     :livestream "714aaa4f64f47985"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-web-processor
+     :l1-stream radio-f--wdr-web-level-two
+     :l2-stream radio-f--wdr-web-level-two)
+    (wdr4-dream
+     :name "WDR 4 Musik zum Träumen Web" :carrier wdr :station "wdr4"
+     :locale "musikzumtraeumen"
+     :livestream "f695e1efa2ba7455"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-web-processor
+     :l1-stream radio-f--wdr-web-level-two
+     :l2-stream radio-f--wdr-web-level-two :bitrate "128")
+    (wdr4-ruhrgebiet
+     :name "WDR 4 Ruhrgebiet" :carrier wdr
+     :id "wdr4ruhrgb" :station "wdr4"
+     :locale "ruhrgebiet" :bitrate "128"
+     :publisher "dcc5f7461d90ca1d" :livestream "65999aca80fc92de"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr4-rheinland
+     :name "WDR 4 Rheinland" :carrier wdr
+     :station "wdr4" :id "wdr4rhld"
+     :locale "rheinland" :bitrate "128"
+     :publisher "dcc5f7461d90ca1d" :livestream "f54ba081d852129a"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr4-aachenundregion
+     :name "WDR 4 Aachen und Region" :carrier wdr
+     :station "wdr4" :id "wdr4ac"
+     :locale "aachenundregion" :bitrate "128"
+     :publisher "dcc5f7461d90ca1d" :livestream "a06af602ef34959e"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr4-sudwestfalen
+     :name "WDR 4 Südwestfalen" :carrier wdr
+     :id "wdr4swf" :station "wdr4"
+     :locale "suedwestfalen" :bitrate "128"
+     :publisher "dcc5f7461d90ca1d" :livestream "84433d0678701750"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two :bitrate "128")
+    (wdr4-lippe
+     :name "WDR 4 Ostwestfalen Lippe" :carrier wdr :id "wdr4owl" :station "wdr4"
+     :locale "ostwestfalenlippe"
+     :publisher "dcc5f7461d90ca1d" :livestream "24d83f91c79a3c93"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr4-rheinruhr
+     :name "WDR 4 Rhein und Ruhr" :carrier wdr
+     :id "wdr4rr" :station "wdr4"
+     :locale "rheinruhr" :bitrate "128"
+     :publisher "dcc5f7461d90ca1d" :livestream "8966dec50d3692a4"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr4-bergisches-land
+     :name "WDR 4 Bergisches Land" :carrier wdr
+     :id "wdr4bld" :station "wdr4"
+     :locale "bergischesland" :bitrate "128"
+     :publisher "dcc5f7461d90ca1d" :livestream "eaca8e08741608dc"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr4-muensterland
+     :name "WDR 4 Münsterland" :carrier wdr
+     :id "wdr4mld" :station "wdr4"
+     :locale "muensterland" :bitrate "128"
+     :publisher "dcc5f7461d90ca1d" :livestream "26ca0ca86f487797"
+     :api radio-f--wdr-web-api-url
+     :processor radio-f--wdr-regional-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdr5
+     :name "WDR 5" :carrier wdr
+     :id "wdr5" :locale "live" :bitrate "128"
+     :publisher "9e3516adb47afc8e" :livestream "0fa94ef0c09df1df"
+     :api radio-f--wdr-radio-api-url
+     :processor radio-f--wdr-radio-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    (wdrmaus
+     :name "WDR Maus" :carrier wdr
+     :id "diemaus" :locale "live" :bitrate "128"
+     :publisher "32a2d9c329891a0b" :livestream "767b059329029e26"
+     :api radio-f--wdr-radio-api-url
+     :processor radio-f--wdr-radio-processor
+     :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two))
+  ;; There's an entry for this station in the ARD Audiothek, but I believe
+  ;; it's a "we interrupt this broadcast with a special report" channel, as
+  ;; ATM the audio stream is silence, and the only information in the JSON is
+  ;; "Derzeit keine Übertragung." (No transmission at the moment.)
+  ;; (wdr-event
+  ;;    :name "WDR Event" :carrier wdr
+  ;;    :id "wdr" :locale "event" :bitrate "128"
+  ;;    :publisher "d7a027a68167aa6f" :livestream "a6368f8093717313"
+  ;;    :api radio-f--wdr-radio-api-url
+  ;;    :processor radio-f--wdr-radio-processor
+  ;;    :l1-stream radio-f--wdr-radio-level-one
+  ;;    :l2-stream radio-f--wdr-radio-level-two))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -315,8 +394,16 @@ development purposes.")
   "Template to retrieve metadata from all supported carriers through
 the ARD Audiothek API.")
 
+;; https://programm-api.ard.de/radio/api/publisher?publisher=urn:ard:publisher:dcc5f7461d90ca1d
+
+;; https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:8b939df5fa39be0b?pastHours=0.1
+
+;; https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
+
 (defconst radio-f--wdr-web-api-url
-  "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
+;;    "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
+;;  "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
+  "https://api.ardaudiothek.de/graphql?query=query%20MediaCollectionPermanentLivestreamsQuery(%24id%3AString!)%7BpermanentLivestream(id%3A%24id)%7BmediaCollection(v%3AV6A)%7D%7D&variables=%7B%22id%22%3A%22urn%3Aard%3Apermanent-livestream%3A<<livestream>>%22%7D"
   "Template to retrieve metadata for WDR web streams")
 
 (defconst radio-f--wdr-url
@@ -329,16 +416,21 @@ the ARD Audiothek API.")
   "https://wdr-radio.ard-mcdn.de/wdr/radio/<<id>>/hls/master.m3u8"
   "Template used to return a Level One audio stream for playback.")
 
-(defconst radio-f--wdr-radio-level-two ;; MP3, 128kpbs
-  "https://dispatcher.rndfnk.com/wdr/<<station>>/<<id>>/mp3/128/stream.mp3"
+(defconst radio-f--wdr-radio-level-two ;; MP3
+  "https://wdr-<<id>>-<<locale>>.icecastssl.wdr.de/wdr/<<id>>/<<locale>>/mp3/<<bitrate>>/stream.mp3"
   "Template used to return a Level Two audio stream for playback.")
 
 (defconst radio-f--wdr2-radio-level-two
-  "https://dispatcher.rndfnk.com/wdr/<<station>>/<<locale>>/mp3/128/stream.mp3"
+  "https://dispatcher.rndfnk.com/wdr/<<station>>/<<locale>>/mp3/<<bitrate>>/stream.mp3"
   "Stream template for level Two stream on WDR2.")
 
+(defconst radio-f--wdr3-radio-level-two
+  "https://wdr-wdr3-live.icecastssl.wdr.de/wdr/<<id>>/<<station>>/mp3/<<bitrate>>/stream.mp3"
+  "Stream template for level Two stream on WDR3.")
+
 (defconst radio-f--wdr-web-level-two
-  "https://dispatcher.rndfnk.com/wdr/<<station>>/<<id>>/mp3/128/stream.mp3")
+;;  "https://icecast.wdr.de/wdr/<<station>>/<<id>>/mp3/<<bitrate>>/stream.mp3")
+  "https://dispatcher.rndfnk.com/wdr/<<station>>/<<id>>/mp3/<<bitrate>>/stream.mp3")
 
 ;; == HELPER FUNCTIONS ==========================
 
@@ -368,7 +460,6 @@ the ARD Audiothek API.")
     (Two     . radio-f--set-wdr-stream-level-two)
     (default . radio-f--set-wdr-stream-level-one))
   "Audio stream templates provided by Westdeutscher Rundfunk.")
-
 
 ;; (defun radio-f--set-wdr-streams ()
 ;;   (let* ((station (radio-f--get-current-station-data))
@@ -440,20 +531,20 @@ the ARD Audiothek API.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-(defun radio-f--wdr2-processor (data station)
+(defun radio-f--wdr4-regional-processor (data station)
   (let* ((station (radio-f--get-current-station-data))
          (name (plist-get station :name))
          (root (cdr (assoc "data" data)))
          (stream (cdr (assoc "permanentLivestream" root)))
          (media (cdr (assoc "mediaCollection" stream)))
-         (meta (cdr (assoc "meta" media)))
-         (images (cdr (assoc "images" meta)))
-         (now (aref images 1))
+         (now (cdr (assoc "meta" media)))
+         (image-array (cdr (assoc "images" now)))
+         (images (aref image-array 1))
          (artist (cdr (assoc "title" now)))
-         (title (cdr (assoc "clipSourceName" meta)))
+         (title (cdr (assoc "title" images)))
          (start (floor (float-time)))
          (end (floor (float-time)))
-         (visual-url (cdr (assoc "url" now)))
+         (visual-url (cdr (assoc "url" images)))
          (item-id (secure-hash
                    'sha3-224
                    (format "%s|%s" artist title))))
@@ -465,31 +556,23 @@ the ARD Audiothek API.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-(defun radio-f--ard-processor (data station)
+(defun radio-f--wdr-regional-processor (data station)
   (let* ((station (radio-f--get-current-station-data))
          (name (plist-get station :name))
-         (root (cdr (assoc "0" data)))
-         (now (cdr (assoc "clip" root)))
-         (artist (cdr (assoc "artist" now)))
-         (title (cdr (assoc "title" now)))
-         (start (cdr (assoc "start" now)))
-         (end (cdr (assoc "end" now)))
-         (image (cdr (assoc "image" now)))
-         ;; (start
-         ;;  (time-convert
-         ;;   (date-to-time
-         ;;    (cdr (assoc "start" now)))
-         ;;   'integer))
-         ;; (end
-         ;;  (time-convert
-         ;;   (date-to-time
-         ;;    (cdr (assoc "end" now)))
-         ;;   'integer))
-         (visual-url (cdr (assoc "url" image)))
-         (item-id
-          (secure-hash
-           'sha3-224
-           (format "%s|%s|%s|%s" artist title start end))))
+         (root (cdr (assoc "data" data)))
+         (stream (cdr (assoc "permanentLivestream" root)))
+         (media (cdr (assoc "mediaCollection" stream)))
+         (now (cdr (assoc "meta" media)))
+         (image-array (cdr (assoc "images" now)))
+         (images (aref image-array 1))
+         (artist (cdr (assoc "title" now)))
+         (title (cdr (assoc "title" images)))
+         (start (floor (float-time)))
+         (end (floor (float-time)))
+         (visual-url (cdr (assoc "url" images)))
+         (item-id (secure-hash
+                   'sha3-224
+                   (format "%s|%s" artist title))))
     `((name       . ,name)
       (item-id    . ,item-id)
       (artist     . ,artist)
@@ -500,4 +583,4 @@ the ARD Audiothek API.")
 
 (provide 'radio-f-wdr)
 
-;;; radio-f-ard.el ends here
+;;; radio-f-wdr.el ends here
