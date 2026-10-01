@@ -150,7 +150,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 219 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 251 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -166,7 +166,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 219.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 251.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -288,7 +288,7 @@ How to make a favorites list again:  copy the stations you want from the station
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run `radio-f-change-station` instead of all 219.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 251.
 
 The list:
 
@@ -496,7 +496,39 @@ The list:
 "WDR 2 Ruhrgebiet"
 "WDR 2 Bergisches Land"
 "WDR 2 Münsterland"
+"WDR 3"
+"WDR 3 World Web"
+"WDR 3 Jazz Web"
+"WDR 3 Klassik Web"
 "WDR 4 Musik zum Träumen Web"
+"WDR 4 Rheinland"
+"WDR 4 Aachen und Region"
+"WDR 4 Südwestfalen"
+"WDR 4 Ostwestfalen Lippe"
+"WDR 4 Rhein und Ruhr"
+"WDR 4 Ruhrgebiet"
+"WDR 4 Bergisches Land"
+"WDR 4 Münsterland"
+"WDR 5"
+"WDR Die Maus"
+"HR 1 Rhein-Main"
+"HR 1 Südhessen"
+"HR 1 Osthessen"
+"HR 1 Nordhessen"
+"HR 1 Mittelhessen"
+"HR 2 Kultur"
+"HR 3 Rhein-Main"
+"HR 3 Südhessen"
+"HR 3 Osthessen"
+"HR 3 Nordhessen"
+"HR 3 Mittelhessen"
+"HR 4 Rhein-Main"
+"HR 4 Südhessen"
+"HR 4 Osthessen"
+"HR 4 Nordhessen"
+"HR 4 Mittelhessen"
+"HR iNFO"
+"DASDING vom HR"
 "RTBF La Premiere"
 "RTBF Classic 21"
 "RTBF Classic 21 60s Web"

@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.4.2
+;; Version: 0.3.5
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -268,7 +268,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -310,6 +310,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
               ('bremen radio-f--bremen-stations)
               ('dlr radio-f--dlr-stations)
               ('wdr radio-f--wdr-stations)
+              ('hr radio-f--hr-stations)
               ('rtbf radio-f--rtbf-stations)
               (_ nil)))
           radio-f-carriers)))
@@ -326,6 +327,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
           radio-f--bremen-stations
           radio-f--dlr-stations
           radio-f--wdr-stations
+          radio-f--hr-stations
           radio-f--rtbf-stations))
 
 (defun radio-f--set-initial-station ()
@@ -357,6 +359,8 @@ from the first carrier defined in `radio-f-carriers'."
        (require 'radio-f-dlr))
       ('wdr
        (require 'radio-f-wdr))
+      ('hr
+       (require 'radio-f-hr))
       ('rtbf
        (require 'radio-f-rtbf)))))
 
@@ -394,6 +398,8 @@ from the first carrier defined in `radio-f-carriers'."
      radio-f--dlr-url)
     ('wdr
      radio-f--wdr-url)
+    ('hr
+     radio-f--hr-url)
     ('rtbf
      radio-f--rtbf-url)
     (_
@@ -411,6 +417,7 @@ from the first carrier defined in `radio-f-carriers'."
             ('bremen radio-f--bremen-streams)
             ('dlr radio-f--dlr-streams)
             ('wdr radio-f--wdr-streams)
+            ('hr radio-f--hr-streams)
             ('rtbf radio-f--rtbf-streams)))
          (level
           (or radio-f--session-stream-level
@@ -467,6 +474,8 @@ does not have, the stream returned is the highest level stream."
      (radio-f--set-dlr-api-url))
     ('wdr
      (radio-f--set-wdr-api-url))
+    ('hr
+     (radio-f--set-hr-api-url))
     ('rtbf
      (radio-f--set-rtbf-api-url))
     (_
@@ -1483,6 +1492,7 @@ user has requested it.")
             ('bremen radio-f-bremen-streams)
             ('dlr radio-f--dlr-streams)
             ('wdr radio-f--wdr-streams)
+            ('hr radio-f--hr-streams)
             ('rtbf radio-f--rtbf-streams)))
          (levels
           (seq-filter
