@@ -150,7 +150,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 251 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 311 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -166,7 +166,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 251.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 311.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -288,7 +288,7 @@ How to make a favorites list again:  copy the stations you want from the station
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run `radio-f-change-station` instead of all 251.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 311.
 
 The list:
 
@@ -480,6 +480,65 @@ The list:
 "COSMO Summer Vibes Web"
 "COSMO Dance Web"
 "COSMO Konzerte Web"
+"MDR Aktuell"
+"MDR Jump"
+"MDR Klassik"
+"MDR Kultur"
+"MDR Kultur Konzerte Web"
+"MDR Serbja"
+"MDR Dresden"
+"MDR Bautzen"
+"MDR Chemnitz"
+"MDR Leipzig"
+"MDR Magdeburg"
+"MDR Dessau"
+"MDR Halle"
+"MDR Stendal"
+"MDR Sputnik Web"
+"MDR Sputnik Firstplay Web"
+"MDR Sputnik Rock Web"
+"MDR Sputnik Club Web"
+"MDR Sputnik Popkult Web"
+"MDR Sputnik Roboton Web"
+"MDR Sputnik Soundcheck Web"
+"MDR Thüringen Mitte"
+"MDR Thüringen Ost"
+"MDR Thüringen Nord"
+"MDR Thüringen Süd"
+"MDR Tweens Web"
+"SWR1 Rock Web"
+"SWR1 Die 90er Web"
+"SWR1 Die 80er Web"
+"SWR1 Deutsch Web"
+"SWR1 Country Web"
+"SWR1 Rheinland-Pfalz"
+"SWR1 Baden-Württemberg"
+"SWR3"
+"SWR3 New Pop Web"
+"SWR3 Party Web"
+"SWR3 2000er Web"
+"SWR3 Rock Web"
+"SWR3 Lyrix Web"
+"DASDING Chillout Web"
+"DASDING Rap Web"
+"DASDING Zukunftsmusik Web"
+"DASDING Weekend WarmUp Web"
+"SWR4 Sonntagskonzert Web"
+"SWR4 70er im Mix Web"
+"70er Pur im SWR4 Web"
+"SWR4 Stuttgart"
+"SWR4 Trier"
+"SWR4 Tübingen"
+"SWR4 Ludwigshafen"
+"SWR4 Friedrichsafen"
+"SWR4 Ulm"
+"SWR4 Karlsruhe"
+"SWR4 Heilbronn"
+"SWR4 Kaiserslautern"
+"SWR4 Koblenz"
+"SWR4 Freiburg"
+"SWR4 Mannheim"
+"SWR4 Mainz"
 "WDR 1LIVE"
 "WDR 1LIVE Diggi Web"
 "WDR 1LIVE Dance Hits Web"
@@ -511,6 +570,7 @@ The list:
 "WDR 4 Münsterland"
 "WDR 5"
 "WDR Die Maus"
+"WDR Event"
 "HR 1 Rhein-Main"
 "HR 1 Südhessen"
 "HR 1 Osthessen"

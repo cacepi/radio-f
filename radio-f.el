@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.5
+;; Version: 0.3.6
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -28,10 +28,10 @@
 ;;
 ;; Radio F is a streaming library to access radio stations through Emacs.
 ;;
-;; * Supports 150+ stations and live streams from Radio France, BBC,
-;;   RTÉ, and more.
-;; * Customizable information display, with artwork, track data, and
-;;   selectable view style.
+;; * Supports 300+ stations and live streams from Radio France, BBC,
+;;   RTÉ, Radio Deutschland, Radio Bremen, SWR, WDR, RTBF, and more.
+;; * Customizable information display, with artwork, track/program data,
+;;   and selectable view style.
 ;; * Uses your choice of mpv, VLC, and EMMS as audio backends, with
 ;;   access to a selection of most commonly used controls: volume
 ;;   up/down, mute/unmute, pause, play, etc.
@@ -200,6 +200,7 @@ in both frame and window view."
 
 ;; == Modes and mode control ============
 
+;;;###autoload
 (define-derived-mode radio-f-mode special-mode "Radio-F"
   "Major mode Radio F.
 
@@ -245,6 +246,7 @@ in both frame and window view."
   "<f11>"     #'radio-f-volume-down
   "<f12>"     #'radio-f-volume-up)
 
+;;;###autoload
 (define-minor-mode radio-f-control-mode
   "Provide global key bindings while Radio F is running."
   :global t
@@ -268,7 +270,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -309,8 +311,10 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
               ('br radio-f--br-stations)
               ('bremen radio-f--bremen-stations)
               ('dlr radio-f--dlr-stations)
+              ('mdr radio-f--mdr-stations)
               ('wdr radio-f--wdr-stations)
               ('hr radio-f--hr-stations)
+              ('swr radio-f--swr-stations)
               ('rtbf radio-f--rtbf-stations)
               (_ nil)))
           radio-f-carriers)))
@@ -327,7 +331,9 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
           radio-f--bremen-stations
           radio-f--dlr-stations
           radio-f--wdr-stations
+          radio-f--mdr-stations
           radio-f--hr-stations
+          radio-f--swr-stations
           radio-f--rtbf-stations))
 
 (defun radio-f--set-initial-station ()
@@ -357,10 +363,14 @@ from the first carrier defined in `radio-f-carriers'."
        (require 'radio-f-bremen))
       ('dlr
        (require 'radio-f-dlr))
+      ('mdr
+       (require 'radio-f-mdr))
       ('wdr
        (require 'radio-f-wdr))
       ('hr
        (require 'radio-f-hr))
+      ('swr
+       (require 'radio-f-swr))
       ('rtbf
        (require 'radio-f-rtbf)))))
 
@@ -396,10 +406,14 @@ from the first carrier defined in `radio-f-carriers'."
      radio-f--bremen-url)
     ('dlr
      radio-f--dlr-url)
+    ('mdr
+     radio-f--mdr-url)
     ('wdr
      radio-f--wdr-url)
     ('hr
      radio-f--hr-url)
+    ('swr
+     radio-f--swr-url)
     ('rtbf
      radio-f--rtbf-url)
     (_
@@ -416,8 +430,10 @@ from the first carrier defined in `radio-f-carriers'."
             ('br radio-f--br-streams)
             ('bremen radio-f--bremen-streams)
             ('dlr radio-f--dlr-streams)
+            ('mdr radio-f--mdr-streams)
             ('wdr radio-f--wdr-streams)
             ('hr radio-f--hr-streams)
+            ('swr radio-f--swr-streams)
             ('rtbf radio-f--rtbf-streams)))
          (level
           (or radio-f--session-stream-level
@@ -472,10 +488,14 @@ does not have, the stream returned is the highest level stream."
      (radio-f--set-bremen-api-url))
     ('dlr
      (radio-f--set-dlr-api-url))
+    ('mdr
+     (radio-f--set-mdr-api-url))
     ('wdr
      (radio-f--set-wdr-api-url))
     ('hr
      (radio-f--set-hr-api-url))
+    ('swr
+     (radio-f--set-swr-api-url))
     ('rtbf
      (radio-f--set-rtbf-api-url))
     (_
@@ -1491,8 +1511,10 @@ user has requested it.")
             ('br radio-f--br-streams)
             ('bremen radio-f-bremen-streams)
             ('dlr radio-f--dlr-streams)
+            ('mdr radio-f--mdr-streams)
             ('wdr radio-f--wdr-streams)
             ('hr radio-f--hr-streams)
+            ('swr radio-f--swr-streams)
             ('rtbf radio-f--rtbf-streams)))
          (levels
           (seq-filter
@@ -1847,7 +1869,7 @@ in `radio-f--alist-buffer-name'."
         (insert "\n")))))
 
 (defmacro radio-f--set-vars (value &rest vars)
-  "Set every variable from VARS to value VALUE."
+  "Assign the same VALUE to a list of VARS."
   `(progn ,@(mapcar
              (lambda (x)
                (list 'setq x value))
@@ -1968,6 +1990,7 @@ STATION is any station from all carriers."
     (message "Radio F: Now listening to %s." station))
   (radio-f-audio-start))
 
+;;;###autoload
 (defun radio-f-dark-mode ()
   "Start Radio F with its view hidden.  While hidden, the view continues
 to refresh with new track information and timeline data.  The view will
@@ -2013,5 +2036,3 @@ remain hidden until the command `radio-f-toggle-view' displays the view."
 (radio-f--prune-error-log)
 
 (provide 'radio-f)
-
-;;; radio-f.el ends here

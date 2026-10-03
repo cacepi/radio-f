@@ -208,10 +208,10 @@ through the ARD Audiothek API.")
          (end (cdr (assoc "time" now)))
          ;; The "image" key value is a relative path, not
          ;; a fully-formed URL.
-         (visual-url (format "%s%s" www image))
-         (item-id (secure-hash
-                   'sha3-224
-                   (format "%s|%s|%s|%s" artist title start end))))
+         (visual-url (format "%s%s" www image)))
+         ;; (item-id (secure-hash
+         ;;           'sha3-224
+         ;;           (format "%s|%s|%s|%s" artist title start end))))
     `((name       . ,name)
       (item-id    . ,item-id)
       (artist     . ,artist)

@@ -34,11 +34,6 @@
 
 ;; == STATION PLIST =====
 
-
-;; https://dispatcher.rndfnk.com/hr/<<station>>/<<id>>/mp3/128/stream.mp3
-;; https://hr-radio.ard-mcdn.de/hr/radio/hr1oh/hls/master.m3u8
-;; https://hr-radio.ard-mcdn.de/hr/radio/hr2/hls/master.m3u8
-
 (defconst radio-f--hr-stations
   '((hr1-rhein-main
      :name "HR 1 Rhein-Main" :carrier hr :station "hr1"
@@ -176,6 +171,11 @@
      :processor radio-f--hr-web-processor
      :l1-stream radio-f--hr-radio-level-one
      :l2-stream radio-f--hr-radio-level-two)
+    ;; This station is probably the reason I decided to add ARD carriers
+    ;; in the first place.  You FM is quite famous in central Europe for
+    ;; the Saturday night techno program "World Club Dome."  It's so popular
+    ;; that there's a "World Club Dome" festival held in Frankfut every June.
+    ;;
     (hr-dasding
      :name "DASDING (You FM)" :carrier hr :station "dasding"
      :id "dasding" :l2-id "mp3" :bitrate "128"
@@ -216,16 +216,12 @@ the ARD Audiothek API.")
   "Template used to return a Level One audio stream for playback.")
 
 (defconst radio-f--hr-radio-level-two ;; MP3
-;;  "https://hr-<<l2-id>>-<<locale>>.icecastssl.hr.de/hr/<<l2-id>>/<<locale>>/mp3/<<bitrate>>/stream.mp3"
   "https://dispatcher.rndfnk.com/hr/<<station>>/<<l2-id>>/<<bitrate>>"
   "Template used to return a Level Two audio stream for playback.")
 
 (defconst radio-f--dasding-level-two
   "https://dispatcher.rndfnk.com/hr/<<station>>/<<l2-id>>/mp3/<<bitrate>>/stream.mp3"
   "Stream template for level Two stream on HR2.")
-
-;; (defconst radio-f--hr-web-level-two
-;;   "https://dispatcher.rndfnk.com/hr/<<station>>/<<id>>/mp3/<<bitrate>>/stream.mp3")
 
 ;; == HELPER FUNCTIONS ==========================
 
@@ -247,7 +243,6 @@ the ARD Audiothek API.")
     (setq radio-f--hr-level-two
           (symbol-value l2-stream))))
 
-
 ;; == STREAM LEVELS =====
 
 (defvar radio-f--hr-streams
@@ -256,21 +251,11 @@ the ARD Audiothek API.")
     (default . radio-f--set-hr-stream-level-one))
   "Audio stream templates provided by Westdeutscher Rundfunk.")
 
-;; (defun radio-f--set-hr-streams ()
-;;   (let* ((station (radio-f--get-current-station-data))
-;;          (stream (plist-get station :stream))
-;;          (streams-symbol
-;;           (cdr (assq stream radio-f--ard-stream-providers))))
-;;     (setq radio-f--hr-streams
-;;           (symbol-value streams-symbol))))
-
-
 ;; == PROCESSORS ================================
 
 (defun radio-f--hr-web-processor (data station)
   "Process HR Web DATA for STATION."
-  (let* ((station (radio-f--get-current-station-data))
-         (name (plist-get station :name))
+  (let* ((name (plist-get station :name))
          (root (cdr (assoc "data" data)))
          (stream (cdr (assoc "permanentLivestream" root)))
          (media (cdr (assoc "mediaCollection" stream)))
@@ -293,9 +278,13 @@ the ARD Audiothek API.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
+;; As always, this processor keeps breaking; ARD can't seem to
+;; decide to place new tracks on the top of the list or the bottom.
+;; If the former, it works; if the latter, new track info never
+;; transistions.
+
 (defun radio-f--hr-radio-processor (data station)
-  (let* ((station (radio-f--get-current-station-data))
-         (name (plist-get station :name))
+  (let* ((name (plist-get station :name))
          (events (cdr (assoc "events" data)))
          (events (aref events 0))
          (clips (cdr (assoc "clips" events)))
@@ -318,31 +307,6 @@ the ARD Audiothek API.")
           (secure-hash
            'sha3-224
            (format "%s|%s|%s|%s" artist title start end))))
-    `((name       . ,name)
-      (item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
-      (start      . ,start)
-      (end        . ,end)
-      (visual-url . ,visual-url))))
-
-(defun radio-f--hr-regional-processor (data station)
-  (let* ((station (radio-f--get-current-station-data))
-         (name (plist-get station :name))
-         (root (cdr (assoc "data" data)))
-         (stream (cdr (assoc "permanentLivestream" root)))
-         (media (cdr (assoc "mediaCollection" stream)))
-         (now (cdr (assoc "meta" media)))
-         (image-array (cdr (assoc "images" now)))
-         (images (aref image-array 1))
-         (artist (cdr (assoc "title" now)))
-         (title (cdr (assoc "title" images)))
-         (start (floor (float-time)))
-         (end (floor (float-time)))
-         (visual-url (cdr (assoc "url" images)))
-         (item-id (secure-hash
-                   'sha3-224
-                   (format "%s|%s" artist title))))
     `((name       . ,name)
       (item-id    . ,item-id)
       (artist     . ,artist)

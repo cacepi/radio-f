@@ -108,18 +108,17 @@ links for the presentation views.")
 
 (defconst radio-f--ard-organizations
   "https://api.ardaudiothek.de/organizations"
-  "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
+  "URL providing JSON metadata for all ARD stations.  Used for
+development purposes.")
 
 (defconst radio-f--br-api-url
 ;;  "https://brradio.br.de/radio/v4?query=query+broadcastService($stationSlug:String!){audioBroadcastService(slug:$stationSlug){...+on+AudioBroadcastService{id+name+slug+fallbackTeaserImage{url}trackingInfos{pageVars+mediaVars}epg(slots:[CURRENT]){broadcastEvent{trackingInfos{pageVars+mediaVars}...eventStartEnd+items{...audioElement+...+on+NewsElement{author}...+on+MusicElement{performer+composer}}excludedTimeRanges{start+end}publicationOf{...eventMetadata+defaultTeaserImage{url}...+on+MangoProgramme{canonicalUrl+title+kicker}}}}description+url}}}fragment+eventMetadata+on+MangoCreativeWorkInterface{id+kicker+title+description}fragment+audioElement+on+AudioElement{title+start+duration}fragment+eventStartEnd+on+MangoBroadcastEvent{id+start+end}&variables[stationSlug]=<<id>"
   "https://brradio.br.de/radio/v4?query=query+broadcastService($stationSlug:String!){audioBroadcastService(slug:$stationSlug){...on+AudioBroadcastService{id+dvbServiceId+name+slug+fallbackTeaserImage{url}trackingInfos{pageVars+mediaVars}...on+MangoBroadcastService{webcamUrls...jumpMarkers}epg(slots:[CURRENT]){broadcastEvent{trackingInfos{pageVars+mediaVars}...eventStartEnd+items{...audioElement...on+NewsElement{author}...on+MusicElement{performer+composer}}excludedTimeRanges{start+end}publicationOf{...eventMetadata+defaultTeaserImage{url}...on+MangoProgramme{canonicalUrl+title+kicker}}}}description+url}}}fragment+eventMetadata+on+MangoCreativeWorkInterface{id+kicker+title+description}fragment+jumpMarkers+on+MangoBroadcastService{lastNewsDate+lastTrafficDate+lastWeatherDate}fragment+audioElement+on+AudioElement{guid+title+class+start+duration}fragment+eventStartEnd+on+MangoBroadcastEvent{id+start+end}&variables[stationSlug]=<<id>>"
   "Template used to retrieve JSON data from Bayerischen Rundfunks.")
 
-
 ;; == WEB URLS ==========
 
 (defconst radio-f--br-www-url "https://br.de/radio/<<id>>")
-
 
 ;; == STREAM URLS =======
 
@@ -131,7 +130,6 @@ links for the presentation views.")
   "https://dispatcher.rndfnk.com/br/<<l2-stream-id>>/live/mp3/<<l2-bitrate>>/stream.mp3"
 "Template used to return a level one audio stream for playback.")
 
-
 ;; == STREAM LEVELS =====
 
 (defconst radio-f--br-streams
@@ -140,14 +138,12 @@ links for the presentation views.")
     (default . ,radio-f--br-level-one))
   "Audio stream templates provided by Bayerischer Rundfunks.")
 
-
 ;; == PROCESSORS ================================
 
 (defun radio-f--br-processor (data station)
   "Process Bayerischer Rundfunks DATA for STATION."
   ;; Hold on, we got a long way to go...
   (let* ((name (plist-get station :name))
-         (current-time (float-time))
          (data (cdr (assoc "data" data)))
          (service (cdr (assoc "audioBroadcastService" data)))
          (epg (cdr (assoc "epg" service)))
@@ -157,12 +153,6 @@ links for the presentation views.")
          (now (cdr (assoc "pageVars" tracking)))
          (artist (cdr (assoc "broadcast_service" now)))
          (title (cdr (assoc "title" now)))
-         (start-string (cdr (assoc "start" broadcast)))
-         (end-string (cdr (assoc "end" broadcast)))
-         (start (time-convert
-                 (date-to-time start-string) 'integer))
-         (end (time-convert
-               (date-to-time end-string) 'integer))
          (start
           (time-convert
            (date-to-time

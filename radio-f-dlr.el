@@ -69,7 +69,8 @@ links for the presentation views.")
 
 (defconst radio-f--ard-organizations
   "https://api.ardaudiothek.de/organizations"
-  "URL providing JSON metadata for all ARD stations.  Used for development purposes.")
+  "URL providing JSON metadata for all ARD stations.  Used for
+development purposes.")
 
 (defconst radio-f--dlf-api-url
   "https://www.deutschlandfunk.de/api/partials/CurrentBroadcast?dlrsearch:_ajax=1"
@@ -146,28 +147,11 @@ links for the presentation views.")
   (let* ((name (plist-get station :name))
          (json-string (radio-f--extract-dlr-json data))
          (json (json-read-from-string json-string))
-         (key (cdr (assoc "key" json)))
          (value (cdr (assoc "value" json)))
          (payload (cdr (assoc "data" value)))
          (now (cdr (assoc "currentBroadcast" payload)))
          (artist (cdr (assoc "producer" now)))
          (title (cdr (assoc "title" now)))
-         ;; (start-string (cdr (assoc "startTime" now)))
-         ;; (end-string (cdr (assoc "endTime" now)))
-         ;; (start (time-convert
-         ;;         (date-to-time start-string) 'integer))
-         ;; (end (time-convert
-         ;;       (date-to-time end-string) 'integer))
-         ;; (start
-         ;;  (time-convert
-         ;;   (date-to-time
-         ;;    (cdr (assoc "startTime" object)))
-         ;;   'integer))
-         ;; (end
-         ;;  (time-convert
-         ;;   (date-to-time
-         ;;    (cdr (assoc "endTime" object)))
-         ;;   'integer))
          (visual-url (symbol-value (plist-get station :visual-url)))
          (start (cdr (assoc "startTime" now)))
          (end (cdr (assoc "endTime" now)))

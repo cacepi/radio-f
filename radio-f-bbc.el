@@ -309,14 +309,12 @@
     (Default . ,radio-f--bbc-level-one))
   "Audio stream templates provided by the BBC.")
 
-
 ;; == PROCESSORS ================================
 
 (defun radio-f--bbc-processor (data station)
   (let* ((name (plist-get station :name))
          (data (cdr (assoc "data" data)))
-         (now (aref data 0))
-         (network (cdr (assoc "network" now)))
+         (now (aref data 0))f
          (titles (cdr (assoc "titles" now)))
          (image-url (cdr (assoc "image_url" now)))
          (item-id (cdr (assoc "id" now)))

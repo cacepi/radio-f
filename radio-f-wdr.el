@@ -34,9 +34,6 @@
 
 ;; == STATION PLIST =====
 
-
-;; https://dispatcher.rndfnk.com/wdr/<<station>>/<<id>>/mp3/128/stream.mp3
-
 (defconst radio-f--wdr-stations
   '((wdrcosmo
      :name "COSMO" :carrier wdr :id "cosmo" :bitrate "128"
@@ -366,19 +363,23 @@
      :api radio-f--wdr-radio-api-url
      :processor radio-f--wdr-radio-processor
      :l1-stream radio-f--wdr-radio-level-one
+     :l2-stream radio-f--wdr-radio-level-two)
+    ;; There's an entry for this station in the ARD Audiothek, but
+    ;; the audio stream is silence, and the only information found in
+    ;; the JSON is "Derzeit keine Übertragung." (No transmission at
+    ;; the moment.)  I believe it's a "we interrupt this broadcast
+    ;; with a special report" kind of channel, and is only activated
+    ;; when needed.  In any case, the Audiothek API includes it, so we
+    ;; include it too.  Just know that this station is, at the moment,
+    ;; broken.
+  (wdr-event
+     :name "WDR Event" :carrier wdr
+     :id "wdr" :locale "event" :bitrate "128"
+     :publisher "d7a027a68167aa6f" :livestream "a6368f8093717313"
+     :api radio-f--wdr-radio-api-url
+     :processor radio-f--wdr-radio-processor
+     :l1-stream radio-f--wdr-radio-level-one
      :l2-stream radio-f--wdr-radio-level-two))
-  ;; There's an entry for this station in the ARD Audiothek, but I believe
-  ;; it's a "we interrupt this broadcast with a special report" channel, as
-  ;; ATM the audio stream is silence, and the only information in the JSON is
-  ;; "Derzeit keine Übertragung." (No transmission at the moment.)
-  ;; (wdr-event
-  ;;    :name "WDR Event" :carrier wdr
-  ;;    :id "wdr" :locale "event" :bitrate "128"
-  ;;    :publisher "d7a027a68167aa6f" :livestream "a6368f8093717313"
-  ;;    :api radio-f--wdr-radio-api-url
-  ;;    :processor radio-f--wdr-radio-processor
-  ;;    :l1-stream radio-f--wdr-radio-level-one
-  ;;    :l2-stream radio-f--wdr-radio-level-two))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
 
@@ -394,15 +395,7 @@ development purposes.")
   "Template to retrieve metadata from all supported carriers through
 the ARD Audiothek API.")
 
-;; https://programm-api.ard.de/radio/api/publisher?publisher=urn:ard:publisher:dcc5f7461d90ca1d
-
-;; https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:8b939df5fa39be0b?pastHours=0.1
-
-;; https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
-
 (defconst radio-f--wdr-web-api-url
-;;    "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
-;;  "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
   "https://api.ardaudiothek.de/graphql?query=query%20MediaCollectionPermanentLivestreamsQuery(%24id%3AString!)%7BpermanentLivestream(id%3A%24id)%7BmediaCollection(v%3AV6A)%7D%7D&variables=%7B%22id%22%3A%22urn%3Aard%3Apermanent-livestream%3A<<livestream>>%22%7D"
   "Template to retrieve metadata for WDR web streams")
 
@@ -429,7 +422,6 @@ the ARD Audiothek API.")
   "Stream template for level Two stream on WDR3.")
 
 (defconst radio-f--wdr-web-level-two
-;;  "https://icecast.wdr.de/wdr/<<station>>/<<id>>/mp3/<<bitrate>>/stream.mp3")
   "https://dispatcher.rndfnk.com/wdr/<<station>>/<<id>>/mp3/<<bitrate>>/stream.mp3")
 
 ;; == HELPER FUNCTIONS ==========================
@@ -461,21 +453,12 @@ the ARD Audiothek API.")
     (default . radio-f--set-wdr-stream-level-one))
   "Audio stream templates provided by Westdeutscher Rundfunk.")
 
-;; (defun radio-f--set-wdr-streams ()
-;;   (let* ((station (radio-f--get-current-station-data))
-;;          (stream (plist-get station :stream))
-;;          (streams-symbol
-;;           (cdr (assq stream radio-f--ard-stream-providers))))
-;;     (setq radio-f--wdr-streams
-;;           (symbol-value streams-symbol))))
-
 
 ;; == PROCESSORS ================================
 
 (defun radio-f--wdr-web-processor (data station)
   "Process WDR Web DATA for STATION."
-  (let* ((station (radio-f--get-current-station-data))
-         (name (plist-get station :name))
+  (let* ((name (plist-get station :name))
          (root (cdr (assoc "data" data)))
          (stream (cdr (assoc "permanentLivestream" root)))
          (media (cdr (assoc "mediaCollection" stream)))
@@ -499,8 +482,7 @@ the ARD Audiothek API.")
       (visual-url . ,visual-url))))
 
 (defun radio-f--wdr-radio-processor (data station)
-  (let* ((station (radio-f--get-current-station-data))
-         (name (plist-get station :name))
+  (let* ((name (plist-get station :name))
          (events (cdr (assoc "events" data)))
          (events (aref events 0))
          (clips (cdr (assoc "clips" events)))
@@ -531,34 +513,8 @@ the ARD Audiothek API.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-(defun radio-f--wdr4-regional-processor (data station)
-  (let* ((station (radio-f--get-current-station-data))
-         (name (plist-get station :name))
-         (root (cdr (assoc "data" data)))
-         (stream (cdr (assoc "permanentLivestream" root)))
-         (media (cdr (assoc "mediaCollection" stream)))
-         (now (cdr (assoc "meta" media)))
-         (image-array (cdr (assoc "images" now)))
-         (images (aref image-array 1))
-         (artist (cdr (assoc "title" now)))
-         (title (cdr (assoc "title" images)))
-         (start (floor (float-time)))
-         (end (floor (float-time)))
-         (visual-url (cdr (assoc "url" images)))
-         (item-id (secure-hash
-                   'sha3-224
-                   (format "%s|%s" artist title))))
-    `((name       . ,name)
-      (item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
-      (start      . ,start)
-      (end        . ,end)
-      (visual-url . ,visual-url))))
-
 (defun radio-f--wdr-regional-processor (data station)
-  (let* ((station (radio-f--get-current-station-data))
-         (name (plist-get station :name))
+  (let* ((name (plist-get station :name))
          (root (cdr (assoc "data" data)))
          (stream (cdr (assoc "permanentLivestream" root)))
          (media (cdr (assoc "mediaCollection" stream)))
@@ -582,5 +538,3 @@ the ARD Audiothek API.")
       (visual-url . ,visual-url))))
 
 (provide 'radio-f-wdr)
-
-;;; radio-f-wdr.el ends here
