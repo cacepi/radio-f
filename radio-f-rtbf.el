@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 ;;
-;; RTBF (Belgium) plugin for Radio F: 15 Stations ATM.
+;; RTBF (Belgium) plugin for Radio F: 23 Stations ATM.
 
 ;;; Code:
 
@@ -41,80 +41,121 @@
 
 
 (defconst radio-f--rtbf-stations
-  '(
-    (rtbf-lapremiere
+  '((rtbf-lapremiere
      :name "RTBF La Premiere" :carrier rtbf :id "lapremiere"
-     :api radio-f--rtbf-api-url :radio-id "lapremiere"
+     :api radio-f--rtbf-api-url :radio-id "lapremiere/aac-128"
      :processor radio-f--rtbf-radio-processor
      :stream radio-f--rtbf-radio-level-one)
     (rtbf-classic21
      :name "RTBF Classic 21" :carrier rtbf :id "classic21"
-     :api radio-f--rtbf-api-url :radio-id "classic21"
+     :api radio-f--rtbf-api-url :radio-id "classic21/aac-128"
      :processor radio-f--rtbf-radio-processor
      :stream radio-f--rtbf-radio-level-one)
     (rtbf-classic21-60s
      :name "RTBF Classic 21 60s Web" :carrier rtbf :id "classic21_60"
-     :api radio-f--rtbf-api-url :web-id "c21-60s" :service "21"
+     :api radio-f--rtbf-api-url :web-id "c21-60s/mp3-128" :service "21"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-70s
      :name "RTBF Classic 21 70s Web" :carrier rtbf :id "classic21_70"
-     :api radio-f--rtbf-api-url :web-id "c21-70s" :service "22"
+     :api radio-f--rtbf-api-url :web-id "c21-70s/mp3-128" :service "22"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-80s
      :name "RTBF Classic 21 80s Web" :carrier rtbf :id "classic21_80"
-     :api radio-f--rtbf-api-url :web-id "c21-80s" :service "20"
+     :api radio-f--rtbf-api-url :web-id "c21-80s/mp3-128" :service "20"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-newwave
      :name "RTBF Classic 21 New Wave Web" :carrier rtbf :id "classic21_newwave"
-     :api radio-f--rtbf-api-url :web-id "c21-80nw" :service "148"
+     :api radio-f--rtbf-api-url :web-id "c21-80nw/mp3-128" :service "148"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-90s
      :name "RTBF Classic 21 90s Web" :carrier rtbf :id "classic21_90"
-     :api radio-f--rtbf-api-url :web-id "c21-90s" :service "90"
+     :api radio-f--rtbf-api-url :web-id "c21-90s/mp3-128" :service "90"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-blues
      :name "RTBF Classic 21 Blues Web" :carrier rtbf :id "classic21_blues"
-     :api radio-f--rtbf-api-url :web-id "c21-blues" :service "200"
+     :api radio-f--rtbf-api-url :web-id "c21-blues/mp3-128" :service "200"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-live
      :name "RTBF Classic 21 Live Web" :carrier rtbf :id "classic21_live"
-     :api radio-f--rtbf-api-url :web-id "c21-live" :service "1107"
+     :api radio-f--rtbf-api-url :web-id "c21-live/mp3-128" :service "1107"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-metal
      :name "RTBF Classic 21 Metal Web" :carrier rtbf :id "classic21_metal"
-     :api radio-f--rtbf-api-url :web-id "c21-metal" :service "29"
+     :api radio-f--rtbf-api-url :web-id "c21-metal/mp3-128" :service "29"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-njr
      :name "RTBF Classic 21 80s Web" :carrier rtbf :id "classic21_njr"
-     :api radio-f--rtbf-api-url :web-id "c21-njr" :service "27"
+     :api radio-f--rtbf-api-url :web-id "c21-njr/mp3-128" :service "27"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-66
      :name "RTBF Classic 21 Route 66 Web" :carrier rtbf :id "classic21_66"
-     :api radio-f--rtbf-api-url :web-id "c21-66" :service "201"
+     :api radio-f--rtbf-api-url :web-id "c21-66/mp3-128" :service "201"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-soul
      :name "RTBF Classic 21 Soul Web" :carrier rtbf :id "classic21_soul"
-     :api radio-f--rtbf-api-url :web-id "c21-soul" :service "26"
+     :api radio-f--rtbf-api-url :web-id "c21-soul/mp3-128" :service "26"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-classic21-underground
      :name "RTBF Classic 21 Soul Web" :carrier rtbf :id "classic21_underground"
-     :api radio-f--rtbf-api-url :web-id "c21-under" :service "19"
+     :api radio-f--rtbf-api-url :web-id "c21-under/mp3-128" :service "19"
      :processor radio-f--rtbf-web-processor
      :stream radio-f--rtbf-web-level-one)
     (rtbf-vivacite
      :name "RTBF 2" :carrier rtbf :id "vivacite"
-     :api radio-f--rtbf-api-url :radio-id "viva-bxl"
+     :api radio-f--rtbf-api-url :radio-id "viva-bxl/aac-128"
+     :processor radio-f--rtbf-radio-processor
+     :stream radio-f--rtbf-radio-level-one)
+    (rtbf-tipik
+     :name "RTBF Tipik" :carrier rtbf :id "tipik"
+     :api radio-f--rtbf-api-url :radio-id "tipik/aac-128"
+     :processor radio-f--rtbf-radio-processor
+     :stream radio-f--rtbf-radio-level-one)
+    (rtbf-tipik-a-lancienne
+     :name "RTBF á L'ancienne Web" :carrier rtbf :id "tipik-a-l-ancienne"
+     :api radio-f--rtbf-api-url :web-id "tipik-al/mp3-128"
+     :processor radio-f--rtbf-web-processor
+     :stream radio-f--rtbf-web-level-one
+     :visual "assets/rtbf/tipik-a-lancienne.png")
+    (rtbf-musiq3
+     :name "RTBF Musiq3" :carrier rtbf :id "musiq3"
+     :api radio-f--rtbf-api-url :radio-id "musiq3/aac-256"
+     :processor radio-f--rtbf-radio-processor
+     :stream radio-f--rtbf-radio-level-one)
+    (rtbf-musiq3-baroque
+     :name "RTBF Musiq3 Baroque" :carrier rtbf :id "musiq3-baroque"
+     :api radio-f--rtbf-api-url :radio-id "m3-bar/mp3-192"
+     :processor radio-f--rtbf-radio-processor
+     :stream radio-f--rtbf-radio-level-one)
+    (rtbf-musiq3-jazz
+     :name "RTBF Musiq3 Jazz" :carrier rtbf :id "musiq3_jazz"
+     :api radio-f--rtbf-api-url :radio-id "m3-jazz/mp3-192"
+     :processor radio-f--rtbf-radio-processor
+     :stream radio-f--rtbf-radio-level-one)
+    (rtbf-musiq3-romantique
+     :name "RTBF Musiq3 Top du Classique" :carrier rtbf :id "musiq3_romantique"
+     :api radio-f--rtbf-api-url :radio-id "m3-rom/mp3-192"
+     :processor radio-f--rtbf-radio-processor
+     :stream radio-f--rtbf-radio-level-one)
+    (rtbf-tarmac
+     :name "RTBF Tarmac" :carrier rtbf :id "tarmac-premium"
+     :api radio-f--rtbf-api-url :radio-id "tarmac/aac-128"
+     :processor radio-f--rtbf-radio-processor
+     :stream radio-f--rtbf-radio-level-one
+     :visual "assets/rtbf/rtbf-tarmac.jpg")
+    (rtbf-jam
+     :name "RTBF JAM" :carrier rtbf :id "JAM"
+     :api radio-f--rtbf-api-url :radio-id "jam/aac-128"
      :processor radio-f--rtbf-radio-processor
      :stream radio-f--rtbf-radio-level-one))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
@@ -133,11 +174,11 @@ links for the presentation views.")
 ;; == STREAM URLS =======
 
 (defconst radio-f--rtbf-radio-level-one ;; AAC, 128kbps
-  "https://radio.rtbf.be/<<radio-id>>/aac-128/rp-web"
+  "https://radio.rtbf.be/<<radio-id>>/rp-web"
   "Template used to return a Level One audio stream for playback.")
 
 (defconst radio-f--rtbf-web-level-one ;; MP3, 128kpbs
-  "https://radio.rtbf.be/<<web-id>>/mp3-128/rp-web"
+  "https://radio.rtbf.be/<<web-id>>/rp-web"
   "Template used to return a Level One web audio stream for playback.")
 
 
@@ -170,15 +211,6 @@ links for the presentation views.")
   "Audio stream templates provided by RBTF.")
 
 
-;; (defun radio-f--set-rtbf-streams ()
-;;   (let* ((station (radio-f--get-current-station-data))
-;;          (stream (plist-get station :stream))
-;;          (streams-symbol
-;;           (cdr (assq stream radio-f--ard-stream-providers))))
-;;     (setq radio-f--rtbf-streams
-;;           (symbol-value streams-symbol))))
-
-
 ;; == PROCESSORS ================================
 
 (defun radio-f--rtbf-radio-processor (data station)
@@ -193,8 +225,9 @@ links for the presentation views.")
            (date-to-time
             (cdr (assoc "startStamp" now)))
            'integer))
-         (end (cdr (assoc "duration" now)))
-         ;; (end (+ duration start))
+         (duration (cdr (assoc "duration" now)))
+         (length (/ 1000 duration))
+         (end (+ duration start))
          (visual-url (cdr (assoc "image" now)))
          (item-id (secure-hash
                    'sha3-224
@@ -219,8 +252,9 @@ links for the presentation views.")
            (date-to-time
             (cdr (assoc "startStamp" now)))
            'integer))
-         (end (cdr (assoc "duration" now)))
-         ;; (end (+ duration start))
+         (duration (cdr (assoc "duration" now)))
+         (length (/ 1000 duration))
+         (end (+ length start))
          (visual-url (cdr (assoc "image" now)))
          (item-id (secure-hash
                    'sha3-224

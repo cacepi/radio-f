@@ -33,8 +33,6 @@
 
 ;; == STATION PLIST =====
 
-;; https://dispatcher.rndfnk.com/swr/swraktuell/live/mp3/128/stream.mp3?aggregator=web
-
 (defconst radio-f--swr-stations
   '((swr1-rock
      :name "SWR1 Rock Web" :carrier swr :id "sw331ch/raka14"
@@ -76,7 +74,7 @@
      :station "swr1" :l2-id "rp" :bitrate "128"
      :publisher "2d74b4350f0d4d53" :livestream "e55592f337f172a5"
      :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr1-radio-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr1-baden-wurttemberg
@@ -84,7 +82,7 @@
      :station "swr1" :l2-id "bw" :bitrate "128"
      :publisher "2d74b4350f0d4d53" :livestream "c2656164ae0f6745"
      :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr1-radio-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr-aktuell
@@ -92,7 +90,7 @@
      :station "swraktuell" :l2-id "live" :bitrate "128"
      :publisher "cb42f81b52c17e85" :livestream "5dd1df844b699812"
      :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr-kultur
@@ -100,7 +98,7 @@
      :station "swr2" :l2-id "live" :bitrate "256"
      :publisher "6f8455dea6e77bc0" :livestream "2842238ca9012473"
      :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr3
@@ -108,7 +106,7 @@
      :station "swr3" :l2-id "live" :bitrate "128"
      :publisher "73c0dd2d4e1e1514" :livestream "fcd7ffb2396f6fbd"
      :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr3-newpop
@@ -199,104 +197,104 @@
      :name "SWR4 Stuttgart" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "bw" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "a9356cc0a8315ee0"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-trier
      :name "SWR4 Trier" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "tr" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "b5c6c6c61a73ddd5"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-tubingen
      :name "SWR4 Tübingen" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "tu" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "8b51e3f83fa7c00a"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-ludwigshafen
      :name "SWR4 Ludwigshafen" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "lu" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "cbb0808a49c4428c"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-friedrichshafen
      :name "SWR4 Friedrichsafen" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "fn" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "a0b0b5c4575384d8"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-ulm
      :name "SWR4 Ulm" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "ul" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "38ae7cae62de9782"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-karlsruhe
      :name "SWR4 Karlsruhe" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "ka" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "a754229c1632f361"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-heilbronn
      :name "SWR4 Heilbronn" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "hn" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "b445a15a0b87504c"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-kaiserslautern
      :name "SWR4 Kaiserslautern" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "kl" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "b00b36d51bcf8348"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-koblenz
      :name "SWR4 Koblenz" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "ko" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "65920d2ae364afa6"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-freiburg
      :name "SWR4 Freiburg" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "fr" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "b2a489822248d108"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-mannheim
      :name "SWR4 Mannheim" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "ma" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "05ef8204bc5555eb"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two)
     (swr4-mainz
      :name "SWR4 Mainz" :carrier swr :id "sw73hl2"
      :station "swr4" :l2-id "rp" :bitrate "128"
      :publisher "ea5af59aa104a089" :livestream "94568a21e73a5857"
-     :api radio-f--ard-radio-api-url
-     :processor radio-f--ard-radio-processor
+     :api radio-f--swr-ard-radio-api-url
+     :processor radio-f--swr-ard-radio-processor
      :l1-stream radio-f--swr4-radio-stream-level-one
      :l2-stream radio-f--dispatcher-stream-level-two))
   "Input data used by the URL templates to retrieve metadata, stream types,
@@ -310,7 +308,7 @@ and web links for the presentation views.")
   "URL providing JSON metadata for all SWR stations.  Used for
 development purposes.")
 
-(defconst radio-f--ard-radio-api-url
+(defconst radio-f--swr-ard-radio-api-url
   "https://programm-api.ard.de/radio/api/channel/urn:ard:permanent-livestream:<<livestream>>?pastHours=0.2"
   "Template to retrieve metadata from all supported carriers through
 the ARD Audiothek API.")
@@ -408,7 +406,7 @@ the ARD Audiothek API.")
       (end        . ,end)
       (visual-url . ,visual-url))))
 
-(defun radio-f--ard-radio-processor (data station)
+(defun radio-f--swr-ard-radio-processor (data station)
   "Process SWR JSON DATA provided by ARD Audiothek for STATION."
   (let* ((name (plist-get station :name))
          (root (cdr (assoc "events" data)))

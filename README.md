@@ -5,7 +5,7 @@ Radio F is a streaming library to access radio stations in Emacs.
 <img src="https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/img/dark-mode.jpg" width="635" height="529" alt="Image of Radio F interface.">
 
 ## Features
-* Supports over 150 stations and web streams from Radio France, BBC, RTÉ, and more.
+* Supports 300+ stations and live streams from Radio France, BBC, RTÉ, Radio Deutschland, Radio Bremen, SWR, WDR, RTBF, and more.
 * Customizable information display, with artwork, track data, and selectable view style.
 * Uses your choice of [mpv](https://mpv.io/), [VLC](https://www.videolan.org/), and [EMMS](https://www.gnu.org/software/emms/) as audio backends, with access to a selection of most commonly accessed controls: volume up/down, mute/unmute, pause, play, etc.
 
@@ -96,6 +96,8 @@ Radio F has two different views for displaying track metadata: `'window`, and `'
 
 * Frame view shows track metadata and accompanying artwork in a child frame attached to the calling parent. It will stay at the same position relative to its parent whenever the parent is resized.
 
+<img src="https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/img/dark-mode.jpg" width="635" height="529" alt="Image of Radio F interface.">
+
 * Window view shows the same information as frame view by default, except the display is in a normal window at the bottom the Emacs frame.  This view is intended for TUI Emacs users, and tries to provide the most compact view possible to preserve precious screen space.  In TUI Emacs sessions, artwork display and the track timeline are disabled.
 
 <img src="https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/img/radio-f-tui.png" width="656" height="646" alt="Image of Radio F in window view style.">
@@ -150,7 +152,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 311 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 331 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -166,7 +168,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 311.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 331.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -288,7 +290,7 @@ How to make a favorites list again:  copy the stations you want from the station
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run `radio-f-change-station` instead of all 311.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 331.
 
 The list:
 
@@ -602,8 +604,29 @@ The list:
 "RTBF Classic 21 80s Web"
 "RTBF Classic 21 Route 66 Web"
 "RTBF Classic 21 Soul Web"
-"RTBF Classic 21 Soul Web"
+"RTBF Classic 21 Underground Web"
 "RTBF 2"
+"RTBF Tipik"
+"RTBF á L'ancienne Web"
+"RTBF Musiq3"
+"RTBF Musiq3 Baroque"
+"RTBF Musiq3 Jazz"
+"RTBF Musiq3 Top du Classique"
+"RTBF Tarmac"
+"RTBF JAM"
+"Antenne Brandenburg"
+"Antenne Brandenburg Frankfurt"
+"Antenne Brandenburg Perleberg"
+"Antenne Brandenburg Prenzlau"
+"Antenne Brandenburg Cottbus"
+"RBB 88.8"
+"RBB Radio Eins"
+"RBB Radioeins Frankfurt"
+"RBB Radioeins Cottbus"
+"RBB Inforadio"
+"RBB Inforadio Sorbisch"
+"RBB Radio 3"
+"RBB Fritz"
 </pre>
 
 
@@ -659,7 +682,7 @@ TL;DR - EMMS support is limited.  Because EMMS is **big**.
 
 EMMS doesn't offer the same level of direct control that VLC and mpv provide through their remote interfaces.  EMMS can raise/lower volume, pause, and unpause, etc.  Other functions like mute, unmute, and setting the volume to arbitrary levels aren't supported.
 
-Adding Radio F support for the functions that EMMS currently lack would require juggling control of six different audio mixers and 8-11 different players.  EMMS still has support mpg123/321 and Xine!  And, as EMMS includes a module for support of the [MPRIS](https://specifications.freedesktop.org/mpris/latest/) API, which brings a staggering **30+ players** to the mix, adding something simple as a mute function to EMMS that works will all players is miles above Radio F's pay grade. I just wanna chill to some cool grooves in Emacs.
+Adding Radio F support for the functions that EMMS currently lack would require juggling control of six different audio mixers and 8-11 different players.  EMMS still has support mpg123/321 and Xine!  And, as EMMS includes a module for support of the [MPRIS](https://specifications.freedesktop.org/mpris/latest/) API, which brings a staggering **30+ players** to the mix, adding something simple as a mute function to EMMS that works with all players is miles above Radio F's pay grade. I just wanna chill to some cool music in Emacs.
 
 As a result, if you choose EMMS as your default player, Radio F assumes that you have it configured to your preferences. Maybe more robust support could come one day, but not today.  Sorry, EMMS.
 

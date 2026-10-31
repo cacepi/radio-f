@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.6
+;; Version: 0.3.7
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -270,7 +270,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -312,8 +312,10 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
               ('bremen radio-f--bremen-stations)
               ('dlr radio-f--dlr-stations)
               ('mdr radio-f--mdr-stations)
+              ('ndr radio-f--ndr-stations)
               ('wdr radio-f--wdr-stations)
               ('hr radio-f--hr-stations)
+              ('sr radio-f--sr-stations)
               ('swr radio-f--swr-stations)
               ('rtbf radio-f--rtbf-stations)
               (_ nil)))
@@ -332,7 +334,9 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
           radio-f--dlr-stations
           radio-f--wdr-stations
           radio-f--mdr-stations
+          radio-f--ndr-stations
           radio-f--hr-stations
+          radio-f--sr-stations
           radio-f--swr-stations
           radio-f--rtbf-stations))
 
@@ -365,10 +369,14 @@ from the first carrier defined in `radio-f-carriers'."
        (require 'radio-f-dlr))
       ('mdr
        (require 'radio-f-mdr))
+      ('ndr
+       (require 'radio-f-ndr))
       ('wdr
        (require 'radio-f-wdr))
       ('hr
        (require 'radio-f-hr))
+      ('sr
+       (require 'radio-f-sr))
       ('swr
        (require 'radio-f-swr))
       ('rtbf
@@ -408,10 +416,14 @@ from the first carrier defined in `radio-f-carriers'."
      radio-f--dlr-url)
     ('mdr
      radio-f--mdr-url)
+    ('ndr
+     radio-f--ndr-url)
     ('wdr
      radio-f--wdr-url)
     ('hr
      radio-f--hr-url)
+    ('sr
+     radio-f--sr-url)
     ('swr
      radio-f--swr-url)
     ('rtbf
@@ -431,8 +443,10 @@ from the first carrier defined in `radio-f-carriers'."
             ('bremen radio-f--bremen-streams)
             ('dlr radio-f--dlr-streams)
             ('mdr radio-f--mdr-streams)
+            ('ndr radio-f--ndr-streams)
             ('wdr radio-f--wdr-streams)
             ('hr radio-f--hr-streams)
+            ('sr radio-f--sr-streams)
             ('swr radio-f--swr-streams)
             ('rtbf radio-f--rtbf-streams)))
          (level
@@ -490,10 +504,14 @@ does not have, the stream returned is the highest level stream."
      (radio-f--set-dlr-api-url))
     ('mdr
      (radio-f--set-mdr-api-url))
+    ('ndr
+     (radio-f--set-ndr-api-url))
     ('wdr
      (radio-f--set-wdr-api-url))
     ('hr
      (radio-f--set-hr-api-url))
+    ('sr
+     (radio-f--set-sr-api-url))
     ('swr
      (radio-f--set-swr-api-url))
     ('rtbf
@@ -1512,8 +1530,10 @@ user has requested it.")
             ('bremen radio-f-bremen-streams)
             ('dlr radio-f--dlr-streams)
             ('mdr radio-f--mdr-streams)
+            ('ndr radio-f--ndr-streams)
             ('wdr radio-f--wdr-streams)
             ('hr radio-f--hr-streams)
+            ('sr radio-f--sr-streams)
             ('swr radio-f--swr-streams)
             ('rtbf radio-f--rtbf-streams)))
          (levels

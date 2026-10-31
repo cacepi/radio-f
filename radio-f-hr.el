@@ -200,8 +200,6 @@ development purposes.")
 the ARD Audiothek API.")
 
 (defconst radio-f--hr-web-api-url
-;;    "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
-;;  "https://api.ardaudiothek.de/graphql?query=query+MediaCollectionPermanentLivestreamsQuery($id:String!){permanentLivestream(id:$id){mediaCollection(v:V6A)}}&variables={\"id\":\"urn:ard:permanent-livestream:<<livestream>>\"}"
   "https://api.ardaudiothek.de/graphql?query=query%20MediaCollectionPermanentLivestreamsQuery(%24id%3AString!)%7BpermanentLivestream(id%3A%24id)%7BmediaCollection(v%3AV6A)%7D%7D&variables=%7B%22id%22%3A%22urn%3Aard%3Apermanent-livestream%3A<<livestream>>%22%7D"
   "Template to retrieve metadata for HR web streams")
 
