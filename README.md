@@ -5,7 +5,7 @@ Radio F is a streaming library to access radio stations in Emacs.
 <img src="https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/img/dark-mode.jpg" width="635" height="529" alt="Image of Radio F interface.">
 
 ## Features
-* Supports 300+ stations and live streams from Radio France, BBC, RTÉ, Radio Deutschland, Radio Bremen, SWR, WDR, RTBF, and more.
+* Supports 400+ stations and live streams from Radio France, BBC, CBC, RTÉ, Radio Deutschland, Radio Bremen, SWR, WDR, RTBF, ORF, and more.
 * Customizable information display, with artwork, track data, and selectable view style.
 * Uses your choice of [mpv](https://mpv.io/), [VLC](https://www.videolan.org/), and [EMMS](https://www.gnu.org/software/emms/) as audio backends, with access to a selection of most commonly accessed controls: volume up/down, mute/unmute, pause, play, etc.
 
@@ -152,7 +152,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 331 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 422 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -168,7 +168,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 331.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 422.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -290,7 +290,7 @@ How to make a favorites list again:  copy the stations you want from the station
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run `radio-f-change-station` instead of all 331.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 422.
 
 The list:
 
@@ -627,6 +627,96 @@ The list:
 "RBB Inforadio Sorbisch"
 "RBB Radio 3"
 "RBB Fritz"
+"Radio One Calgary"
+"Radio One Edmonton"
+"Radio One Kamloops"
+"Radio One Kelowna"
+"Radio One Prince George"
+"Radio One Vancouver"
+"Radio One Victoria"
+"Radio One Winnipeg"
+"Radio One Fredericton"
+"Radio One Moncton"
+"Radio One Saint John"
+"Radio One Corner Brook"
+"Radio One Goose Bay"
+"Radio One Grand Falls"
+"Radio One St. John's"
+"Radio One Inuvik"
+"Radio One Yellowknife"
+"Radio One Halifax"
+"Radio One Sidney"
+"Radio One Iqaluit (Nunavut)"
+"Radio One Kenora"
+"Radio One Barrie"
+"Radio One Kingston"
+"Radio One Kitchener-Waterloo"
+"Radio One London"
+"Radio One Ottawa"
+"Radio One Peterborough"
+"Radio One Sudbury"
+"Radio One Thunder Bay"
+"Radio One Toronto"
+"Radio One Windsor"
+"Radio One Charlottetown"
+"Radio One Montreal"
+"Radio One Nord Quebec"
+"Radio One Quebec City"
+"Radio One Regina"
+"Radio One Saskatoon"
+"Radio One Whitehorse"
+"CBC Music Calgary"
+"CBC Music Edmonton"
+"CBC Music Kamloops"
+"CBC Music Kelowna"
+"CBC Music Prince George"
+"CBC Music Vancouver"
+"CBC Music Victoria"
+"CBC Music Winnipeg"
+"CBC Music Fredericton"
+"CBC Music Moncton"
+"CBC Music Saint John"
+"CBC Music Corner Brook"
+"CBC Music Goose Bay"
+"CBC Music Grand Falls"
+"CBC Music St. John's"
+"CBC Music Inuvik"
+"CBC Music Yellowknife"
+"CBC Music Halifax"
+"CBC Music Sidney"
+"CBC Music Iqaluit (Nunavut)"
+"CBC Music Kenora"
+"CBC Music Barrie"
+"CBC Music Kingston"oo
+"CBC Music Kitchener-Waterloo"
+"CBC Music London"
+"CBC Music Ottawa"
+"CBC Music Peterborough"
+"CBC Music Sudbury"
+"CBC Music Thunder Bay"
+"CBC Music Toronto"
+"CBC Music Windsor"
+"CBC Music Charlottetown"
+"CBC Music Montreal"
+"CBC Music Nord Quebec"
+"CBC Music Quebec City"
+"CBC Music Regina"
+"CBC Music Saskatoon"
+"CBC Music Whitehorse"
+"ORF Hitradio Ö3"
+"ORF Radio Ö1"
+"ORF FM4"
+"ORF Radio Salzburg"
+"ORF Radio Steiermark"
+"ORF Radio Vorarlberg"
+"ORF Radio Oberösterreich"
+"ORF Radio Wien"
+"ORF Radio Niederösterreich"
+"ORF Radio Tirol"
+"ORF Radio Kärnten"
+"ORF Radio Burgenland"
+"ORF Radio Slovenski Spored"
+"ORF Radio Ö1 Campus"
 </pre>
 
 

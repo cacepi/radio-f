@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.7
+;; Version: 0.3.9
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -270,7 +270,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr cbc)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr cbc orf)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -319,6 +319,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
               ('swr radio-f--swr-stations)
               ('rtbf radio-f--rtbf-stations)
               ('cbc radio-f--cbc-stations)
+              ('orf radio-f--orf-stations)
               (_ nil)))
           radio-f-carriers)))
 
@@ -340,7 +341,8 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
           radio-f--sr-stations
           radio-f--swr-stations
           radio-f--rtbf-stations
-          radio-f--cbc-stations))
+          radio-f--cbc-stations
+          radio-f--orf-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station
@@ -384,7 +386,9 @@ from the first carrier defined in `radio-f-carriers'."
       ('rtbf
        (require 'radio-f-rtbf))
       ('cbc
-       (require 'radio-f-cbc)))))
+       (require 'radio-f-cbc))
+      ('orf
+       (require 'radio-f-orf)))))
 
 (defun radio-f--favorite-stations ()
   "Return the effective list of favorite stations."
@@ -434,6 +438,8 @@ from the first carrier defined in `radio-f-carriers'."
      radio-f--rtbf-url)
     ('cbc
      radio-f--cbc-url)
+    ('orf
+     radio-f--orf-url)
     (_
      nil)))
 
@@ -455,7 +461,8 @@ from the first carrier defined in `radio-f-carriers'."
             ('sr radio-f--sr-streams)
             ('swr radio-f--swr-streams)
             ('rtbf radio-f--rtbf-streams)
-            ('cbc radio-f--cbc-streams)))
+            ('cbc radio-f--cbc-streams)
+            ('orf radio-f--orf-streams)))
          (level
           (or radio-f--session-stream-level
               radio-f-stream-level))
@@ -524,6 +531,7 @@ does not have, the stream returned is the highest level stream."
     ('rtbf
      (radio-f--set-rtbf-api-url))
     ('cbc radio-f--cbc-api-url)
+    ('orf radio-f--orf-api-url)
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -1544,7 +1552,8 @@ user has requested it.")
             ('sr radio-f--sr-streams)
             ('swr radio-f--swr-streams)
             ('rtbf radio-f--rtbf-streams)
-            ('cbc radio-f--cbc-streams)))
+            ('cbc radio-f--cbc-streams)
+            ('orf radio-f--orf-streams)))
          (levels
           (seq-filter
            (lambda (level)
