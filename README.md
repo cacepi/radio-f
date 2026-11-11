@@ -152,7 +152,7 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 422 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 440 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
@@ -168,7 +168,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 422.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 440.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -290,7 +290,7 @@ How to make a favorites list again:  copy the stations you want from the station
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run `radio-f-change-station` instead of all 422.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 440.
 
 The list:
 
@@ -717,6 +717,25 @@ The list:
 "ORF Radio Burgenland"
 "ORF Radio Slovenski Spored"
 "ORF Radio Ö1 Campus"
+"ERR Vikerraadio"
+"ERR Raadio 2"
+"ERR Klassik Raadio"
+"ERR Raadio 4"
+"ERR Raadio Tallinn"
+"ERR R2 Chill"
+"ERR R2 Eesti"
+"ERR R2 Pop"
+"ERR R2 Rapp"
+"ERR R2 Rock"
+"ERR R2 Alternatiiv"
+"ERR R2 Music"
+"ERR Klara Klassik"
+"ERR Klara Jazz"
+"ERR Klara Nostalgia"
+"ERR Klara Meditatsioon"
+"ERR R4 Retro"
+"ERR Eesti Raadio"
+"ERR Eri3"
 </pre>
 
 
