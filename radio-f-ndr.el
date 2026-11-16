@@ -284,9 +284,9 @@ the ARD Audiothek API.")
   "https://www.ndr.de/public/radioplaylists/<<id>>.json"
   "Template to retrieve metadata for NDR Schlager.")
 
-(defconst radio-f--ndr-url
+(defconst radio-f--ndr-www-url
   "https://www1.ndr.de/radio/<<ndr-id>>/index.html"
-  "URL.")
+  "URL template for NDR station home pages.")
 
 ;; == STREAM URLS =======
 

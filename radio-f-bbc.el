@@ -271,7 +271,8 @@
 
 ;; == API URLS ==========
 
-(defconst radio-f--bbc-api-url "https://rms.api.bbc.co.uk/v2/broadcasts/poll/<<id>>"
+(defconst radio-f--bbc-api-url
+  "https://rms.api.bbc.co.uk/v2/broadcasts/poll/<<id>>"
   "Recipe used to retrieve JSON program data from the BBC.")
 
 ;; This API doesn't return the currently playing song, but is used
@@ -288,8 +289,9 @@
 
 ;; == WEB URL ==========
 
-(defconst radio-f--bbc-url "https://www.bbc.co.uk/sounds/play/live/<<id>>/"
-  "Template used to generate the URL for BBC station home pages.")
+(defconst radio-f--bbc-www-url
+  "https://www.bbc.co.uk/sounds/play/live/<<id>>/"
+  "URL template for BBC station home pages.")
 
 
 ;; == STREAM URLS =======

@@ -3,7 +3,7 @@
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
 ;; Created: Mon 9 Nov 26
-;; Localewords: hypermedia, network, streaming, radio, Canada
+;; Keywords: hypermedia, network, streaming, radio, Austria
 
 ;; This file is NOT part of Emacs.
 
@@ -98,6 +98,11 @@ and web links for the presentation views.")
   "https://audioapi.orf.at/<<id>>/api/json/5.0/broadcast/onair"
   "Template to retrieve metadata for ORF Radio.")
 
+;; == WEB URLS ==========
+
+(defconst radio-f--orf-www-url
+  "https://sound.orf.at/radio/<<id>>"
+  "URL Template for ORF station home pages.")
 
 ;; == STREAM URLS =======
 

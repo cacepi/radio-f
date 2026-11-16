@@ -26,6 +26,16 @@
 ;;; Commentary:
 ;;
 ;; RTBF (Belgium) plugin for Radio F: 23 Stations ATM.
+;;
+;; VRT, the Flanders/Flemish carrier for Belgium, will probably not be
+;; implemented.  Their JSON is contained within the HTTP headers of each
+;; request, and the request itself changes with not only each station in
+;; VRT, but with each program airing on that station. With 17 stations and
+;; web streams, plus dozens of programs per station/stream, adding VRT
+;; would take more work than all the other stations of Radio F combined.
+;;
+;; In other words, I'll need help.  So please, help!
+;;
 
 ;;; Code:
 
@@ -33,12 +43,43 @@
 
 ;;
 ;; VRT - https://www.vrt.be/vrtnu-api/graphql/public/v1
-;;
+;; https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2/channels/livestream-audio-radio1
+;; Radio 1
+;; https://icecast.vrtcdn.be/radio1-high.mp3
+;; https://quantumcast.vrtcdn.be/radio1/mp3-128
+;; Radio Studio Brussel
+;; https://icecast.vrtcdn.be/stubru-high.mp3
+;; https://quantumcast.vrtcdn.be/stubru/mp3-128
+;; VRT Klara
+;; https://icecast.vrtcdn.be/klara-high.mp3
+;; https://quantumcast.vrtcdn.be/ra2ant/mp3-128
+;; VRT Radio 2 Antwerpen
+;; https://icecast.vrtcdn.be/ra2ant-high.mp3
+;; https://quantumcast.vrtcdn.be/ra2ant/mp3-128
+;; VRT MNM
+;; https://icecast.vrtcdn.be/mnm-high.mp3
+;; https://quantumcast.vrtcdn.be/mnm/mp3-128
+;; VRT MNM Hits
+;; https://icecast.vrtcdn.be/mnm_hits-high.mp3
+;; https://quantumcast.vrtcdn.be/mnm_hits/mp3-128
+;; VRT Radio 2 Oost-Vlaanderen
+;; https://icecast.vrtcdn.be/ra2ovl-high.mp3
+;; https://quantumcast.vrtcdn.be/ra2ovl/mp3-128
+;; VRT Radio 2 West-Vlaanderen
+;; https://icecast.vrtcdn.be/ra2wvl-high.mp3
+;; https://quantumcast.vrtcdn.be/ra2wvl/mp3-128
+;; VRT Radio 2 Vlaams-Brabant
+;; https://icecast.vrtcdn.be/ra2vlb-high.mp3
+;; https://quantumcast.vrtcdn.be/ra2vlb/mp3-128
+;; VRT Radio 2 Limberg
+;; https://icecast.vrtcdn.be/ra2lim-high.mp3
+;; https://quantumcast.vrtcdn.be/ra2lim/mp3-128
+;; VRT Ketnet Hits
+;; https://icecast.vrtcdn.be/ketnetradio-high.mp3
+;; https://quantumcast.vrtcdn.be/ketnetradio/mp3-128
 
-;; https://mapi-prod.radioplayer.co.uk/api/be/public/service/12
-;; https://radio.rtbf.be/viva-bxl/aac-128/rp-web
-;; https://bff-service.rtbf.be/radioplayer/v1/threads?keys=vivacite
 
+;; == STATION PLIST =====
 
 (defconst radio-f--rtbf-stations
   '((rtbf-lapremiere
@@ -167,9 +208,10 @@ links for the presentation views.")
   "https://bff-service.rtbf.be/radioplayer/v1/threads?keys=<<id>>"
   "Template to retrieve metadata for RTBF streams")
 
-(defconst radio-f--rtbf-url
+(defconst radio-f--rtbf-www-url
   "https://www.rtbf.be/radio/<<id>>"
-  "URL template for RBTF station WWW homepages.")
+  "URL template for RTBF station home pages.")
+
 
 ;; == STREAM URLS =======
 

@@ -35,127 +35,114 @@
 
 (defconst radio-f--rbb-stations
   '((antenne-brandenburg
-     :name "Antenne Brandenburg" :carrier rbb :id "2016998" :l1-id "rbb_antbrb"
-     :station "antbrb" :l2-carrier "antennebrandenburg" :l2-id "live" :bitrate "mid"
+     :name "Antenne Brandenburg" :carrier rbb :id "2016998"
+     :station "antbrb" :l2-carrier "antennebrandenburg"
+     :l2-id "live" :bitrate "mid"
      :publisher "1b6ae8b401a077fd" :livestream "be8ca9fe99dc2115"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://antbrb-frankfurt.akamaized.net/hls/live/2017000/rbb_antbrb-frankfurt/master.m3u8
-    ;; https://dispatcher.rndfnk.com/rbb/antennebrandenburg/frankfurt/mp3/mid
     (antenne-frankfurt
-     :name "Antenne Brandenburg Frankfurt" :carrier rbb :id "2017000" :l1-id "rbb_antbrb-frankfurt"
-     :station "antbrb" :l2-carrier "antennebrandenburg" :l2-id "frankfurt" :bitrate "mid"
+     :name "Antenne Brandenburg Frankfurt" :carrier rbb :id "2017000"
+     :station "antbrb-frankfurt" :l2-carrier "antennebrandenburg"
+     :l2-id "frankfurt" :bitrate "mid"
      :publisher "1b6ae8b401a077fd" :livestream "515286f56605f097"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://antbrb-perleberg.akamaized.net/hls/live/2017001/rbb_antbrb-perleberg/master.m3u8
-    ;; https://dispatcher.rndfnk.com/rbb/antennebrandenburg/perleberg/mp3/mid
     (antenne-perleberg
-     :name "Antenne Brandenburg Perleberg" :carrier rbb :id "2017001" :l1-id "rbb_antbrb-perleberg"
-     :station "antbrb" :l2-carrier "antennebrandenburg" :l2-id "perleberg" :bitrate "mid"
+     :name "Antenne Brandenburg Perleberg" :carrier rbb :id "2017001"
+     :station "antbrb-perleberg" :l2-carrier "antennebrandenburg"
+     :l2-id "perleberg" :bitrate "mid"
      :publisher "1b6ae8b401a077fd" :livestream "3034b06553bfcedf"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://antbrb-prenzlau.akamaized.net/hls/live/2017002/rbb_antbrb-prenzlau/master.m3u8
-    ;; https://dispatcher.rndfnk.com/rbb/antennebrandenburg/prenzlau/mp3/mid
     (antenne-prenzlau
-     :name "Antenne Brandenburg Prenzlau" :carrier rbb :id "2017002" :l1-id "rbb_antbrb-prenzlau"
-     :station "antbrb" :l2-carrier "antennebrandenburg" :l2-id "prenzlau" :bitrate "mid"
+     :name "Antenne Brandenburg Prenzlau" :carrier rbb :id "2017002"
+     :station "antbrb-prenzlau" :l2-carrier "antennebrandenburg"
+     :l2-id "prenzlau" :bitrate "mid"
      :publisher "1b6ae8b401a077fd" :livestream "57dd43ef3160b03c"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://antbrb-cottbus.akamaized.net/hls/live/2016999/rbb_antbrb-cottbus/master.m3u8
-    ;; https://dispatcher.rndfnk.com/rbb/antennebrandenburg/cottbus/mp3/mid
     (antenne-cottbus
-     :name "Antenne Brandenburg Cottbus" :carrier rbb :id "2016999" :l1-id "rbb_antbrb-cottbus"
-     :station "antbrb" :l2-carrier "antennebrandenburg" :l2-id "cottbus" :bitrate "mid"
+     :name "Antenne Brandenburg Cottbus" :carrier rbb :id "2016999"
+     :station "antbrb-cottbus" :l2-carrier "antennebrandenburg"
+     :l2-id "cottbus" :bitrate "mid"
      :publisher "1b6ae8b401a077fd" :livestream "328f0b31e0ff512c"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/rbb888/live/mp3/mid
-    ;; https://rbb888.akamaized.net/hls/live/2017003/rbb_rbb888/master.m3u8
     (rbb-888
-     :name "RBB 88.8" :carrier rbb :id "2017003" :l1-id "rbb_rbb888"
-     :station "rbb888" :l2-carrier "rbb888" :l2-id "live" :bitrate "mid"
+     :name "RBB 88.8" :carrier rbb :id "2017003"
+     :station "rbb888" :l2-carrier "rbb888"
+     :l2-id "live" :bitrate "mid"
      :publisher "599a095fa84a416e" :livestream "b9686d01b5ebc136"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/radioeins/live/mp3/mid
-    ;; https://radioeins.akamaized.net/hls/live/2016930/rbb_radioeins/master.m3u8
     (rbb-radioeins
-     :name "RBB Radio Eins" :carrier rbb :id "2016930" :l1-id "rbb_radioeins"
-     :station "radioeins" :l2-carrier "radioeins" :l2-id "live" :bitrate "mid"
+     :name "RBB Radio Eins" :carrier rbb :id "2016930"
+     :station "radioeins" :l2-carrier "radioeins"
+     :l2-id "live" :bitrate "mid"
      :publisher "6fd2ea6b797a605b" :livestream "b10db8e5de2aab87"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/radioeins/frankfurt/mp3/mid
-    ;; https://radioeins-frankfurt.akamaized.net/hls/live/2016996/rbb_radioeins-frankfurt/master.m3u8
     (rbb-radioeins-frankfurt
-     :name "RBB Radioeins Frankfurt" :carrier rbb :id "2016996" :l1-id "rbb_radioeins-frankfurt"
-     :station "radioeins" :l2-carrier "radioeins" :l2-id "frankfurt" :bitrate "mid"
+     :name "RBB Radioeins Frankfurt" :carrier rbb :id "2016996"
+     :station "radioeins-frankfurt" :l2-carrier "radioeins"
+     :l2-id "frankfurt" :bitrate "mid"
      :publisher "6fd2ea6b797a605b" :livestream "02d1c474fb9aa37a"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/radioeins/cottbus/mp3/mid
-    ;; https://radioeins-cottbus.akamaized.net/hls/live/2016995/rbb_radioeins-cottbus/master.m3u8
     (rbb-radioeins-cottbus
-     :name "RBB Radioeins Cottbus" :carrier rbb :id "2016995" :l1-id "rbb_radioeins-cottbus"
-     :station "radioeins" :l2-carrier "radioeins" :l2-id "cottbus" :bitrate "mid"
+     :name "RBB Radioeins Cottbus" :carrier rbb :id "2016995"
+     :station "radioeins-cottbus" :l2-carrier "radioeins"
+     :l2-id "cottbus" :bitrate "mid"
      :publisher "6fd2ea6b797a605b" :livestream "99b9c3e67c4f49ac"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/inforadio/live/mp3/mid
-    ;; https://inforadio.akamaized.net/hls/live/2017004/rbb_inforadio/master.m3u8
     (rbb-inforadio
-     :name "RBB Inforadio" :carrier rbb :id "2017004" :l1-id "rbb_inforadio"
+     :name "RBB Inforadio" :carrier rbb :id "2017004"
      :station "inforadio" :l2-id "live" :bitrate "mid"
      :publisher "d7b84d265c36f604" :livestream "cb6df5483c778969"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/inforadio/sorb/mp3/mid
     ;; https://inforadio-sorb.akamaized.net/hls/live/2017005/rbb_inforadio-sorb/master.m3u8
+    ;; https://dispatcher.rndfnk.com/rbb/inforadio/sorb/mp3/mid
     (rbb-inforadio-sorbisch
-     :name "RBB Inforadio Sorbisch" :carrier rbb :id "2017005" :l1-id "rbb_radioinfo-sorb"
-     :station "inforadio" :l2-id "sorb" :bitrate "mid"
+     :name "RBB Inforadio Sorbisch" :carrier rbb :id "2017005"
+     :station "inforadio-sorb" :l2-id "sorb" :bitrate "mid"
      :publisher "d7b84d265c36f604" :livestream "36c444681c987527"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/rbbkultur/live/mp3/mid
-    ;; https://rbbkultur.akamaized.net/hls/live/2017006/rbb_rbbkultur/master.m3u8
     (rbb-radio3
-     :name "RBB Radio 3" :carrier rbb :id "2017006" :l1-id "rbb_rbbkultur"
+     :name "RBB Radio 3" :carrier rbb :id "2017006"
      :station "rbbkultur" :l2-id "live" :bitrate "mid"
      :publisher "9548accdf5dcc097" :livestream "59d7ea9aff468b01"
      :api radio-f--rbb-ard-radio-api-url
      :processor radio-f--rbb-ard-radio-processor
      :l1-stream radio-f--rbb-radio-stream-level-one
      :l2-stream radio-f--rbb-radio-stream-level-two)
-    ;; https://dispatcher.rndfnk.com/rbb/fritz/live/mp3/mid
-    ;; https://fritz.akamaized.net/hls/live/2016997/rbb_fritz/master.m3u8
     (rbb-fritz
-     :name "RBB Fritz" :carrier rbb :id "2016997" :l1-id "rbb_fritz"
+     :name "RBB Fritz" :carrier rbb :id "2016997"
      :station "fritz" :l2-id "live" :bitrate "mid"
      :publisher "c03f427b1367429c" :livestream "073b7c4a843982f4"
      :api radio-f--rbb-ard-radio-api-url
@@ -174,20 +161,18 @@ and web links for the presentation views.")
 the ARD Audiothek API.")
 
 (defconst radio-f--rbb-radio-api-url
-  "https://www.rbb.de/public/radioplaylists/<<id>>.json"
+  "https://www.rbb-online.de/public/radioplaylists/<<id>>.json"
   "Template to retrieve metadata for RBB.")
 
-(defconst radio-f--rbb-url
+(defconst radio-f--rbb-www-url
   "https://www1.rbb.de/radio/<<rbb-id>>/index.html"
-  "URL.")
+  "URL template for RBB station home pages.")
 
 ;; == STREAM URLS =======
 
 (defconst radio-f--rbb-radio-stream-level-one ;; AAC, 192kbps
-  "https://<<station>>.akamaized.net/hls/live/<<id>>/<<l1-id>>/master.m3u8"
+  "https://<<station>>.akamaized.net/hls/live/<<id>>/rbb_<<station>>/master.m3u8"
   "Template used to return a Level One audio stream for playback.")
-
-;; https://fritz.akamaized.net/hls/live/2016997/rbb_fritz/master.m3u8
 
 (defconst radio-f--rbb-radio-stream-level-two ;; MP3, 128kbps
   "https://dispatcher.rndfnk.com/rbb/<<l2-carrier>>/<<l2-id>>/mp3/<<bitrate>>"
@@ -277,7 +262,7 @@ the ARD Audiothek API.")
       (start      . ,start)
       (end        . ,end)
       (visual-url . ,(format
-                     "https://www.rbb.de/public/radioplaylists/coverimages/%s_600x600.jpg"
+                     "https://www.rbb-online.de/public/radioplaylists/coverimages/%s_600x600.jpg"
                      (cdr (assoc "song_now_cover" now)))))))
 
 (provide 'radio-f-rbb)

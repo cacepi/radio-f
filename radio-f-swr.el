@@ -325,9 +325,9 @@ the ARD Audiothek API.")
   "https://www.swr.de/~webradio/<<station>>/playerbar/<<station>>-playerbar-100~playerbarContainer.json"
   "SWR Template for web/radio streams")
 
-(defconst radio-f--swr-url
+(defconst radio-f--swr-www-url
   "https://www1.swr.de/radio/<<swr-id>>/index.html"
-  "URL.")
+  "URL template for SWR station home pages.")
 
 ;; == STREAM URLS =======
 

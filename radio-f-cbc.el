@@ -418,6 +418,17 @@
   "Input data used by the URL templates to retrieve metadata, stream types,
 and web links for the presentation views.")
 
+
+;; == WEB URL ==========
+
+;; CBC doesn't have dedicated station pages, so we just go to the live
+;; radio portal instead.
+
+(defconst radio-f--cbc-www-url
+  "https://www.cbc.ca/listen/live-radio"
+  "URL Template for CBC station home pages.")
+
+
 ;; == API URLS ==========
 
 (defconst radio-f--cbc-api-url

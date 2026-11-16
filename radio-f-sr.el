@@ -85,9 +85,9 @@ development purposes.")
   "Template to retrieve metadata from all supported carriers through
 the ARD Audiothek API.")
 
-(defconst radio-f--sr-url
+(defconst radio-f--sr-www-url
   "https://www1.sr.de/radio/<<sr-id>>/index.html"
-  "URL.")
+  "URL template for SWR station home pages.")
 
 ;; == STREAM URLS =======
 

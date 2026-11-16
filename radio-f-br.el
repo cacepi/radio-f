@@ -118,7 +118,9 @@ development purposes.")
 
 ;; == WEB URLS ==========
 
-(defconst radio-f--br-www-url "https://br.de/radio/<<id>>")
+(defconst radio-f--br-www-url
+  "https://br.de/radio/<<id>>"
+  "URL Template for BR station home pages.")
 
 ;; == STREAM URLS =======
 

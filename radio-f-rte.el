@@ -14,31 +14,7 @@
 
 ;;; Code:
 
-(defconst radio-f--rte-level-one
-  "https://www.rte.ie/manifests/<<id>>.m3u8"
-  "Template used to return a level one stream for playback.")
-
-(defconst radio-f--rte-level-two
-  "https://icecast1.rte.ie/<<id>>"
-  "Template used to return a level two stream for playback.")
-
-(defconst radio-f--rte-api-url
-  "https://www.rte.ie/feeds/livelistings/playlist/?source=rte.ie&platform=iphone&channelid=<<channel>>"
-  "Template used to retrieve live listings JSON from RTÉ.")
-
-(defconst radio-f--rte-url
-  "https://www.rte.ie/radio/<<www>>/"
-  "Template used to return a station's URL on the RTÉ web site.")
-
-(defconst ratio-f--rte-schedule-url
-  "https://www.rte.ie/radio/<<id>>/schedule/<<yyyymmdd>>/"
-  "Template used to retrieve daily schedule JSON data from RTÉ.")
-
-(defconst radio-f--rte-streams
-  `((One     . ,radio-f--rte-level-one)
-    (Two     . ,radio-f--rte-level-two)
-    (default . ,radio-f--rte-level-two))
-  "Audio stream templates provided by RTÉ.")
+;; == STATION PLIST =====
 
 (defconst radio-f--rte-stations
   '((radio1
@@ -68,6 +44,33 @@
      :processor radio-f--rte-processor))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
+
+
+(defconst radio-f--rte-level-one
+  "https://www.rte.ie/manifests/<<id>>.m3u8"
+  "Template used to return a level one stream for playback.")
+
+(defconst radio-f--rte-level-two
+  "https://icecast1.rte.ie/<<id>>"
+  "Template used to return a level two stream for playback.")
+
+(defconst radio-f--rte-api-url
+  "https://www.rte.ie/feeds/livelistings/playlist/?source=rte.ie&platform=iphone&channelid=<<channel>>"
+  "Template used to retrieve live listings JSON from RTÉ.")
+
+(defconst radio-f--rte-www-url
+  "https://www.rte.ie/radio/<<www>>/"
+  "Template used to return a station's URL on the RTÉ web site.")
+
+(defconst ratio-f--rte-schedule-url
+  "https://www.rte.ie/radio/<<id>>/schedule/<<yyyymmdd>>/"
+  "Template used to retrieve daily schedule JSON data from RTÉ.")
+
+(defconst radio-f--rte-streams
+  `((One     . ,radio-f--rte-level-one)
+    (Two     . ,radio-f--rte-level-two)
+    (default . ,radio-f--rte-level-two))
+  "Audio stream templates provided by RTÉ.")
 
 (defun radio-f--rte-processor (data station)
   (let* ((name (plist-get station :name))

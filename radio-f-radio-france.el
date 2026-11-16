@@ -31,7 +31,6 @@
 
 ;;; Code:
 
-
 (defconst radio-f--radio-france-stations
   '((fip ;; Fip runs programs that aren't recognized in the new_apprf_fip endpoint.
      :name "FIP" :id "7"
@@ -693,7 +692,7 @@ links for the presentation views.")
   "https://www.radiofrance.fr/pikapi/images/<<cover>>/400x400"
   "Template used to retrieve the artwork image for the presentation views.")
 
-(defconst radio-f--radio-france-url
+(defconst radio-f--radio-france-www-url
   "https://www.radiofrance.fr/<<www>>/<<www-suffix>>"
   "Template used to return a station's URL on the Radio France web site.")
 

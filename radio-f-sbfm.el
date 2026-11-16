@@ -34,14 +34,16 @@
 
 ;;; Code:
 
-(defconst radio-f--sbfm-level-one "https://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_a"
+(defconst radio-f--sbfm-level-one
+  "https://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_a"
     "Template used to a level one stream for playback.")
 
 (defconst radio-f--sbfm-api-url
   "https://www.beachfm.co.jp/wp-content/uploads/now_play.json"
   "Template used to retrieve live listings JSON from Shonan Beach FM.")
 
-(defconst radio-f--sbfm-url "https://www.beachfm.co.jp/"
+(defconst radio-f--sbfm-www-url
+  "https://www.beachfm.co.jp/"
   "Template used to return a station's URL on the Shonan Beach FM web site.")
 
 (defconst radio-f--sbfm-streams

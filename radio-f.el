@@ -270,7 +270,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr rbb cbc err orf)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr rbb cbc err orf ruv rai)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -322,6 +322,8 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
               ('cbc radio-f--cbc-stations)
               ('err radio-f--err-stations)
               ('orf radio-f--orf-stations)
+              ('ruv radio-f--ruv-stations)
+              ('rai radio-f--rai-stations)
               (_ nil)))
           radio-f-carriers)))
 
@@ -346,7 +348,9 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
           radio-f--rtbf-stations
           radio-f--cbc-stations
           radio-f--err-stations
-          radio-f--orf-stations))
+          radio-f--orf-stations
+          radio-f--ruv-stations
+          radio-f--rai-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station
@@ -396,7 +400,11 @@ from the first carrier defined in `radio-f-carriers'."
       ('err
        (require 'radio-f-err))
       ('orf
-       (require 'radio-f-orf)))))
+       (require 'radio-f-orf))
+      ('ruv
+       (require 'radio-f-ruv))
+      ('rai
+       (require 'radio-f-rai)))))
 
 (defun radio-f--favorite-stations ()
   "Return the effective list of favorite stations."
@@ -417,41 +425,45 @@ from the first carrier defined in `radio-f-carriers'."
   "Return the station page URL template for CARRIER."
   (pcase carrier
     ('bbc
-     radio-f--bbc-url)
+     radio-f--bbc-www-url)
     ('radio-france
-     radio-f--radio-france-url)
+     radio-f--radio-france-www-url)
     ('rte
-     radio-f--rte-url)
+     radio-f--rte-www-url)
     ('sbfm
-     radio-f--sbfm-url)
+     radio-f--sbfm-www-url)
     ('br
-     radio-f--br-url)
+     radio-f--br-www-url)
     ('bremen
-     radio-f--bremen-url)
+     radio-f--bremen-www-url)
     ('dlr
-     radio-f--dlr-url)
+     radio-f--dlr-www-url)
     ('mdr
-     radio-f--mdr-url)
+     radio-f--mdr-www-url)
     ('ndr
-     radio-f--ndr-url)
+     radio-f--ndr-www-url)
     ('wdr
-     radio-f--wdr-url)
+     radio-f--wdr-www-url)
     ('hr
-     radio-f--hr-url)
+     radio-f--hr-www-url)
     ('sr
-     radio-f--sr-url)
+     radio-f--sr-www-url)
     ('swr
-     radio-f--swr-url)
+     radio-f--swr-www-url)
     ('rbb
-     radio-f--rbb-url)
+     radio-f--rbb-www-url)
     ('rtbf
-     radio-f--rtbf-url)
+     radio-f--rtbf-www-url)
     ('cbc
-     radio-f--cbc-url)
+     radio-f--cbc-www-url)
     ('err
-     radio-f--err-url)
+     radio-f--err-www-url)
     ('orf
-     radio-f--orf-url)
+     radio-f--orf-www-url)
+    ('ruv
+     radio-f--ruv-www-url)
+    ('rai
+     radio-f--rai-www-url)
     (_
      nil)))
 
@@ -476,7 +488,9 @@ from the first carrier defined in `radio-f-carriers'."
             ('rtbf radio-f--rtbf-streams)
             ('cbc radio-f--cbc-streams)
             ('err radio-f--err-streams)
-            ('orf radio-f--orf-streams)))
+            ('orf radio-f--orf-streams)
+            ('ruv radio-f--ruv-streams)
+            ('rai radio-f--rai-streams)))
          (level
           (or radio-f--session-stream-level
               radio-f-stream-level))
@@ -549,6 +563,8 @@ does not have, the stream returned is the highest level stream."
     ('cbc radio-f--cbc-api-url)
     ('err radio-f--err-api-url)
     ('orf radio-f--orf-api-url)
+    ('ruv radio-f--ruv-api-url)
+    ('rai radio-f--rai-api-url)
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -1572,7 +1588,9 @@ user has requested it.")
             ('rtbf radio-f--rtbf-streams)
             ('cbc radio-f--cbc-streams)
             ('err radio-f--err-streams)
-            ('orf radio-f--orf-streams)))
+            ('orf radio-f--orf-streams)
+            ('ruv radio-f--ruv-streams)
+            ('rai radio-f--rai-streams)))
          (levels
           (seq-filter
            (lambda (level)

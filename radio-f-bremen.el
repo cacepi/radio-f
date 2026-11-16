@@ -82,7 +82,7 @@
     ;; These are web-only streams, so they use a different API template
     ;; and processor.
     (bremen-zwei-herz
-     :name "Bremen Zwei Herzstücke Web" :carrier bremen
+     :name "Bremen Zwei Herzstücke *" :carrier bremen
      :id "webchannel4" :livestream "5cd4b678f6c9b3ba"
      :l1-stream radio-f--bremen-web-level-two
      :l2-stream radio-f--bremen-web-level-two
@@ -90,7 +90,7 @@
      :processor radio-f--ard-bremen-processor
      :visual "assets/bremen/bremen-zwei.png")
     (bremen-zwei-sounds
-     :name "Bremen Zwei Sounds Web" :carrier bremen
+     :name "Bremen Zwei Sounds *" :carrier bremen
      :id "webchannel7" :livestream "b4884322d2c878c0"
      :l1-stream radio-f--bremen-web-level-two
      :l2-stream radio-f--bremen-web-level-two
@@ -98,7 +98,7 @@
      :processor radio-f--ard-bremen-processor
      :visual "assets/bremen/bremen-zwei.png")
     (bremen-vier-festival
-     :name "Bremen Vier Festival-Channel Web" :carrier bremen
+     :name "Bremen Vier Festival-Channel *" :carrier bremen
      :id "webchannel2" :livestream "b77402449ddba998"
      :l1-stream radio-f--bremen-web-level-two
      :l2-stream radio-f--bremen-web-level-two
@@ -106,7 +106,7 @@
      :processor radio-f--ard-bremen-processor
      :visual "assets/bremen/bremen-vier.png")
     (bremen-vier-dance
-     :name "Bremen Vier Tanzt! Web" :carrier bremen
+     :name "Bremen Vier Tanzt! *" :carrier bremen
      :id "webchannel3" :livestream "ef0edf0b4532afca"
      :l1-stream radio-f--bremen-web-level-two
      :l2-stream radio-f--bremen-web-level-two
@@ -114,7 +114,7 @@
      :processor radio-f--ard-bremen-processor
      :visual "assets/bremen/bremen-vier.png")
     (bremen-vier-zebra
-     :name "Bremen Vier Zebra Web" :carrier bremen
+     :name "Bremen Vier Zebra *" :carrier bremen
      :id "webchannel8" :livestream "917956f8917024f9"
      :l1-stream radio-f--bremen-web-level-two
      :l2-stream radio-f--bremen-web-level-two
@@ -143,7 +143,10 @@ through the ARD Audiothek API.")
 
 ;; == WEB URLS ==========
 
-(defconst radio-f--bremen-www-url "https://<<id>>.de/")
+(defconst radio-f--bremen-www-url
+  "https://<<id>>.de/"
+  "URL Template for Radio Bremen station home pages.")
+
 
 ;; == STREAM URLS =======
 

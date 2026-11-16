@@ -3,7 +3,7 @@
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
 ;; Created: Tue 10 Nov 26
-;; Keywords: hypermedia, network, streaming, radio, Germany
+;; Keywords: hypermedia, network, streaming, radio, Estonia
 
 ;; This file is NOT part of Emacs.
 
@@ -26,13 +26,13 @@
 ;;
 ;; ERR (Estonia) plugin for Radio F: 19 Stations.
 ;;
-;; Uses an API similar to ARD: a single JSON file contains all station metadata,
-;; with endpoint names, artwork, streams, metadata, etc., each leading to
-;; a specific station.  Nice!
+;; Uses an API similar to the BEEB: a single JSON file contains all
+;; stations in a separate array, with each array pointing to the endpoint
+;; names, artwork, streams, metadata, etc. for a specific station.  Nice!
 ;;
 ;; When a carrier is organized as well as this, it's easy to add all the
 ;; stations very quickly: this only took 25 minutes to do.  Compare that to
-;; hunting for days with the more obstuse carriers that I could name.
+;; struggling for days with more abstruse carriers that I could name.
 ;;
 ;; Hello, Deutschlandradio!
 ;;
@@ -111,12 +111,11 @@ and web links for the presentation views.")
 
 (defconst radio-f--err-api-url
   "https://eestiraadio.err.ee/api/v1/channels/<<id>>"
-  "Template to retrieve metadata from all supported carriers through
-the ARD Audiothek API.")
+  "Template to retrieve metadata for ERR stations.")
 
-(defconst radio-f--err-url
-  "https://www1.err.de/radio/<<err-id>>/index.html"
-  "URL.")
+(defconst radio-f--err-www-url
+  "https://eestiraadio.err.ee/<<id>>"
+  "URL Template for ERR station home pages.")
 
 
 ;; == STREAM URL ========
@@ -131,7 +130,7 @@ the ARD Audiothek API.")
 (defconst radio-f--err-streams
   `((One     . ,radio-f--err-stream-level-one)
     (_       . ,radio-f--err-stream-level-one))
-  "Audio stream templates provided by Norddeutscher Rundfunk.")
+  "Audio stream templates provided by ERR.")
 
 
 ;; == PROCESSORS ================================

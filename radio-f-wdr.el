@@ -399,9 +399,9 @@ the ARD Audiothek API.")
   "https://api.ardaudiothek.de/graphql?query=query%20MediaCollectionPermanentLivestreamsQuery(%24id%3AString!)%7BpermanentLivestream(id%3A%24id)%7BmediaCollection(v%3AV6A)%7D%7D&variables=%7B%22id%22%3A%22urn%3Aard%3Apermanent-livestream%3A<<livestream>>%22%7D"
   "Template to retrieve metadata for WDR web streams")
 
-(defconst radio-f--wdr-url
+(defconst radio-f--wdr-www-url
   "https://www1.wdr.de/radio/<<ard-id>>/index.html"
-  "URL.")
+  "URL Template for WDR station home pages.")
 
 ;; == STREAM URLS =======
 

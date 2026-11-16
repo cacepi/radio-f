@@ -87,7 +87,7 @@ development purposes.")
 
 ;; == WEB URLS ==========
 
-(defconst radio-f--dlf-www-url
+(defconst radio-f--dlr-www-url
   "https://www.deutschland[tag].de"
   "Template used to return the web URL for Deutschland Radio stations.")
 

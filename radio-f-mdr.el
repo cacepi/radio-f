@@ -67,7 +67,7 @@
      :l1-stream radio-f--mdr-radio-level-one
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-kultur-konzerte
-     :name "MDR Kultur Konzerte Web" :carrier mdr
+     :name "MDR Kultur Konzerte *" :carrier mdr
      :station "0" :l2-id "284311" :bitrate "high"
      :publisher "3e6537f312b8ee7e" :livestream "746477d13d92a028"
      :api radio-f--mdr-web-api-url
@@ -147,7 +147,7 @@
      :l1-stream radio-f--mdr-radio-level-one
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-sputnik
-     :name "MDR Sputnik Web" :carrier mdr
+     :name "MDR Sputnik *" :carrier mdr
      :station "0" :l2-id "284330" :bitrate "high"
      :publisher "b047738ae6c45914" :livestream "cb686e1bbd1c9adb"
      :api radio-f--mdr-web-api-url
@@ -155,7 +155,7 @@
      :l1-stream radio-f--mdr-radio-level-two
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-sputnik-firstplay
-     :name "MDR Sputnik Firstplay Web" :carrier mdr
+     :name "MDR Sputnik Firstplay *" :carrier mdr
      :station "3" :l2-id "284330" :bitrate "high"
      :publisher "b047738ae6c45914" :livestream "a2524d96ebbd663e"
      :api radio-f--mdr-web-api-url
@@ -163,7 +163,7 @@
      :l1-stream radio-f--mdr-radio-level-two
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-sputnik-rock
-     :name "MDR Sputnik Rock Web" :carrier mdr
+     :name "MDR Sputnik Rock *" :carrier mdr
      :station "1" :l2-id "284330" :bitrate "high"
      :publisher "b047738ae6c45914" :livestream "163f07b378c75798"
      :api radio-f--mdr-web-api-url
@@ -171,7 +171,7 @@
      :l1-stream radio-f--mdr-radio-level-two
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-sputnik-club
-     :name "MDR Sputnik Club Web" :carrier mdr
+     :name "MDR Sputnik Club *" :carrier mdr
      :station "2" :l2-id "284330" :bitrate "high"
      :publisher "b047738ae6c45914" :livestream "d68a29a554c58ef7"
      :api radio-f--mdr-web-api-url
@@ -179,7 +179,7 @@
      :l1-stream radio-f--mdr-radio-level-two
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-sputnik-popkult
-     :name "MDR Sputnik Popkult Web" :carrier mdr
+     :name "MDR Sputnik Popkult *" :carrier mdr
      :station "4" :l2-id "284330" :bitrate "high"
      :publisher "b047738ae6c45914" :livestream "eee1e451f4894828"
      :api radio-f--mdr-web-api-url
@@ -187,7 +187,7 @@
      :l1-stream radio-f--mdr-radio-level-two
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-sputnik-roboton
-     :name "MDR Sputnik Roboton Web" :carrier mdr
+     :name "MDR Sputnik Roboton *" :carrier mdr
      :station "5" :l2-id "284330" :bitrate "high"
      :publisher "b047738ae6c45914" :livestream "62d470446f2156a1"
      :api radio-f--mdr-web-api-url
@@ -195,7 +195,7 @@
      :l1-stream radio-f--mdr-radio-level-two
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-sputnik-soundcheck
-     :name "MDR Sputnik Soundcheck Web" :carrier mdr
+     :name "MDR Sputnik Soundcheck *" :carrier mdr
      :station "6" :l2-id "284330" :bitrate "high"
      :publisher "b047738ae6c45914" :livestream "373253aafb6675d7"
      :api radio-f--mdr-web-api-url
@@ -235,7 +235,7 @@
      :l1-stream radio-f--mdr-radio-level-one
      :l2-stream radio-f--mdr-radio-level-two)
     (mdr-tweens
-     :name "MDR Tweens Web" :carrier mdr
+     :name "MDR Tweens *" :carrier mdr
      :station "0" :l2-id "991101" :bitrate "high"
      :publisher "7a96971f9ce005ad" :livestream "823dcb1b2033a30c"
      :api radio-f--mdr-web-api-url
@@ -256,9 +256,9 @@ the ARD Audiothek API.")
   "https://api.ardaudiothek.de/graphql?query=query%20MediaCollectionPermanentLivestreamsQuery(%24id%3AString!)%7BpermanentLivestream(id%3A%24id)%7BmediaCollection(v%3AV6A)%7D%7D&variables=%7B%22id%22%3A%22urn%3Aard%3Apermanent-livestream%3A<<livestream>>%22%7D"
   "Template to submit a GraphQL query for MDR web/radio streams")
 
-(defconst radio-f--mdr-url
+(defconst radio-f--mdr-www-url
   "https://www1.mdr.de/radio/<<mdr-id>>/index.html"
-  "URL.")
+  "URL template for WDR station home pages.")
 
 ;; == STREAM URLS =======
 

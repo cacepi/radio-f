@@ -171,10 +171,11 @@
      :processor radio-f--hr-web-processor
      :l1-stream radio-f--hr-radio-level-one
      :l2-stream radio-f--hr-radio-level-two)
-    ;; This station is probably the reason I decided to add ARD carriers
-    ;; in the first place.  You FM is quite famous in central Europe for
-    ;; the Saturday night techno program "World Club Dome."  It's so popular
-    ;; that there's a "World Club Dome" festival held in Frankfut every June.
+    ;;
+    ;; This next is why I decided to add ARD carriers. You FM is famous
+    ;; in Europe for the Saturday night techno/EDM program "World Club
+    ;; Dome."  It's so popular that there's a World Club Dome Festival
+    ;; held in Frankfut, which is attended by over 120,000 ravers every June.
     ;;
     (hr-dasding
      :name "DASDING (You FM)" :carrier hr :station "dasding"
@@ -203,9 +204,9 @@ the ARD Audiothek API.")
   "https://api.ardaudiothek.de/graphql?query=query%20MediaCollectionPermanentLivestreamsQuery(%24id%3AString!)%7BpermanentLivestream(id%3A%24id)%7BmediaCollection(v%3AV6A)%7D%7D&variables=%7B%22id%22%3A%22urn%3Aard%3Apermanent-livestream%3A<<livestream>>%22%7D"
   "Template to retrieve metadata for HR web streams")
 
-(defconst radio-f--hr-url
+(defconst radio-f--hr-www-url
   "https://www1.hr.de/radio/<<ard-id>>/index.html"
-  "URL.")
+  "URL template for HR station home pages.")
 
 ;; == STREAM URLS =======
 
