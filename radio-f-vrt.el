@@ -32,25 +32,19 @@
 
 ;;; Code:
 
+
 ;; == STATION PLIST =====
 
 ;;
 ;; VRT - https://www.vrt.be/vrtnu-api/graphql/public/v1
 ;; https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2/channels/livestream-audio-radio1
-;; This requires a Javascript derived player token, and Emacs no worky with the Javascripty.
-;; https://media-services-public.vrt.be/media-aggregator/v2/media-items/livestream-audio-radio1?client=vrtnu-web%40PROD&vrtPlayerToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTQ1NDk2MDAsImdlb0xvY2F0aW9uIjoiV09STEQiLCJhdXRoZW50aWNhdGVkIjpmYWxzZSwidXNlclN0YXR1cyI6IlVOS05PV04iLCJhZ2VDYXRlZ29yeSI6IlpFUk9fUExVUyIsInByZXZpZXdBbGxvd2VkIjpmYWxzZSwibGVnYWN5UHJldmlldyI6ZmFsc2UsIm1heFF1YWxpdHkiOiJIRCIsImRybUltcGxlbWVudGF0aW9uIjoiV2lkZXZpbmUiLCJ0cnVzdGVkT3MiOmZhbHNlLCJkcm1DYXBhYmlsaXR5IjoiU1cifQ.FnzA6yswaXm_C4UT7KOW_ci_kEkSAFNaDJcB89i0iCg
-;; VRT Ketnet Hits
-;; https://icecast.vrtcdn.be/ketnetradio-high.mp3
-;; https://quantumcast.vrtcdn.be/ketnetradio/mp3-128
-;; Gitaren
-;; https://radio.vrtcdn.be/vrt/stubru-bruut/live.m3u8
-;; http://icecast.vrtcdn.be/stubru_bruut-high.mp3/
-;; https://www.vrt.be/vrtmax/livestream/audio/studio-brussel-zware-gitaren/?tab=playlist
-;; https://www.vrt.be/vrtmax/livestream/audio/studio-brussel-zware-gitaren/?tab=playlist
-;; Klara Bene
-;; https://radio.vrtcdn.be/vrt/radio-bene/live.m3u8
-;; https://www.vrt.be/vrtmax/livestream/audio/studio-brussel-de-jaren-nul/
-;; https://radio.vrtcdn.be/vrt/stubru-dejarennul/live.m3u8
+
+;; https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2/channels/livestream-audio-stubruuntz
+;; https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2/channels/livestream-audio-stubru-vuurland
+;; https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2/channels/livestream-audio-radio1classics
+;; Radio 2 Relax
+;; https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2/channels/livestream-audio-radio2unwind
+;; https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2/channels/livestream-audio-stubrudejarennul
 
 ;; == STATION PLIST =====
 
@@ -247,5 +241,3 @@ links for the presentation views.")
       (visual-url . ,visual-url))))
 
 (provide 'radio-f-vrt)
-
-;;; radio-f-ard.el ends here

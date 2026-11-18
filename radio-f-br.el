@@ -186,5 +186,3 @@ development purposes.")
       (visual-url . ,visual-url))))
 
 (provide 'radio-f-br)
-
-;;; radio-f-br.el ends here

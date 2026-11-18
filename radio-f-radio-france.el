@@ -766,5 +766,3 @@ OBJECT refers to a JSON object or vector of objects."
         (visual-url . ,visual-url)))))
 
 (provide 'radio-f-radio-france)
-
-;;; radio-f-radio-france.el ends here

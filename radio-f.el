@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.10
+;; Version: 0.3.11
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -270,7 +270,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr rbb cbc err orf ruv rai)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr rbb cbc err orf ruv rai yle lrt)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -324,6 +324,8 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
               ('orf radio-f--orf-stations)
               ('ruv radio-f--ruv-stations)
               ('rai radio-f--rai-stations)
+              ('yle radio-f--yle-stations)
+              ('lrt radio-f--lrt-stations)
               (_ nil)))
           radio-f-carriers)))
 
@@ -350,7 +352,9 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
           radio-f--err-stations
           radio-f--orf-stations
           radio-f--ruv-stations
-          radio-f--rai-stations))
+          radio-f--rai-stations
+          radio-f--yle-stations
+          radio-f--lrt-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station
@@ -404,7 +408,11 @@ from the first carrier defined in `radio-f-carriers'."
       ('ruv
        (require 'radio-f-ruv))
       ('rai
-       (require 'radio-f-rai)))))
+       (require 'radio-f-rai))
+      ('yle
+       (require 'radio-f-yle))
+      ('lrt
+       (require 'radio-f-lrt)))))
 
 (defun radio-f--favorite-stations ()
   "Return the effective list of favorite stations."
@@ -464,6 +472,10 @@ from the first carrier defined in `radio-f-carriers'."
      radio-f--ruv-www-url)
     ('rai
      radio-f--rai-www-url)
+    ('yle
+     radio-f--yle-www-url)
+    ('lrt
+     radio-f--lrt-www-url)
     (_
      nil)))
 
@@ -490,7 +502,9 @@ from the first carrier defined in `radio-f-carriers'."
             ('err radio-f--err-streams)
             ('orf radio-f--orf-streams)
             ('ruv radio-f--ruv-streams)
-            ('rai radio-f--rai-streams)))
+            ('rai radio-f--rai-streams)
+            ('yle radio-f--yle-streams)
+            ('lrt radio-f--lrt-streams)))
          (level
           (or radio-f--session-stream-level
               radio-f-stream-level))
@@ -560,11 +574,14 @@ does not have, the stream returned is the highest level stream."
      (radio-f--set-rbb-api-url))
     ('rtbf
      (radio-f--set-rtbf-api-url))
+    ('yle
+     (radio-f--set-yle-api-url))
     ('cbc radio-f--cbc-api-url)
     ('err radio-f--err-api-url)
     ('orf radio-f--orf-api-url)
     ('ruv radio-f--ruv-api-url)
     ('rai radio-f--rai-api-url)
+    ('lrt radio-f--lrt-api-url)
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -743,6 +760,7 @@ without the effect."
   (let* ((type
           (pcase image-type
             ("image/webp" 'webp)
+            ("image/avif" 'avif)
             ("image/jpeg" 'jpeg)
             ("image/png"  'png)))
          (source-image (create-image image-data type t))
@@ -1297,6 +1315,9 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
 
 ;; == Track Timeline ======
 
+;; Yes, the track timeline is disable by default.  this is by design.
+;; See README.md for details.
+
 (defvar radio-f--timeline-timer nil
   "Timer used to update the current track timeline.")
 
@@ -1590,7 +1611,9 @@ user has requested it.")
             ('err radio-f--err-streams)
             ('orf radio-f--orf-streams)
             ('ruv radio-f--ruv-streams)
-            ('rai radio-f--rai-streams)))
+            ('rai radio-f--rai-streams)
+            ('yle radio-f--yle-streams)
+            ('lrt radio-f--lrt-streams)))
          (levels
           (seq-filter
            (lambda (level)
@@ -2038,6 +2061,7 @@ the station played is governed by the custom variable
       (message "Radio F: You are listening to %s." favorite-picked))
     (radio-f-audio-start)))
 
+;; SURPRISE!!
 ;;;###autoload
 (defun radio-f-change-to-any-station (&optional station)
   "Switch to a different STATION.

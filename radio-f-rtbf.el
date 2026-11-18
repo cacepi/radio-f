@@ -310,5 +310,3 @@ links for the presentation views.")
       (visual-url . ,visual-url))))
 
 (provide 'radio-f-rtbf)
-
-;;; radio-f-ard.el ends here

@@ -88,5 +88,3 @@ links for the presentation views.")
       (visual-url . ,(cdr (assoc "thumbnail" now))))))
 
 (provide 'radio-f-rte)
-
-;;; radio-f-rte.el ends here

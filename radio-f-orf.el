@@ -55,7 +55,7 @@
     (orf-voralberg
      :name "ORF Radio Vorarlberg" :carrier orf :id "vbg"
      :api radio-f--orf-api-url :processor radio-f--orf-processor
-     :visual "assets/orf/orf-veralberg.png")
+     :visual "assets/orf/orf-voralberg.png")
     (orf-oberosterreich
      :name "ORF Radio Oberösterreich" :carrier orf :id "ooe"
      :api radio-f--orf-api-url :processor radio-f--orf-processor
@@ -79,7 +79,7 @@
     (orf-burgenland
      :name "ORF Radio Burgenland" :carrier orf :id "bgl"
      :api radio-f--orf-api-url :processor radio-f--orf-processor
-     :visual "assets/orf/orf-music.png")
+     :visual "assets/orf/orf-burgenland.png")
     (orf-slovenski
      :name "ORF Radio Slovenski Spored" :carrier orf :id "slo"
      :api radio-f--orf-api-url :processor radio-f--orf-processor

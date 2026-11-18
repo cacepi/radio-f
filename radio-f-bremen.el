@@ -249,5 +249,3 @@ through the ARD Audiothek API.")
       (visual-url . ,visual-url))))
 
 (provide 'radio-f-bremen)
-
-;;; radio-f-bremen.el ends here
