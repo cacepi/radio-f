@@ -2,7 +2,7 @@
 
 ;; Author: Jason Martens
 ;; URL: https://github.com/cacepi/radio-f
-;; Version: 0.3.11
+;; Version: 0.3.11.1
 ;; Package-Requires: ((emacs "30.1"))
 ;; Created: Thu 30 Jul 26
 ;; Keywords: hypermedia, network, streaming, radio
@@ -44,6 +44,7 @@
 (require 'json)
 (require 'url)
 (require 'seq)
+;; (require 'image-converter)
 (require 'emms nil t)
 (require 'svg nil t)
 
@@ -119,15 +120,23 @@ the presentation views."
   "Show track info in the presentation views.  A non-nil value shows
 track info; nil disables track info."
   :type '(choice
-          (const :tag "Show Track Info." t)
+          (const :tag "Show Track Info" t)
           (const :tag "Don't Show Track Info" nil))
+  :group 'radio-f-appearance)
+
+(defcustom radio-f-show-station-name t
+  "Show station name among the track info in the presentation views.
+A non-nil value shows the station name; nil disables station name."
+  :type '(choice
+          (const :tag "Show Station Name" t)
+          (const :tag "Don't Show Station Name" nil))
   :group 'radio-f-appearance)
 
 (defcustom radio-f-show-artwork t
   "Display artwork in the presentation views.  A non-nil value displays
 the artwork; nil disables artwork."
   :type '(choice
-          (const :tag "Show Track Info." t)
+          (const :tag "Show Track Info" t)
           (const :tag "Don't Show Track Info" nil))
   :group 'radio-f-appearance)
 
@@ -168,7 +177,7 @@ level is used for mpv and VLC.  This setting is not available in EMMS."
 lower quality or bitrate."
   :type '(choice
           (const :tag "Level One: highest quality or bitrate stream available." One)
-          (const :tag "Level Two: lower quality/bitrate than a level one stream." Two)
+          (const :tag "Level Two: lower quality/bitrate than a Level One stream." Two)
           (const :tag "Level Three: even lower quality/bitrate." Three)
           (const :tag "Level Four: lowest quality/bitrate." Four))
   :group 'radio-f-audio)
@@ -270,7 +279,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
 ;; == Variables for station/stream control ======
 
 (defconst radio-f-carriers
-  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr rbb cbc err orf ruv rai yle lrt)
+  '(radio-france bbc rte sbfm br bremen dlr wdr rtbf hr mdr swr sr ndr rbb cbc err orf ruv rai yle lrt abc)
   "List of carriers that provide stations to Radio F.")
 
 (defvar radio-f--current-station nil
@@ -326,6 +335,7 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
               ('rai radio-f--rai-stations)
               ('yle radio-f--yle-stations)
               ('lrt radio-f--lrt-stations)
+              ('abc radio-f--abc-stations)
               (_ nil)))
           radio-f-carriers)))
 
@@ -354,7 +364,8 @@ so its scrolling function, `pixel-scroll-precision', is never called.  Ever."
           radio-f--ruv-stations
           radio-f--rai-stations
           radio-f--yle-stations
-          radio-f--lrt-stations))
+          radio-f--lrt-stations
+          radio-f--abc-stations))
 
 (defun radio-f--set-initial-station ()
   "Return the preferred station, or the first available station
@@ -412,7 +423,9 @@ from the first carrier defined in `radio-f-carriers'."
       ('yle
        (require 'radio-f-yle))
       ('lrt
-       (require 'radio-f-lrt)))))
+       (require 'radio-f-lrt))
+      ('abc
+       (require 'radio-f-abc)))))
 
 (defun radio-f--favorite-stations ()
   "Return the effective list of favorite stations."
@@ -476,6 +489,8 @@ from the first carrier defined in `radio-f-carriers'."
      radio-f--yle-www-url)
     ('lrt
      radio-f--lrt-www-url)
+    ('abc
+     radio-f--abc-www-url)
     (_
      nil)))
 
@@ -504,7 +519,8 @@ from the first carrier defined in `radio-f-carriers'."
             ('ruv radio-f--ruv-streams)
             ('rai radio-f--rai-streams)
             ('yle radio-f--yle-streams)
-            ('lrt radio-f--lrt-streams)))
+            ('lrt radio-f--lrt-streams)
+            ('abc radio-f--abc-streams)))
          (level
           (or radio-f--session-stream-level
               radio-f-stream-level))
@@ -582,6 +598,7 @@ does not have, the stream returned is the highest level stream."
     ('ruv radio-f--ruv-api-url)
     ('rai radio-f--rai-api-url)
     ('lrt radio-f--lrt-api-url)
+    ('abc radio-f--abc-api-url)
     (_
      (error "Radio F: No metadata template for carrier %S"
             carrier))))
@@ -760,7 +777,6 @@ without the effect."
   (let* ((type
           (pcase image-type
             ("image/webp" 'webp)
-            ("image/avif" 'avif)
             ("image/jpeg" 'jpeg)
             ("image/png"  'png)))
          (source-image (create-image image-data type t))
@@ -1228,7 +1244,7 @@ BUFFER name is generated dynamically by `radio-f--generate-buffer-name'."
   "Insert current track metadata into the Radio F buffer."
   (let-alist radio-f--current-track-info
     (when .artist
-      (insert (propertize .artist 'face 'radio-f-bold) "\n"))
+          (insert (propertize .artist 'face 'radio-f-bold) "\n"))
     (when .title
       (insert (propertize .title 'face 'radio-f-regular)))))
 
@@ -1613,7 +1629,8 @@ user has requested it.")
             ('ruv radio-f--ruv-streams)
             ('rai radio-f--rai-streams)
             ('yle radio-f--yle-streams)
-            ('lrt radio-f--lrt-streams)))
+            ('lrt radio-f--lrt-streams)
+            ('abc radio-f--abc-streams)))
          (levels
           (seq-filter
            (lambda (level)

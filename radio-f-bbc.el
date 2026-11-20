@@ -266,7 +266,9 @@
      :carrier bbc :processor radio-f--bbc-processor)
     (york
      :name "BBC York" :id "bbc_radio_york"
-     :carrier bbc :processor radio-f--bbc-processor)))
+     :carrier bbc :processor radio-f--bbc-processor))
+    "Input data used by the URL templates to retrieve metadata, stream types, and web
+links for the presentation views.")
 
 
 ;; == API URLS ==========

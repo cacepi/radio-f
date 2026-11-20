@@ -49,7 +49,7 @@ Starts playback of the station you've set in `radio-f-default-station`. A "Now P
 
 This function can be run non-interactively with an optional argument for a specific station. For example, `(radio-f "FIP Reggae")` will start Radio F tuned to FIP's Reggae station instead of your default.
 
-Consult the [station list](https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/STATIONS.md) for available stations.
+Consult the [station list](https://github.com/cacepi/radio-f/blob/main/STATIONS.md) for available stations.
 
 This function is bound to `C-c f r` by default.
 
@@ -111,7 +111,7 @@ A word of caution: the view toggle works by running `make-frame-visible` and `ma
 
 ## Custom Variables
 
-<a id="radio-f-default-station"></a> **`radio-f-default-station`**: The station which plays Radio F first starts.  Refer to the [station list](https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/STATIONS.md) for all the stations supported under Radio F.
+<a id="radio-f-default-station"></a> **`radio-f-default-station`**: The station which plays Radio F first starts.  Refer to the [station list](https://github.com/cacepi/radio-f/blob/main/STATIONS.md) for all the stations supported under Radio F.
 
 The default is `"FIP"`.
 
@@ -152,11 +152,11 @@ The default is `'frame`.
 
 <a id="radio-f-favorite-stations"></a>**`radio-f-favorite-stations`**: List favorite stations for completion.  A nil value shows all stations.
 
-Radio F currently supports 568 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
+Radio F currently supports 620 stations.  Scrolling through that list to change stations is... well, it's not fun. So, instead:
 
 `customize-option [RETURN] radio-f-favorite-stations [RETURN]` presents you with a checkbox list to select only those stations that you want to see. The list will be set in the user's Custom file.
 
-Or if you really hate to use Custom - and who doesn't? - you can copy the stations you want from the [station list](https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/STATIONS.md) and place them in your `use-package` definition for Radio F.  For example:
+Or if you really hate to use Custom - and who doesn't? - you can copy the stations you want from the [station list](https://github.com/cacepi/radio-f/blob/main/STATIONS.md) and place them in your `use-package` definition for Radio F.  For example:
 
 ```elisp
 :config
@@ -168,7 +168,7 @@ Or if you really hate to use Custom - and who doesn't? - you can copy the statio
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 568.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
+will only show those 22 stations when you run [`radio-f-change-station`](#change-station) instead of all 620.  Remember, you can always choose from every station with [`radio-f-change-to-any-station`](#change-to-any-station).
 
 <a id="radio-f-artwork-size"></a>**`radio-f-artwork-size`**: The size, in pixels, of the artwork image's height and width.
 
@@ -181,6 +181,12 @@ The default is `t`.
 <a id="radio-f-show-track-info"></a>**`radio-f-show-track-info`**: Show track info in either frame of window view. A value of `t` shows track info, `nil` disables it.
 
 The default is `t`.
+
+<!-- 
+<a id="radio-f-show-station-name"></a>**`radio-f-show-station-name`**: Show station name among the track info in the presentation views.  A value of `t` shows the station name, `nil` disables it."
+
+The default is `t`.
+-->
 
 <a id="radio-f-show-track-timeline"></a>**`radio-f-show-track-timeline`**: Display a timer showing the playing time of the current track. A value of `t` shows the timer, `nil` shows no timer.
 
@@ -250,7 +256,7 @@ You can also change volume with the mouse wheel while the mouse cursor is inside
 (buffer-face-mode)     ; if using 'window view
 ```
 
-* Did I mention the favorites list? Only like 11 times already?  Let's make it an even dozen: go to the [station list](https://raw.githubusercontent.com/cacepi/radio-f/refs/heads/main/STATIONS.md) to learn how to build your list.  Your `n` and `p` keys - or arrow keys if you swing that way - will thank you.
+* Did I mention the favorites list? Only like 11 times already?  Let's make it an even dozen: go to the [station list](https://github.com/cacepi/radio-f/blob/main/STATIONS.md) to learn how to build your list.  Your `n` and `p` keys - or arrow keys if you swing that way - will thank you.
 
 * The VLC remote interface is over a network connection, and you can control it directly via telnet:
 

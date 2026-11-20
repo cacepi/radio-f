@@ -418,6 +418,66 @@
   "Input data used by the URL templates to retrieve metadata, stream types,
 and web links for the presentation views.")
 
+;; ICI Première - Côte-Nord
+;; https://rcavliveaudio.akamaized.net/hls/live/2006970/P-2QSEP0_SEP/master.m3u8
+
+;; ICI Première - Québec
+;; https://rcavliveaudio.akamaized.net/hls/live/2006953/P-2QQUE0_QUE/master.m3u8
+
+;; ICI Première - Estrie
+;; https://rcavliveaudio.akamaized.net/hls/live/2006971/P-2QSHE0_SHE/master.m3u8
+
+;; ICI Première - Toronto
+;; https://rcavliveaudio.akamaized.net/hls/live/2006973/P-2OTOR0_TOR/master.m3u8
+
+;; ICI Première - Alberta
+;; https://rcavliveaudio.akamaized.net/hls/live/2006949/P-2AEDM0_EDM/master.m3u8
+
+;; ICI Première - Windsor
+;; https://rcavliveaudio.akamaized.net/hls/live/2006976/P-2OWDR0_WDR/master.m3u8
+
+;; ICI Première - Manitoba
+;; https://rcavliveaudio.akamaized.net/hls/live/2006977/P-2MWIN0_WIN/master.m3u8
+
+;; ICI Première - Montréal
+;; https://rcavliveaudio.akamaized.net/hls/live/2006635/P-2QMTL0_MTL/master.m3u8
+
+;; ICI Première - Saskatchewan
+;; https://rcavliveaudio.akamaized.net/hls/live/2006954/P-2SREG0_REG/master.m3u8
+
+;; ICI Première - Nouvelle-Écosse
+;; https://rcavliveaudio.akamaized.net/hls/live/2006950/P-2EMCT2_HAL/master.m3u8
+
+;; ICI Première - Colombie-Britannique
+;; https://rcavliveaudio.akamaized.net/hls/live/2006975/P-2BVAN0_VAN/master.m3u8
+
+;; ICI Première - Bas-Saint-Laurent
+;; https://rcavliveaudio.akamaized.net/hls/live/2006651/P-2QRIM0_RIM/master.m3u8
+
+;; ICI Première - Nouveau-Brunswick
+;; https://rcavliveaudio.akamaized.net/hls/live/2006952/P-2EMCT0_MCT/master.m3u8
+
+;; ICI Première - Nord de l'Ontario
+;; https://rcavliveaudio.akamaized.net/hls/live/2006972/P-2OSUB0_SUB/master.m3u8
+
+;; ICI Première - Mauricie–Centre-du-Québec
+;; https://rcavliveaudio.akamaized.net/hls/live/2006974/P-2QTRV0_TRV/master.m3u8
+
+;; ICI Première - Île-du-Prince-Édouard
+;; https://rcavliveaudio.akamaized.net/hls/live/2006948/P-2EMCT3_CHR/master.m3u8
+
+;; ICI Première - Abitibi-Témiscamingue
+;; https://rcavliveaudio.akamaized.net/hls/live/2006955/P-2QROU0_ROU/master.m3u8
+
+;; ICI Première - Saguenay–Lac-Saint-Jean
+;; https://rcavliveaudio.akamaized.net/hls/live/2006969/P-2QSAG0_SAG/master.m3u8
+
+;; ICI Première - Terre-Neuve-et-Labrador
+;; https://rcavliveaudio.akamaized.net/hls/live/2006950/P-2EMCT2_HAL/master.m3u8
+
+;; ICI Première - Gaspésie–Îles-de-la-Madeleine
+;; https://rcavliveaudio.akamaized.net/hls/live/2006951/P-2QMAT0_MAT/master.m3u8
+
 
 ;; == WEB URL ==========
 

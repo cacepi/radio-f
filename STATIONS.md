@@ -12,7 +12,7 @@ How to make a favorites list again:  copy the stations you want from the station
     "Deutschlandfunk Nova" "Bayern 3" "Bremen Vier Tanzt! Web")
 ```
 
-will only show those 22 stations when you run `radio-f-change-station` instead of all 568.
+will only show those 22 stations when you run `radio-f-change-station` instead of all 620.
 
 The list:
 
@@ -587,6 +587,57 @@ The list:
 "Yle VEGA Östnyland"
 "Yle Sämi"
 "Ålands Radio Live"
+"ABC Sydney"
+"ABC Broken Hill"
+"ABC Central Coast"
+"ABC Central West"
+"ABC Coffs Coast"
+"ABC Illawarra"
+"ABC Mid North Coast"
+"ABC New England North West"
+"ABC Newcastle"
+"ABC Nort Coast"
+"ABC Riverina"
+"ABC South East NSW"
+"ABC Upper Hunter"
+"ABC Western Plains"
+"ABC Canberra"
+"ABC Darwin"
+"ABC Alice Springs"
+"ABC Ballarat"
+"ABC Central Victoria"
+"ABC Gippsland"
+"ABC Goulburn Murray"
+"ABC Mildura-Swan Hill"
+"ABC Shepparton"ia
+"ABC South-West Victoria"
+"ABC Wimmera"
+"ABC Adelaide"
+"ABC Eyre Peninsula"
+"ABC North and West"
+"ABC Riverland"
+"ABC South East"
+"ABC Hobart"
+"ABC Northern Tasmania"
+"ABC Brisbane"
+"ABC Capricornia"
+"ABC Far North"
+"ABC Gold Coast"
+"ABC North Queensland"
+"ABC North Queensland"
+"ABC Soutern Queensland"
+"ABC Sunshine Coast"
+"ABC Tropical North"
+"ABC Western Queensland"
+"ABC Wide Bay"
+"ABC Perth"
+"ABC Esperance"
+"ABC Goldfields"
+"ABC Great Southern"
+"ABC Kimberly"
+"ABC Midwest & Wheatbelt"
+"ABC Pilbara"
+"ABC South West"
 </pre>
 
 † = These stations are geolocation locked to the UK only.

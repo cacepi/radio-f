@@ -45,7 +45,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-1.png")
     (yle-radio-suomi
      :name "Yle Radio Suomi" :carrier yle :id "ylers"
@@ -53,7 +53,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi.png")
     (yle-radio-suomi-hameenlinna
      :name "Yle Radio Suomi Hämeenlinna" :carrier yle :id "ylers-hml"
@@ -61,16 +61,16 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-hameenlinna.png")
     (yle-radio-suomi-joensuu
      :name "Yle Radio Suomi Joensuu" :carrier yle :id "ylers-joensuu"
      :key "880" :l3 "YleJoensuu"
-     :api radio-f--yle-radio-api-url
+     :processor radio-f--yle-processor
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-joensuu.png")
     (yle-radio-suomi-jyvaskyla
      :name "Yle Radio Suomi Jyväskylä" :carrier yle :id "ylers-jkl"
@@ -78,7 +78,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-jyvaskyla.png")
     (yle-radio-suomi-kajaani
      :name "Yle Radio Suomi Kajaani" :carrier yle :id "yle-kajaani"
@@ -86,7 +86,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-kajaani.png")
     (yle-radio-suomi-kokkola
      :name "Yle Radio Suomi Kokkola" :carrier yle :id "ylers-kokkola"
@@ -94,7 +94,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-kokkola.png")
     (yle-radio-suomi-kotka
      :name "Yle Radio Suomi Kotka" :carrier yle :id "ylers-kotka"
@@ -102,7 +102,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-kotka.png")
     (yle-radio-suomi-kuopio
      :name "Yle Radio Suomi Kuopio" :carrier yle :id "ylers-kuopio"
@@ -110,7 +110,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-kuopio.png")
     (yle-radio-suomi-lahti
      :name "Yle Radio Suomi Lahti" :carrier yle :id "yle-lahti"
@@ -118,7 +118,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-lahti.png")
     (yle-radio-suomi-lappeenranta
      :name "Yle Radio Suomi Lappeenranta" :carrier yle :id "yle-lpr"
@@ -126,7 +126,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-lappeenranta.png")
     (yle-radio-suomi-mikkeli
      :name "Yle Radio Suomi Mikkeli" :carrier yle :id "yle-mikkeli"
@@ -134,7 +134,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-mikkeli.png")
     (yle-radio-suomi-oulu
      :name "Yle Radio Suomi Oulu" :carrier yle :id "yle-oulu"
@@ -142,7 +142,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-oulu.png")
     (yle-radio-suomi-pori
      :name "Yle Radio Suomi Pori" :carrier yle :id "yle-pori"
@@ -150,7 +150,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-pori.png")
     (yle-radio-suomi-rovaniemi
      :name "Yle Radio Suomi Rovaniemi" :carrier yle :id "yle-rovaniemi"
@@ -158,7 +158,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-rovaniemi.png")
     (yle-radio-suomi-seinajoki
      :name "Yle Radio Suomi Seinäjoki" :carrier yle :id "yle-skl"
@@ -166,7 +166,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-seinajoki.png")
     (yle-radio-suomi-tampere
      :name "Yle Radio Suomi Tampere" :carrier yle :id "yle-tampere"
@@ -174,7 +174,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-tampere.png")
     (yle-radio-suomi-turku
      :name "Yle Radio Suomi Turku" :carrier yle :id "yle-turku"
@@ -182,7 +182,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-tirku.png")
     (yle-radio-suomi-vaasa
      :name "Yle Radio Suomi Vaasa" :carrier yle :id "yle-vaasa"
@@ -190,7 +190,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-radio-suomi-vaasa.png")
     (yle-ylex
      :name "Yle YleX" :carrier yle :id "ylex"
@@ -198,23 +198,23 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-ylex.png")
     (yle-klassinen
-     :name "Yle Radio 1" :carrier yle :id "yleklassinen"
+     :name "Yle Klassinen" :carrier yle :id "yleklassinen"
      :key "872" :l3 "YleKlassinen" :api radio-f--yle-radio-api-url
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
-     :visual "assets/yle/yle-klassinen.png")
+     :processor radio-f--yle-processor
+     :visual "assets/yle/yle-klassinen.jpg")
     (yle-x3m
      :name "Yle X3M" :carrier yle :id "ylex3m"
      :key "877" :l3 "YleX3M" :api radio-f--yle-radio-api-url
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-x3m.png")
     (yle-vega-helsinki
      :name "Yle VEGA Huvudstadsregionen" :carrier yle :id "ylevega"
@@ -222,7 +222,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-vega.png")
     (yle-vega-vastnyland
      :name "Yle VEGA Västnyland" :carrier yle :id "ylevega-vastnyland"
@@ -230,7 +230,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-vega.png")
     (yle-vega-alboland
      :name "Yle VEGA Ålboland" :carrier yle :id "ylevega-alboland"
@@ -238,7 +238,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-vega.png")
     (yle-vega-osterbotten
      :name "Yle VEGA Österbotten" :carrier yle :id "ylevega-osterbotten"
@@ -246,7 +246,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-vega.png")
     (yle-vega-ostnyland
      :name "Yle VEGA Östnyland" :carrier yle :id "ylevega-ostnyland"
@@ -254,7 +254,7 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
+     :processor radio-f--yle-processor
      :visual "assets/yle/yle-vega.png")
     (yle-sami
      :name "Yle Sämi" :carrier yle :id "ylesami"
@@ -262,13 +262,12 @@
      :l1-stream radio-f--yle-stream-level-one
      :l2-stream radio-f--yle-stream-level-two
      :l3-stream radio-f--yle-stream-level-three
-     :processor radio-f--yle-radio-processor
-     :visual "assets/yle/yle-sami-radio.jpg")
+     :processor radio-f--yle-processor
+     :visual "assets/yle/yle-sami-radio.png")
     (yle-alands-radio-live
      :name "Ålands Radio Live" :carrier yle
-     :api radio-f--yle-radio-api-url
      :l1-stream radio-f--yle-alands-stream-level-one
-     :l2-stream nil :l3-stream nil :processor nil
+     :processor radio-f--yle-processor
      :visual "assets/yle/alands-radio-live.png"))
   "Input data used by the URL templates to retrieve metadata, stream types, and web
 links for the presentation views.")
@@ -288,7 +287,7 @@ links for the presentation views.")
 
 (defconst radio-f--yle-stream-level-one ;; AAC, 256kbps
   "https://yleradiolive5.akamaized.net/hls/live/20000<<key>>/<<id>>/master.m3u8"
-  "Template used for VERT Level One audio stream playback.")
+  "Template used for Yle Level One audio stream playback.")
 
 (defconst radio-f--yle-stream-level-two ;; AAC, 256kpbs
   "https://yleradiolive5.akamaized.net/hls/live/20000<<key>>/<<id>>/256/variant.m3u8"
@@ -296,7 +295,7 @@ links for the presentation views.")
 
 (defconst radio-f--yle-stream-level-three ;; MP3, 128kpbs
   "https://icecast.live.yle.fi/radio/<<l3>>/icecast.audio"
-  "Template for Yle Level Two audio stream playback.")
+  "Template for Yle Level Three audio stream playback.")
 
 (defconst radio-f--yle-alands-stream-level-one ;; Ogg Vorbis
   "https://stream.alandsradio.ax/stream.ogg"
@@ -341,7 +340,7 @@ links for the presentation views.")
 
 ;; == PROCESSORS ================================
 
-(defun radio-f--yle-radio-processor (data station)
+(defun radio-f--yle-processor (data station)
   "Process Yle Radio DATA for STATION."
   (let* ((name (plist-get station :name))
          (visual-id (plist-get station :visual))
@@ -355,32 +354,5 @@ links for the presentation views.")
       ;; (start      . ,start)
       ;; (end        . ,end)
       (visual-id . ,visual-id))))
-
-(defun radio-f--yle-web-processor (data station)
-  "Process Yle Web DATA for STATION."
-  (let* ((name (plist-get station :name))
-         (data (cdr (assoc "data" data)))
-         (now (aref data 0))
-         (artist (cdr (assoc "artist" now)))
-         (title (cdr (assoc "title" now)))
-         (start
-          (time-convert
-           (date-to-time
-            (cdr (assoc "startStamp" now)))
-           'integer))
-         (duration (cdr (assoc "duration" now)))
-         (length (/ 1000 duration))
-         (end (+ length start))
-         (visual-url (cdr (assoc "image" now)))
-         (item-id (secure-hash
-                   'sha3-224
-                   (format "%s|%s" artist title))))
-    `((name       . ,name)
-      (item-id    . ,item-id)
-      (artist     . ,artist)
-      (title      . ,title)
-      (start      . ,start)
-      (end        . ,end)
-      (visual-url . ,visual-url))))
 
 (provide 'radio-f-yle)
